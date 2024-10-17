@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from flask import request, jsonify
+from flasgger.utils import swag_from
 
 from . import borrowing_api
 from ...services.borrowing.borrowing_service import BorrowingService
@@ -12,6 +13,7 @@ from ...utils.decorators import JWT_required, admin_required
 @borrowing_api.route("/borrowing", methods=["GET"])
 @JWT_required
 @admin_required
+@swag_from("../../apidocs/borrowing/get_all_borrow_records.yaml", endpoint="borrowing_api.get_all_borrow_records", methods=["GET"])
 def get_all_borrow_records(user):
     borrowing_service = BorrowingService()
     borrow_records = borrowing_service.list_borrow_records()  
@@ -24,6 +26,7 @@ def get_all_borrow_records(user):
 
 @borrowing_api.route("/user/<id>/borrowing", methods=["GET"])
 @JWT_required
+@swag_from("../../apidocs/borrowing/list_borrow_records_of_user.yaml", endpoint="borrowing_api.list_borrow_records_of_user", methods=["GET"])
 def list_borrow_records_of_user(user, id):
     if user.role != "admin" and user.id != id:
         return jsonify({
@@ -58,6 +61,7 @@ def list_borrow_records_of_user(user, id):
 @borrowing_api.route("/borrowing", methods=["POST"])
 @JWT_required
 @admin_required
+@swag_from("../../apidocs/borrowing/create_borrow_record.yaml", endpoint="borrowing_api.create_borrow_record", methods=["POST"])
 def create_borrow_record(user):
     data = request.get_json()
     if not data:
@@ -106,6 +110,7 @@ def create_borrow_record(user):
 @borrowing_api.route("/borrowing/<borrow_record_id>/return", methods=["PUT"])
 @JWT_required
 @admin_required
+@swag_from("../../apidocs/borrowing/update_borrow_record.yaml", endpoint="borrowing_api.update_borrow_record", methods=["PUT"])
 def update_borrow_record(user, borrow_record_id):
     borrowing_service = BorrowingService()
     borrow_record = borrowing_service.get_borrow_record_by_id(borrow_record_id)
@@ -148,6 +153,7 @@ def update_borrow_record(user, borrow_record_id):
 @borrowing_api.route("/borrowing/search", methods=["GET"])
 @JWT_required
 @admin_required
+@swag_from("../../apidocs/borrowing/search_borrow_records.yaml", endpoint="borrowing_api.search_borrow_records", methods=["GET"])
 def search_borrow_records(user):
     query = request.args.get("query", type=str, default=None)
     if not query:

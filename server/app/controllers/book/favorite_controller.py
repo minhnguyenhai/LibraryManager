@@ -1,4 +1,5 @@
 from flask import request, jsonify
+from flasgger.utils import swag_from
 
 from . import book_api
 from ...services.book.book_service import BookService
@@ -9,6 +10,7 @@ from ...utils.decorators import JWT_required
 
 @book_api.route("/user/favorite", methods=["GET"])
 @JWT_required
+@swag_from("../../apidocs/book/favorite/get_favorite_books_for_user.yaml", endpoint="book_api.get_favorite_books_for_user", methods=["GET"])
 def get_favorite_books_for_user(user_id):
     favorite_service = FavoriteService()
     favorite_books = favorite_service.list_favorite_books(user_id)
@@ -21,6 +23,7 @@ def get_favorite_books_for_user(user_id):
         
 @book_api.route("/user/favorite", methods=["POST"])
 @JWT_required
+@swag_from("../../apidocs/book/favorite/add_favorite_book_for_user.yaml", endpoint="book_api.add_favorite_book_for_user", methods=["POST"])
 def add_favorite_book_for_user(user):
     user_service = UserService()
     if user_service.is_admin(user):
@@ -68,6 +71,7 @@ def add_favorite_book_for_user(user):
         
 @book_api.route("/user/favorite/<book_id>", methods=["DELETE"])
 @JWT_required
+@swag_from("../../apidocs/book/favorite/remove_book_from_favorites.yaml", endpoint="book_api.remove_book_from_favorites", methods=["DELETE"])
 def remove_book_from_favorites(user_id, book_id):
     book_service = BookService()
     book = book_service.get_book_by_id(book_id)
