@@ -1,4 +1,6 @@
 from flask import jsonify
+from flasgger.utils import swag_from
+
 from . import statistic_api
 from ...services.statistic.statistic_service import StatisticService
 from ...utils.decorators import JWT_required, admin_required
@@ -7,6 +9,7 @@ from ...utils.decorators import JWT_required, admin_required
 @statistic_api.route("/user", methods=["GET"])
 @JWT_required
 @admin_required
+@swag_from("../../apidocs/statistic/get_user_statistics.yaml", endpoint="statistic_api.get_user_statistics", methods=["GET"])
 def get_user_statistics(user):
     statistic_service = StatisticService()
     total_num_of_users = statistic_service.get_total_number_of_users()
@@ -24,6 +27,7 @@ def get_user_statistics(user):
 @statistic_api.route("/book", methods=["GET"])
 @JWT_required
 @admin_required
+@swag_from("../../apidocs/statistic/get_book_statistics.yaml", endpoint="statistic_api.get_book_statistics", methods=["GET"])
 def get_book_statistics(user):
     statistic_service = StatisticService()
     total_num_of_books = statistic_service.get_total_number_of_books()
