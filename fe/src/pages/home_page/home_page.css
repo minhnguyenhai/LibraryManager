@@ -1,0 +1,15 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    display: block; /* Hoặc một kiểu display khác bạn muốn */
+    justify-content: normal; /* Hoặc các giá trị mặc định khác */
+    align-items: normal; /* Hoặc các giá trị mặc định khác */
+    min-height: auto; /* Thiết lập lại chiều cao tối thiểu */
+    background: none; /* Không có ảnh nền */
+}
