@@ -1,15 +1,17 @@
-
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body {
+.home_page {
     font-family: "Poppins", sans-serif;
-    display: block; /* Hoặc một kiểu display khác bạn muốn */
-    justify-content: normal; /* Hoặc các giá trị mặc định khác */
-    align-items: normal; /* Hoặc các giá trị mặc định khác */
-    min-height: auto; /* Thiết lập lại chiều cao tối thiểu */
-    background: none; /* Không có ảnh nền */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: antiquewhite;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
 }

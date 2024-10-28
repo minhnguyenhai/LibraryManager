@@ -3,7 +3,9 @@ import './home_page.css';
 const HomePage =() =>{
     return(
         <div>
-            <h1>Wellcome Back</h1>
+            <div className="home_page">
+                <h1>Wellcome Back</h1>
+            </div>
         </div>
     )
 }
