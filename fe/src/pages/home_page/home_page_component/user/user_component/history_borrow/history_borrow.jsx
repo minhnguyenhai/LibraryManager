@@ -31,6 +31,13 @@ const useBorrowRecords = () => {
         await handleRefreshToken();
         const accessToken = localStorage.getItem("access_token");
         const user = JSON.parse(localStorage.getItem("user_info"));
+
+        if (!accessToken || !user) {
+          throw new Error(
+            "Token không hợp lệ hoặc thông tin người dùng không có"
+          );
+        }
+
         const response = await fetch(
           `https://librarymanager-aict.onrender.com/user/${user.id}/borrowing`,
           {
@@ -41,7 +48,9 @@ const useBorrowRecords = () => {
             },
           }
         );
+
         if (!response.ok) throw new Error(`Error: ${response.status}`);
+
         const data = await response.json();
         if (data.borrow_records) {
           const updatedRecords = data.borrow_records.map((record) => {
@@ -70,7 +79,7 @@ const useBorrowRecords = () => {
 };
 
 const HistoryBorrow = () => {
-  const { borrowRecords, loading, error } = useBorrowRecords(); // Sử dụng custom hook
+  const { borrowRecords, loading, error } = useBorrowRecords();
 
   if (loading) {
     return <div className="centered-message">Loading...</div>;
