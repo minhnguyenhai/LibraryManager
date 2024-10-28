@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import './login_register.css';
-import { useNavigate } from "react-router-dom";  
 import { FaUser,FaLock, FaEnvelope } from "react-icons/fa";
 
 const LoginRegister =() =>{
     const[action,setAction]=useState('');
-    const navigate =useNavigate();
-
     const registerLink=()=>{
         setAction(' active');
     };
@@ -14,17 +11,10 @@ const LoginRegister =() =>{
     const loginLink=()=>{
         setAction('');
     };
-    const handleLoginSubmit = (e) => {
-        e.preventDefault();
-        // Kiểm tra thông tin đăng nhập ở đây, ví dụ với API
-        // Nếu thành công, điều hướng tới trang homepage
-        navigate('/homepage');
-    };
-
     return (
         <div className={`wrapper${action}`}>
             <div className="form-box login">
-                <form onSubmit={handleLoginSubmit}>
+                <form action="">
                     <h1>Login</h1>
                     <div className="input-box">
                         <input type="text" placeholder="Username" required />
