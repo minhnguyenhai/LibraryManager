@@ -11,7 +11,7 @@ from config import secret_key
 def validate_login(email, password):
     user = db.session.execute(
         db.select(User).where(User.email == email)
-    )
+    ).scalar()
 
     if user is None:
         return None
@@ -43,15 +43,15 @@ def generate_refresh_token(user_id, expires_in=2592000):
 def is_email_registered(email):
     user = db.session.execute(
         db.select(User).where(User.email == email)
-    )
+    ).scalar()
     
     if user:
         return True
     return False
 
 
-def save_new_user(email, password, name, language, timezone, deviceId):
-    new_user = User(email, password, name, language, timezone, deviceId)
+def save_new_user(email, password, name, dob, gender, address, phone_number):
+    new_user = User(email, password, name, dob, gender, address, phone_number)
     db.session.add(new_user)
     db.session.commit()
     return new_user

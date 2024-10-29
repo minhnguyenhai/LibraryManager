@@ -1,0 +1,13 @@
+Dear {{ user.name }},
+
+Welcome to Group 34's Library!
+
+To confirm your account please click on the following link:
+
+
+
+Sincerely,
+
+Group 34 - IT4409 - HUST
+
+Note: replies to this email address are not monitored.
