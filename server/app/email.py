@@ -20,6 +20,5 @@ def send_email(to, subject, template, **kwargs):
     subject_prefixed = f"{app.config['MAIL_SUBJECT_PREFIX']} {subject}"
     text_body = render_template(f"{template}.txt", **kwargs)
     html_body = render_template(f"{template}.html", **kwargs)
-    print(html_body)
     
     send_async_email.delay(to, subject_prefixed, text_body, html_body)
