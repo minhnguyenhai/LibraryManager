@@ -29,7 +29,7 @@ class Config:
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER = "minhnguyenhai26032003@gmail.com"
-    MAIL_SUBJECT_PREFIX = "[Group 34's Library]"
+    MAIL_SUBJECT_PREFIX = "[4M Library]"
     
 
 secret_key = Config.SECRET_KEY

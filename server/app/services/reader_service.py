@@ -1,6 +1,7 @@
 from datetime import datetime, timezone, timedelta
 import jwt
 import logging
+import random
 
 from werkzeug.security import check_password_hash
 
@@ -107,6 +108,7 @@ def verify_refresh_token(token):
 
 
 def is_email_registered(email):
+    """Checks if an email is already registered."""
     reader = db.session.execute(
         db.select(Reader).where(Reader.email == email)
     ).scalar()
@@ -117,16 +119,90 @@ def is_email_registered(email):
 
 
 def save_new_reader(email, password, name, dob, gender, address, phone_number):
+    """Saves a new reader to the database."""
     new_reader = User(email, password, name, dob, gender, address, phone_number)
     db.session.add(new_reader)
     db.session.commit()
     return new_reader
 
 
-def generate_confirm_token(reader_id, expires_in=3600):
-    payload = {
-        "reader_id": reader_id,
-        "exp":  datetime.now(tz=timezone.utc) + timedelta(seconds=expires_in)
-    }
-    token = jwt.encode(payload, secret_key, algorithm="HS256")
-    return token
+def generate_verification_code(email):
+    """Generates a verification code for a reader."""
+    try:
+        verification_code = "".join([str(random.randint(0, 9)) for _ in range(6)])
+
+        token = db.session.execute(
+            db.select(Token)
+            .join(Reader, Reader.id == Token.reader_id)
+            .where(Reader.email == email)
+        ).scalar()
+        
+        if not token:
+            new_token = Token(
+                verification_code=verification_code,
+                verification_code_expires=datetime.now(tz=timezone.utc) + timedelta(minutes=10),
+                reader_id=get_reader_by_email(email).id
+            )
+            db.session.add(new_token)
+        else:
+            token.verification_code = verification_code
+            token.verification_code_expires = datetime.now(tz=timezone.utc) + timedelta(minutes=10)
+            
+        db.session.commit()
+        return verification_code
+    
+    except Exception as e:
+        db.session.rollback() 
+        logging.error(f"Error generating verification code: {str(e)}")
+        raise
+
+
+def generate_confirm_token(email, expires_in=3600):
+    """Generates a confirmation token for the reader."""
+    try:
+        reader_id = get_reader_by_email(email).id
+        payload = {
+            "reader_id": reader_id,
+            "exp":  datetime.now(tz=timezone.utc) + timedelta(seconds=expires_in)
+        }
+        new_confirm_token = jwt.encode(payload, secret_key, algorithm="HS256")
+        
+        existing_token = db.session.execute(
+            db.select(Token).where(Token.reader_id == reader_id)
+        ).scalar()
+        
+        if not existing_token:
+            new_token = Token(confirm_token=new_confirm_token, reader_id=reader_id)
+            db.session.add(new_token)
+        else:
+            existing_token.confirm_token = new_confirm_token
+    
+        db.session.commit()
+        return new_confirm_token
+    
+    except jwt.PyJWTError as e:
+        logging.error(f"JWT Error: {str(e)}")
+        raise
+
+    except Exception as e:
+        db.session.rollback() 
+        logging.error(f"Error generating access token: {str(e)}")
+        raise
+
+
+def is_verified(email):
+    """Checks if a reader has been verified."""
+    reader = db.session.execute(
+        db.select(Reader).where(Reader.email == email)
+    ).scalar()
+    
+    if reader and reader.is_verified:
+        return True
+    return False
+
+
+def get_reader_by_email(email):
+    """Retrieves a reader by email."""
+    return db.session.execute(
+        db.select(Reader).where(Reader.email == email)
+    ).scalar()

@@ -10,7 +10,10 @@ from ...services.reader_service import (
     verify_refresh_token,
     is_email_registered,
     save_new_reader,
-    generate_confirm_token
+    generate_verification_code,
+    generate_confirm_token,
+    is_verified,
+    get_reader_by_email
 )
 
 
@@ -134,19 +137,21 @@ def register():
                 "message": "Email is already registered."
             }), 400
             
-        new_user = save_new_reader(data["email"], data["password"], data["name"], data["dob"], data["gender"], data["address"], data["phone_number"])
-        confirm_token = generate_confirm_token(new_user.id)
+        new_reader = save_new_reader(data["email"], data["password"], data["name"], data["dob"], data["gender"], data["address"], data["phone_number"])
+        verification_code = generate_verification_code(new_reader.email)
+        confirm_token = generate_confirm_token(new_reader.email)
         send_email(
             to=data["email"], 
-            subject="Confirm Your Account",
+            subject="Your Verification Code from 4M Library",
             template="confirm",
-            user=new_user
+            reader=new_reader,
+            code=verification_code
         )
         
         return jsonify({
             "success": True,
             "message": "User registered successfully. An email has been sent to confirm your account.",
-            "user": new_user.as_dict(),
+            "user": new_reader.as_dict(),
             "confirm_token": confirm_token
         }), 201
         
@@ -156,6 +161,59 @@ def register():
             "message": str(e)
         }), 400
     
+    except Exception as e:
+        return jsonify({
+            "error": "Internal server error.",
+            "message": str(e)
+        }), 500
+        
+
+@reader_api.route("/send-verification-code", methods=["POST"])
+def send_verification_code():
+    try:
+        data = request.get_json()
+        email = data.get("email")
+
+        if not email:
+            return jsonify({
+                "success": False,
+                "message": "Email is required."
+            }), 400
+            
+        if not validate_email(email):
+            return jsonify({
+                "success": False,
+                "message": "Invalid email address."
+            }), 400
+
+        if not is_email_registered(email):
+            return jsonify({
+                "success": False,
+                "message": "Email is not registered."
+            }), 400
+            
+        if is_verified(email):
+            return jsonify({
+                "success": False,
+                "message": "Email is already verified."
+            }), 400
+
+        verification_code = generate_verification_code(email)
+        confirm_token = generate_confirm_token(email)
+        send_email(
+            to=data["email"], 
+            subject="Your Verification Code from 4M Library",
+            template="confirm",
+            reader=get_reader_by_email(email),
+            code=verification_code
+        )
+
+        return jsonify({
+            "success": True,
+            "message": "Verification code sent to email successfully.",
+            "confirm_token": confirm_token
+        }), 200
+
     except Exception as e:
         return jsonify({
             "error": "Internal server error.",

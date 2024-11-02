@@ -1,13 +1,14 @@
-Dear {{ user.name }},
+Dear {{ reader.name }},
 
-Welcome to Group 34's Library!
+Welcome to 4M Library! To complete your registration and access our resources, please use the verification code below:
 
-To confirm your account please click on the following link:
+Verification Code: {{ code }}
 
+This code is valid for the next 10 minutes. Enter it on the verification page to activate your account.
 
+If you did not request this code, please ignore this email or reach out to our support team for assistance.
 
-Sincerely,
-
-Group 34 - IT4409 - HUST
+Warm regards,
+The 4M Library Team
 
 Note: replies to this email address are not monitored.
