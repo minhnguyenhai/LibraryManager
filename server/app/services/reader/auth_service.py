@@ -92,6 +92,10 @@ def verify_refresh_token(token):
     try:
         payload = jwt.decode(token, secret_key, algorithms=["HS256"])
         reader_id = payload.get("reader_id")
+        if not reader_id:
+            logging.warning("Token missing required field: reader_id.")
+            return None
+
         existing_token = db.session.execute(
             db.select(Token).where(Token.reader_id == reader_id)
         ).scalar()
@@ -102,10 +106,10 @@ def verify_refresh_token(token):
         return reader_id
 
     except jwt.ExpiredSignatureError:
-        logging.error("Refresh token expired.")
+        logging.warning("Refresh token expired.")
         return None
     except jwt.InvalidTokenError:
-        logging.error("Invalid refresh token.")
+        logging.warning("Invalid refresh token.")
         return None
     except Exception as e:
         logging.error(f"Error verifying refresh token: {str(e)}")
@@ -135,7 +139,6 @@ def generate_verification_code(email):
     """Generates a verification code for a reader."""
     try:
         verification_code = "".join([str(random.randint(0, 9)) for _ in range(6)])
-
         token = db.session.execute(
             db.select(Token)
             .join(Reader, Reader.id == Token.reader_id)
@@ -218,6 +221,10 @@ def verify_code(confirm_token, verification_code):
     try:
         payload = jwt.decode(confirm_token, secret_key, algorithms=["HS256"])
         reader_id = payload.get("reader_id")
+        if not reader_id:
+            logging.warning("Token missing required field: reader_id.")
+            return None
+
         token = db.session.execute(
             db.select(Token).where(Token.reader_id == reader_id)
         ).scalar()
@@ -234,10 +241,10 @@ def verify_code(confirm_token, verification_code):
         ).scalar()
     
     except jwt.ExpiredSignatureError:
-        logging.error("Confirm token expired.")
+        logging.warning("Confirm token expired.")
         return None
     except jwt.InvalidTokenError:
-        logging.error("Invalid confirm token.")
+        logging.warning("Invalid confirm token.")
         return None
     except Exception as e:
         logging.error(f"Error verifying code: {str(e)}")
@@ -261,4 +268,38 @@ def verify_email(email):
     except Exception as e:
         db.session.rollback() 
         logging.error(f"Error verifying email: {str(e)}")
+        raise
+    
+    
+def invalidate_token(token):
+    """Invalidate the provided token by removing it from the database."""
+    try:
+        payload = jwt.decode(token, secret_key, algorithms=["HS256"])
+        reader_id = payload.get("reader_id")
+        if not reader_id:
+            logging.warning("Token missing required field: reader_id.")
+            return False
+        
+        existing_token = db.session.execute(
+            db.select(Token).where(Token.reader_id == reader_id)
+        ).scalar()
+        
+        if not existing_token or existing_token.access_token != token:
+            logging.warning("Invalid token.")
+            return False
+
+        existing_token.access_token = None
+        existing_token.refresh_token = None
+        db.session.commit()
+        return True
+
+    except jwt.ExpiredSignatureError:
+        logging.warning("Token already expired.")
+        return False
+    except jwt.InvalidTokenError:
+        logging.warning("Invalid token.")
+        return False
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error invalidating token: {str(e)}")
         raise

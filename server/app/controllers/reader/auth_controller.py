@@ -15,7 +15,8 @@ from ...services.reader.auth_service import (
     is_verified,
     get_reader_by_email,
     verify_code,
-    verify_email
+    verify_email,
+    invalidate_token
 )
 
 
@@ -252,6 +253,32 @@ def verify_email():
                 "message": "Invalid confirm token or verification code."
             }), 400
     
+    except Exception as e:
+        return jsonify({
+            "error": "Internal server error.",
+            "message": str(e)
+        }), 500
+        
+        
+@reader_api.route("/logout", methods=["POST"])
+def logout():
+    try:
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            return jsonify({
+                "success": False,
+                "message": "Token is missing or invalid."
+            }), 401
+        
+        token = auth_header.split(" ")[1]
+        if invalidate_token(token):
+            return "", 204
+        else:
+            return jsonify({
+                "success": False,
+                "message": "Failed to log out. Invalid token."
+            }), 401
+
     except Exception as e:
         return jsonify({
             "error": "Internal server error.",
