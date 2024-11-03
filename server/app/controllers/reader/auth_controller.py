@@ -14,11 +14,12 @@ from ...services.reader.auth_service import (
     generate_confirm_token,
     is_verified,
     get_reader_by_email,
-    verify_code,
+    verify_verification_code,
     verify_email,
     invalidate_token,
     generate_reset_code,
-    generate_reset_token
+    generate_reset_token,
+    verify_reset_code
 )
 
 
@@ -258,7 +259,7 @@ def verify_email():
                 "message": "Confirm token and verification code are required."
             }), 400
 
-        reader = verify_code(confirm_token, verification_code)
+        reader = verify_verification_code(confirm_token, verification_code)
         if reader and verify_email(reader.email):
             access_token = generate_access_token(reader.id)
             refresh_token = generate_refresh_token(reader.id)
@@ -362,6 +363,49 @@ def request_reset_password():
             "message": str(e)
         }), 400
 
+    except Exception as e:
+        return jsonify({
+            "error": "Internal server error.",
+            "message": str(e)
+        }), 500
+        
+        
+@reader_api.route("/validate-reset-code", methods=["POST"])
+def validate_reset_code():
+    try:
+        data = request.get_json()
+        if data is None:
+            raise ValueError("Invalid JSON data.")
+        
+        reset_token = data.get("reset_token")
+        reset_code = data.get("reset_code")
+
+        if not reset_token or not reset_code:
+            return jsonify({
+                "success": False,
+                "message": "Reset token and reset code are required."
+            }), 400
+
+        reader = verify_reset_code(reset_token, reset_code)
+        if reader:
+            temp_access_token = generate_access_token(reader.id)
+            return jsonify({
+                "success": True,
+                "message": "Reset code verified successfully.",
+                "temp_access_token": temp_access_token
+            }), 200
+        else:
+            return jsonify({
+                "success": False,
+                "message": "Invalid reset token or reset code."
+            }), 400
+            
+    except ValueError as e:
+        return jsonify({
+            "error": "Invalid data.",
+            "message": str(e)
+        }), 400
+    
     except Exception as e:
         return jsonify({
             "error": "Internal server error.",

@@ -216,7 +216,7 @@ def get_reader_by_email(email):
     ).scalar()
     
     
-def verify_code(confirm_token, verification_code):
+def verify_verification_code(confirm_token, verification_code):
     """Verifies the confirmation token and verification code."""
     try:
         payload = jwt.decode(confirm_token, secret_key, algorithms=["HS256"])
@@ -247,7 +247,7 @@ def verify_code(confirm_token, verification_code):
         logging.warning("Invalid confirm token.")
         return None
     except Exception as e:
-        logging.error(f"Error verifying code: {str(e)}")
+        logging.error(f"Error verifying verification code: {str(e)}")
         raise
     
     
@@ -365,4 +365,39 @@ def generate_reset_token(email, expires_in=1800):
     except Exception as e:
         db.session.rollback() 
         logging.error(f"Error generating reset token: {str(e)}")
+        raise
+    
+    
+def verify_reset_code(reset_token, reset_code):
+    """Verifies the reset password token and reset password code."""
+    try:
+        payload = jwt.decode(reset_token, secret_key, algorithms=["HS256"])
+        reader_id = payload.get("reader_id")
+        if not reader_id:
+            logging.warning("Token missing required field: reader_id.")
+            return None
+
+        token = db.session.execute(
+            db.select(Token).where(Token.reader_id == reader_id)
+        ).scalar()
+        
+        if (
+            token is None or token.reset_token != reset_token or
+            token.reset_code != reset_code or
+            token.reset_code_expiration < datetime.now(tz=timezone.utc)
+        ):
+            return None
+        
+        return db.session.execute(
+            db.select(Reader).where(Reader.id == reader_id)
+        ).scalar()
+    
+    except jwt.ExpiredSignatureError:
+        logging.warning("Reset token expired.")
+        return None
+    except jwt.InvalidTokenError:
+        logging.warning("Invalid reset token.")
+        return None
+    except Exception as e:
+        logging.error(f"Error verifying reset code: {str(e)}")
         raise
