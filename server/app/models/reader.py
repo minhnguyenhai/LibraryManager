@@ -1,13 +1,13 @@
 import uuid
-import Optional
+from typing import Optional
 from datetime import date
 
 from sqlalchemy import String, Date, Boolean
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import generate_password_hash
 
 from app import db
-from app.models.token import Token
+
 
 class Reader(db.Model):
     
@@ -23,8 +23,8 @@ class Reader(db.Model):
     phone_number: Mapped[str] = mapped_column(String(15), nullable=False)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
     
-    token: Mapped[Optional[Token]] = mapped_column(Token, uselist=False, back_populates="reader", nullable=True)
-    
+    token: Mapped["Token"] = relationship("Token", uselist=False, back_populates="reader")
+
     
     def __init__(self, email, password, name, dob, gender, address, phone_number):
         self.email = email

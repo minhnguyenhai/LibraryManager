@@ -1,12 +1,12 @@
 import uuid
-import Optional
+from typing import Optional
 from datetime import datetime
 
 from sqlalchemy import String, DateTime, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app import db
-from app.models.reader import Reader
+
 
 class Token(db.Model):
     
@@ -20,4 +20,4 @@ class Token(db.Model):
     verification_code_expiration: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     
     reader_id: Mapped[Optional[str]] = mapped_column(ForeignKey("readers.id"), nullable=True)
-    reader: Mapped[Optional[Reader]] = mapped_column(Reader, back_populates="token", nullable=True)
+    reader: Mapped["Reader"] = relationship("Reader", back_populates="token")

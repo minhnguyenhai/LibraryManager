@@ -219,3 +219,74 @@ def send_verification_code():
             "error": "Internal server error.",
             "message": str(e)
         }), 500
+
+
+# @reader_api.route("/verify-email", methods=["POST"])
+# def verify_email():
+#     try:
+#         data = request.get_json()
+#         email = data.get("email")
+#         code = data.get("code")
+
+#         if not email or not code:
+#             return jsonify({
+#                 "success": False,
+#                 "message": "Email and verification code are required."
+#             }), 400
+
+#         if verify_code(email, code):
+#             activate_user(email)
+#             return jsonify({
+#                 "success": True,
+#                 "message": "Email verification successful. Account activated."
+#             }), 200
+#         else:
+#             return jsonify({
+#                 "success": False,
+#                 "message": "Invalid verification code."
+#             }), 400
+
+#     except Exception as e:
+#         return jsonify({
+#             "error": "Internal server error.",
+#             "message": str(e)
+#         }), 500
+        
+        
+        
+        
+# @user_api.route("/logout", methods=["POST"])
+# def logout():
+#     try:
+#         auth_header = request.headers.get("Authorization")
+        
+#         if not auth_header or not auth_header.startswith("Bearer "):
+#             return jsonify({
+#                 "success": False,
+#                 "message": "Authorization header with Bearer token required."
+#             }), 401
+        
+#         access_token = auth_header.split(" ")[1]
+        
+#         user_id = verify_access_token(access_token)
+        
+#         if not user_id:
+#             return jsonify({
+#                 "success": False,
+#                 "message": "Invalid or expired access token."
+#             }), 401
+        
+#         invalidate_refresh_token(user_id)
+
+#         return jsonify({
+#             "success": True,
+#             "message": "Logout successful."
+#         }), 200
+
+#     except Exception as e:
+#         return jsonify({
+#             "error": "Internal server error.",
+#             "message": str(e)
+#         }), 500
+            
+    
