@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from . import admin_api
-from ...services.admin.ad_auth_service import validate_login, generate_access_token, generate_refresh_token
+from ...services.admin.ad_auth_service import validate_login, generate_access_token, generate_refresh_token, verify_refresh_token
 
 
 @admin_api.route("/login", methods=["POST"])
@@ -44,6 +44,52 @@ def login():
             "message": str(e)
         }), 400
         
+    except Exception as e:
+        return jsonify({
+            "error": "Internal server error.",
+            "message": str(e)
+        }), 500
+    
+    
+@admin_api.route("/refresh-token", methods=["POST"])
+def refresh_token():
+    try:
+        data = request.get_json()
+        if data is None:
+            raise ValueError("Invalid JSON data.")
+        
+        refresh_token = data.get("refresh_token")
+        
+        if refresh_token is None:
+            return jsonify({
+                "success": False,
+                "message": "Refresh token is required."
+            }), 400
+        
+        admin_id = verify_refresh_token(refresh_token)
+        
+        if admin_id is None:
+            return jsonify({
+                "success": False,
+                "message": "Invalid or expired refresh token."
+            }), 400
+            
+        new_access_token = generate_access_token(admin_id)
+        new_refresh_token = generate_refresh_token(admin_id)
+
+        return jsonify({
+            "success": True,
+            "message": "Token refreshed.",
+            "access_token": new_access_token,
+            "refresh_token": new_refresh_token
+        }), 200
+        
+    except ValueError as e:
+        return jsonify({
+            "error": "Invalid data.",
+            "message": str(e)
+        }), 400
+
     except Exception as e:
         return jsonify({
             "error": "Internal server error.",

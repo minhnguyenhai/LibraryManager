@@ -84,3 +84,32 @@ def generate_refresh_token(admin_id, expires_in=2592000):
         db.session.rollback() 
         logging.error(f"Error generating access token: {str(e)}")
         raise
+    
+    
+def verify_refresh_token(token):
+    """Verify if the provided refresh token is valid and not expired."""
+    try:
+        payload = jwt.decode(token, secret_key, algorithms=["HS256"])
+        admin_id = payload.get("admin_id")
+        if not admin_id:
+            logging.warning("Token missing required field: admin_id.")
+            return None
+
+        existing_token = db.session.execute(
+            db.select(Token).where(Token.admin_id == admin_id)
+        ).scalar()
+        
+        if not existing_token or existing_token.refresh_token != token:
+            return None
+        
+        return admin_id
+
+    except jwt.ExpiredSignatureError:
+        logging.warning("Refresh token expired.")
+        return None
+    except jwt.InvalidTokenError:
+        logging.warning("Invalid refresh token.")
+        return None
+    except Exception as e:
+        logging.error(f"Error verifying refresh token: {str(e)}")
+        raise

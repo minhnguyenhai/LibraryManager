@@ -93,6 +93,7 @@ def refresh_token():
 
         return jsonify({
             "success": True,
+            "message": "Token refreshed.",
             "access_token": new_access_token,
             "refresh_token": new_refresh_token
         }), 200
