@@ -6,8 +6,8 @@ import random
 from werkzeug.security import check_password_hash
 
 from app import db
-from ..models.reader import Reader
-from ..models.token import Token
+from ...models.reader import Reader
+from ...models.token import Token
 from config import secret_key
 
 
@@ -102,9 +102,14 @@ def verify_refresh_token(token):
         return reader_id
 
     except jwt.ExpiredSignatureError:
+        logging.error("Refresh token expired.")
         return None
     except jwt.InvalidTokenError:
+        logging.error("Invalid refresh token.")
         return None
+    except Exception as e:
+        logging.error(f"Error verifying refresh token: {str(e)}")
+        raise
 
 
 def is_email_registered(email):
@@ -206,3 +211,54 @@ def get_reader_by_email(email):
     return db.session.execute(
         db.select(Reader).where(Reader.email == email)
     ).scalar()
+    
+    
+def verify_code(confirm_token, verification_code):
+    """Verifies the confirmation token and verification code."""
+    try:
+        payload = jwt.decode(confirm_token, secret_key, algorithms=["HS256"])
+        reader_id = payload.get("reader_id")
+        token = db.session.execute(
+            db.select(Token).where(Token.reader_id == reader_id)
+        ).scalar()
+        
+        if (
+            token is None or token.confirm_token != confirm_token or
+            token.verification_code != verification_code or
+            token.verification_code_expiration < datetime.now(tz=timezone.utc)
+        ):
+            return None
+        
+        return db.session.execute(
+            db.select(Reader).where(Reader.id == reader_id)
+        ).scalar()
+    
+    except jwt.ExpiredSignatureError:
+        logging.error("Confirm token expired.")
+        return None
+    except jwt.InvalidTokenError:
+        logging.error("Invalid confirm token.")
+        return None
+    except Exception as e:
+        logging.error(f"Error verifying code: {str(e)}")
+        raise
+    
+    
+def verify_email(email):
+    """Verifies a reader's email."""
+    try:
+        reader = db.session.execute(
+            db.select(Reader).where(Reader.email == email)
+        ).scalar()
+        
+        if reader is None:
+            return False
+        
+        reader.is_verified = True
+        db.session.commit()
+        return True
+    
+    except Exception as e:
+        db.session.rollback() 
+        logging.error(f"Error verifying email: {str(e)}")
+        raise

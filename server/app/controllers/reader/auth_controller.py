@@ -3,7 +3,7 @@ from validate_email_address import validate_email
 
 from . import reader_api
 from ...email import send_email
-from ...services.reader_service import (
+from ...services.reader.auth_service import (
     validate_login, 
     generate_access_token, 
     generate_refresh_token,
@@ -13,7 +13,9 @@ from ...services.reader_service import (
     generate_verification_code,
     generate_confirm_token,
     is_verified,
-    get_reader_by_email
+    get_reader_by_email,
+    verify_code,
+    verify_email
 )
 
 
@@ -221,72 +223,37 @@ def send_verification_code():
         }), 500
 
 
-# @reader_api.route("/verify-email", methods=["POST"])
-# def verify_email():
-#     try:
-#         data = request.get_json()
-#         email = data.get("email")
-#         code = data.get("code")
+@reader_api.route("/verify-email", methods=["POST"])
+def verify_email():
+    try:
+        data = request.get_json()
+        confirm_token = data.get("confirm_token")
+        verification_code = data.get("verification_code")
 
-#         if not email or not code:
-#             return jsonify({
-#                 "success": False,
-#                 "message": "Email and verification code are required."
-#             }), 400
+        if not confirm_token or not verification_code:
+            return jsonify({
+                "success": False,
+                "message": "Confirm token and verification code are required."
+            }), 400
 
-#         if verify_code(email, code):
-#             activate_user(email)
-#             return jsonify({
-#                 "success": True,
-#                 "message": "Email verification successful. Account activated."
-#             }), 200
-#         else:
-#             return jsonify({
-#                 "success": False,
-#                 "message": "Invalid verification code."
-#             }), 400
-
-#     except Exception as e:
-#         return jsonify({
-#             "error": "Internal server error.",
-#             "message": str(e)
-#         }), 500
-        
-        
-        
-        
-# @user_api.route("/logout", methods=["POST"])
-# def logout():
-#     try:
-#         auth_header = request.headers.get("Authorization")
-        
-#         if not auth_header or not auth_header.startswith("Bearer "):
-#             return jsonify({
-#                 "success": False,
-#                 "message": "Authorization header with Bearer token required."
-#             }), 401
-        
-#         access_token = auth_header.split(" ")[1]
-        
-#         user_id = verify_access_token(access_token)
-        
-#         if not user_id:
-#             return jsonify({
-#                 "success": False,
-#                 "message": "Invalid or expired access token."
-#             }), 401
-        
-#         invalidate_refresh_token(user_id)
-
-#         return jsonify({
-#             "success": True,
-#             "message": "Logout successful."
-#         }), 200
-
-#     except Exception as e:
-#         return jsonify({
-#             "error": "Internal server error.",
-#             "message": str(e)
-#         }), 500
-            
+        reader = verify_code(confirm_token, verification_code)
+        if reader and verify_email(reader.email):
+            access_token = generate_access_token(reader.id)
+            refresh_token = generate_refresh_token(reader.id)
+            return jsonify({
+                "success": True,
+                "message": "Your email address was verified successfully.",
+                "access_token": access_token,
+                "refresh_token": refresh_token
+            }), 200
+        else:
+            return jsonify({
+                "success": False,
+                "message": "Invalid confirm token or verification code."
+            }), 400
     
+    except Exception as e:
+        return jsonify({
+            "error": "Internal server error.",
+            "message": str(e)
+        }), 500

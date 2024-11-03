@@ -22,7 +22,7 @@ def create_app(config_class=Config):
     
     celery.conf.update(app.config)
     
-    from .controllers.user import reader_api
+    from .controllers.reader import reader_api
     app.register_blueprint(reader_api, url_prefix="/reader")
 
     return app
