@@ -3,7 +3,7 @@ import jwt
 import logging
 import random
 
-from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
 from ...models.reader import Reader
@@ -85,6 +85,35 @@ def generate_refresh_token(reader_id, expires_in=2592000):
         db.session.rollback() 
         logging.error(f"Error generating access token: {str(e)}")
         raise
+    
+    
+def verify_access_token(token):
+    """Verify if the provided access token is valid and not expired."""
+    try:
+        payload = jwt.decode(token, secret_key, algorithms=["HS256"])
+        reader_id = payload.get("reader_id")
+        if not reader_id:
+            logging.warning("Token missing required field: reader_id.")
+            return None
+
+        existing_token = db.session.execute(
+            db.select(Token).where(Token.reader_id == reader_id)
+        ).scalar()
+        
+        if not existing_token or existing_token.access_token != token:
+            return None
+        
+        return reader_id
+
+    except jwt.ExpiredSignatureError:
+        logging.warning("Access token expired.")
+        return None
+    except jwt.InvalidTokenError:
+        logging.warning("Invalid access token.")
+        return None
+    except Exception as e:
+        logging.error(f"Error verifying access token: {str(e)}")
+        raise
 
 
 def verify_refresh_token(token):
@@ -100,7 +129,7 @@ def verify_refresh_token(token):
             db.select(Token).where(Token.reader_id == reader_id)
         ).scalar()
         
-        if existing_token is None or existing_token.refresh_token != token:
+        if not existing_token or existing_token.refresh_token != token:
             return None
         
         return reader_id
@@ -400,4 +429,24 @@ def verify_reset_code(reset_token, reset_code):
         return None
     except Exception as e:
         logging.error(f"Error verifying reset code: {str(e)}")
+        raise
+    
+    
+def set_password(reader_id, new_password):
+    """Set a new password for the reader."""
+    try:
+        reader = db.session.execute(
+            db.select(Reader).where(Reader.id == reader_id)
+        ).scalar()
+
+        if reader is None:
+            return False
+        
+        reader.password_hash = generate_password_hash(new_password)
+        db.session.commit()
+        return True
+    
+    except Exception as e:
+        db.session.rollback() 
+        logging.error(f"Error setting password: {str(e)}")
         raise

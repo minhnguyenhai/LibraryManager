@@ -7,6 +7,7 @@ from ...services.reader.auth_service import (
     validate_login, 
     generate_access_token, 
     generate_refresh_token,
+    verify_access_token,
     verify_refresh_token,
     is_email_registered,
     save_new_reader,
@@ -19,7 +20,8 @@ from ...services.reader.auth_service import (
     invalidate_token,
     generate_reset_code,
     generate_reset_token,
-    verify_reset_code
+    verify_reset_code,
+    set_password
 )
 
 
@@ -400,6 +402,53 @@ def validate_reset_code():
                 "message": "Invalid reset token or reset code."
             }), 400
             
+    except ValueError as e:
+        return jsonify({
+            "error": "Invalid data.",
+            "message": str(e)
+        }), 400
+    
+    except Exception as e:
+        return jsonify({
+            "error": "Internal server error.",
+            "message": str(e)
+        }), 500
+       
+        
+@reader_api.route("/reset-password", methods=["POST"])
+def reset_password():
+    try:
+        data = request.get_json()
+        if data is None:
+            raise ValueError("Invalid JSON data.")
+        
+        temp_access_token = data.get("temp_access_token")
+        new_password = data.get("new_password")
+
+        if not temp_access_token or not new_password:
+            return jsonify({
+                "success": False,
+                "message": "Temporary access token and new password are required."
+            }), 400
+
+        reader_id = verify_access_token(temp_access_token)
+        if not reader_id:
+            return jsonify({
+                "success": False,
+                "message": "Invalid temporary access token."
+            }), 400
+            
+        if set_password(reader_id, new_password):
+            return jsonify({
+                "success": True,
+                "message": "Password reset successfully."
+            }), 200
+        
+        return jsonify({
+            "success": False,
+            "message": "Failed to reset password."
+        }), 400
+        
     except ValueError as e:
         return jsonify({
             "error": "Invalid data.",
