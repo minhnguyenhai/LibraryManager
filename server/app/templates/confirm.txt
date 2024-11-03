@@ -1,14 +1,16 @@
+Welcome to 4M Library!
+
 Dear {{ reader.name }},
 
-Welcome to 4M Library! To complete your registration and access our resources, please use the verification code below:
+Thank you for joining us! To complete your registration and start exploring our resources, please use the verification code below:
 
 Verification Code: {{ code }}
 
 This code is valid for the next 10 minutes. Enter it on the verification page to activate your account.
 
-If you did not request this code, please ignore this email or reach out to our support team for assistance.
+If you did not request this code, please ignore this email or contact our support team for assistance.
 
 Warm regards,
 The 4M Library Team
 
-Note: replies to this email address are not monitored.
+Note: Replies to this email address are not monitored.

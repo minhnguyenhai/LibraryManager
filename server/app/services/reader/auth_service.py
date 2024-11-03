@@ -148,13 +148,13 @@ def generate_verification_code(email):
         if not token:
             new_token = Token(
                 verification_code=verification_code,
-                verification_code_expires=datetime.now(tz=timezone.utc) + timedelta(minutes=10),
+                verification_code_expiration=datetime.now(tz=timezone.utc) + timedelta(minutes=10),
                 reader_id=get_reader_by_email(email).id
             )
             db.session.add(new_token)
         else:
             token.verification_code = verification_code
-            token.verification_code_expires = datetime.now(tz=timezone.utc) + timedelta(minutes=10)
+            token.verification_code_expiration = datetime.now(tz=timezone.utc) + timedelta(minutes=10)
             
         db.session.commit()
         return verification_code
@@ -194,7 +194,7 @@ def generate_confirm_token(email, expires_in=3600):
 
     except Exception as e:
         db.session.rollback() 
-        logging.error(f"Error generating access token: {str(e)}")
+        logging.error(f"Error generating confirm token: {str(e)}")
         raise
 
 
@@ -302,4 +302,67 @@ def invalidate_token(token):
     except Exception as e:
         db.session.rollback()
         logging.error(f"Error invalidating token: {str(e)}")
+        raise
+    
+    
+def generate_reset_code(email):
+    """Generates a reset password code for a reader."""
+    try:
+        reset_code = "".join([str(random.randint(0, 9)) for _ in range(6)])
+        token = db.session.execute(
+            db.select(Token)
+            .join(Reader, Reader.id == Token.reader_id)
+            .where(Reader.email == email)
+        ).scalar()
+        
+        if not token:
+            new_token = Token(
+                reset_code=reset_code,
+                reset_code_expiration=datetime.now(tz=timezone.utc) + timedelta(minutes=10),
+                reader_id=get_reader_by_email(email).id
+            )
+            db.session.add(new_token)
+        else:
+            token.reset_code = reset_code
+            token.reset_code_expiration = datetime.now(tz=timezone.utc) + timedelta(minutes=10)
+            
+        db.session.commit()
+        return reset_code
+    
+    except Exception as e:
+        db.session.rollback() 
+        logging.error(f"Error generating reset code: {str(e)}")
+        raise
+    
+    
+def generate_reset_token(email, expires_in=1800):
+    """Generates a reset password token for the reader."""
+    try:
+        reader_id = get_reader_by_email(email).id
+        payload = {
+            "reader_id": reader_id,
+            "exp":  datetime.now(tz=timezone.utc) + timedelta(seconds=expires_in)
+        }
+        new_reset_token = jwt.encode(payload, secret_key, algorithm="HS256")
+        
+        existing_token = db.session.execute(
+            db.select(Token).where(Token.reader_id == reader_id)
+        ).scalar()
+        
+        if not existing_token:
+            new_token = Token(reset_token=new_reset_token, reader_id=reader_id)
+            db.session.add(new_token)
+        else:
+            existing_token.reset_token = new_reset_token
+    
+        db.session.commit()
+        return new_reset_token
+    
+    except jwt.PyJWTError as e:
+        logging.error(f"JWT Error: {str(e)}")
+        raise
+
+    except Exception as e:
+        db.session.rollback() 
+        logging.error(f"Error generating reset token: {str(e)}")
         raise

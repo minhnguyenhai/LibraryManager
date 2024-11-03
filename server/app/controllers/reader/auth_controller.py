@@ -16,7 +16,9 @@ from ...services.reader.auth_service import (
     get_reader_by_email,
     verify_code,
     verify_email,
-    invalidate_token
+    invalidate_token,
+    generate_reset_code,
+    generate_reset_token
 )
 
 
@@ -24,7 +26,6 @@ from ...services.reader.auth_service import (
 def login():
     try:
         data = request.get_json()
-        
         if data is None:
             raise ValueError("Invalid JSON data.")
         
@@ -67,7 +68,7 @@ def login():
             "error": "Invalid data.",
             "message": str(e)
         }), 400
-    
+        
     except Exception as e:
         return jsonify({
             "error": "Internal server error.",
@@ -79,6 +80,9 @@ def login():
 def refresh_token():
     try:
         data = request.get_json()
+        if data is None:
+            raise ValueError("Invalid JSON data.")
+        
         refresh_token = data.get("refresh_token")
         
         if refresh_token is None:
@@ -103,6 +107,12 @@ def refresh_token():
             "access_token": new_access_token,
             "refresh_token": new_refresh_token
         }), 200
+        
+    except ValueError as e:
+        return jsonify({
+            "error": "Invalid data.",
+            "message": str(e)
+        }), 400
 
     except Exception as e:
         return jsonify({
@@ -115,7 +125,6 @@ def refresh_token():
 def register():
     try:
         data = request.get_json()
-        
         if data is None:
             raise ValueError("Invalid JSON data.")
         
@@ -175,6 +184,9 @@ def register():
 def send_verification_code():
     try:
         data = request.get_json()
+        if data is None:
+            raise ValueError("Invalid JSON data.")
+        
         email = data.get("email")
 
         if not email:
@@ -216,6 +228,12 @@ def send_verification_code():
             "message": "Verification code sent to email successfully.",
             "confirm_token": confirm_token
         }), 200
+        
+    except ValueError as e:
+        return jsonify({
+            "error": "Invalid data.",
+            "message": str(e)
+        }), 400
 
     except Exception as e:
         return jsonify({
@@ -228,6 +246,9 @@ def send_verification_code():
 def verify_email():
     try:
         data = request.get_json()
+        if data is None:
+            raise ValueError("Invalid JSON data.")
+        
         confirm_token = data.get("confirm_token")
         verification_code = data.get("verification_code")
 
@@ -252,6 +273,12 @@ def verify_email():
                 "success": False,
                 "message": "Invalid confirm token or verification code."
             }), 400
+            
+    except ValueError as e:
+        return jsonify({
+            "error": "Invalid data.",
+            "message": str(e)
+        }), 400
     
     except Exception as e:
         return jsonify({
@@ -278,6 +305,62 @@ def logout():
                 "success": False,
                 "message": "Failed to log out. Invalid token."
             }), 401
+
+    except Exception as e:
+        return jsonify({
+            "error": "Internal server error.",
+            "message": str(e)
+        }), 500
+        
+        
+@reader_api.route("/request-reset-password", methods=["POST"])
+def request_reset_password():
+    try:
+        data = request.get_json()
+        if data is None:
+            raise ValueError("Invalid JSON data.")
+        
+        email = data.get("email")
+        
+        if not email:
+            return jsonify({
+                "success": False,
+                "message": "Email is required."
+            }), 400
+            
+        if not validate_email(email):
+            return jsonify({
+                "success": False,
+                "message": "Invalid email address."
+            }), 400
+
+        if not is_email_registered(email):
+            return jsonify({
+                "success": False,
+                "message": "Email is not registered."
+            }), 400
+            
+        reset_code = generate_reset_code(email)
+        reset_token = generate_reset_token(email)
+        send_email(
+            to=email, 
+            subject="Reset Your Password from 4M Library",
+            template="reset-password",
+            reader=get_reader_by_email(email),
+            code=reset_code
+        )
+
+        return jsonify({
+            "success": True,
+            "message": "Reset password code sent to your email successfully.",
+            "reset_token": reset_token
+        }), 200
+        
+    except ValueError as e:
+        return jsonify({
+            "error": "Invalid data.",
+            "message": str(e)
+        }), 400
 
     except Exception as e:
         return jsonify({
