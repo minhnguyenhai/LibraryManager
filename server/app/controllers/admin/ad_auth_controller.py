@@ -1,7 +1,9 @@
 from flask import request, jsonify
 from . import admin_api
-from ...services.admin.ad_auth_service import validate_login, generate_access_token, generate_refresh_token, verify_refresh_token
-
+from ...services.admin.ad_auth_service import (
+    generate_access_token, generate_refresh_token,
+    validate_login, verify_refresh_token, invalidate_token
+)
 
 @admin_api.route("/login", methods=["POST"])
 def login():
@@ -89,6 +91,32 @@ def refresh_token():
             "error": "Invalid data.",
             "message": str(e)
         }), 400
+
+    except Exception as e:
+        return jsonify({
+            "error": "Internal server error.",
+            "message": str(e)
+        }), 500
+        
+        
+@admin_api.route("/logout", methods=["POST"])
+def logout():
+    try:
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            return jsonify({
+                "success": False,
+                "message": "Token is missing or invalid."
+            }), 401
+        
+        token = auth_header.split(" ")[1]
+        if invalidate_token(token):
+            return "", 204
+        else:
+            return jsonify({
+                "success": False,
+                "message": "Failed to log out. Invalid token."
+            }), 401
 
     except Exception as e:
         return jsonify({

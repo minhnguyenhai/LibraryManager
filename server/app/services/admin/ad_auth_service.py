@@ -113,3 +113,37 @@ def verify_refresh_token(token):
     except Exception as e:
         logging.error(f"Error verifying refresh token: {str(e)}")
         raise
+    
+    
+def invalidate_token(token):
+    """Invalidate the provided token by removing it from the database."""
+    try:
+        payload = jwt.decode(token, secret_key, algorithms=["HS256"])
+        admin_id = payload.get("admin_id")
+        if not admin_id:
+            logging.warning("Token missing required field: admin_id.")
+            return False
+        
+        existing_token = db.session.execute(
+            db.select(Token).where(Token.admin_id == admin_id)
+        ).scalar()
+        
+        if not existing_token or existing_token.access_token != token:
+            logging.warning("Invalid token.")
+            return False
+
+        existing_token.access_token = None
+        existing_token.refresh_token = None
+        db.session.commit()
+        return True
+
+    except jwt.ExpiredSignatureError:
+        logging.warning("Token already expired.")
+        return False
+    except jwt.InvalidTokenError:
+        logging.warning("Invalid token.")
+        return False
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error invalidating token: {str(e)}")
+        raise
