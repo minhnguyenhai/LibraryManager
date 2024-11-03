@@ -1,4 +1,5 @@
 from flask import request, jsonify
+from flasgger.utils import swag_from
 from validate_email_address import validate_email
 
 from . import user_api
@@ -8,6 +9,7 @@ from ...utils.decorators import JWT_required
 
 
 @user_api.route("/login", methods=["POST"])
+@swag_from("../../apidocs/user/auth/login.yaml", endpoint="user_api.login", methods=["POST"])
 def login():
     data = request.get_json()
     if not data:
@@ -50,6 +52,7 @@ def login():
     
     
 @user_api.route("/refresh-token", methods=["POST"])
+@swag_from("../../apidocs/user/auth/refresh_token.yaml", endpoint="user_api.refresh_token", methods=["POST"])
 def refresh_token():
     data = request.get_json()
     if not data:
@@ -85,6 +88,7 @@ def refresh_token():
    
 @user_api.route("/logout", methods=["POST"])
 @JWT_required
+@swag_from("../../apidocs/user/auth/logout.yaml", endpoint="user_api.logout", methods=["POST"])
 def logout(user_id):
     auth_service = AuthService()
     if auth_service.invalidate_refresh_token(user_id):
@@ -97,6 +101,7 @@ def logout(user_id):
 
    
 @user_api.route("/register", methods=["POST"])
+@swag_from("../../apidocs/user/auth/register.yaml", endpoint="user_api.register", methods=["POST"])
 def register():
     data = request.get_json()
     if not data:
@@ -147,6 +152,7 @@ def register():
         
 
 @user_api.route("/send-verification-code", methods=["POST"])
+@swag_from("../../apidocs/user/auth/send_verification_code.yaml", endpoint="user_api.send_verification_code", methods=["POST"])
 def send_verification_code():
     data = request.get_json()
     if not data:
@@ -200,6 +206,7 @@ def send_verification_code():
 
 
 @user_api.route("/verify-email", methods=["POST"])
+@swag_from("../../apidocs/user/auth/verify_email.yaml", endpoint="user_api.verify_email", methods=["POST"])
 def verify_email():
     data = request.get_json()
     if not data:
@@ -235,6 +242,7 @@ def verify_email():
         
  
 @user_api.route("/request-reset-password", methods=["POST"])
+@swag_from("../../apidocs/user/auth/request_reset_password.yaml", endpoint="user_api.request_reset_password", methods=["POST"])
 def request_reset_password():
     data = request.get_json()
     if not data:
@@ -282,6 +290,7 @@ def request_reset_password():
         
         
 @user_api.route("/validate-reset-code", methods=["POST"])
+@swag_from("../../apidocs/user/auth/validate_reset_code.yaml", endpoint="user_api.validate_reset_code", methods=["POST"])
 def validate_reset_code():
     data = request.get_json()
     if not data:
@@ -315,6 +324,7 @@ def validate_reset_code():
        
         
 @user_api.route("/reset-password", methods=["POST"])
+@swag_from("../../apidocs/user/auth/reset_password.yaml", endpoint="user_api.reset_password", methods=["POST"])
 def reset_password():
     data = request.get_json()
     if not data:
