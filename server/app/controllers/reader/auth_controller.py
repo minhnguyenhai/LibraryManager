@@ -4,24 +4,10 @@ from validate_email_address import validate_email
 from . import reader_api
 from ...email import send_email
 from ...services.reader.auth_service import (
-    validate_login, 
-    generate_access_token, 
-    generate_refresh_token,
-    verify_access_token,
-    verify_refresh_token,
-    is_email_registered,
-    save_new_reader,
-    generate_verification_code,
-    generate_confirm_token,
-    is_verified,
-    get_reader_by_email,
-    verify_verification_code,
-    verify_email,
-    invalidate_token,
-    generate_reset_code,
-    generate_reset_token,
-    verify_reset_code,
-    set_password
+    validate_login, generate_access_token, generate_refresh_token, verify_access_token,
+    verify_refresh_token, is_email_registered, save_new_reader, generate_verification_code,
+    generate_confirm_token, is_verified, get_reader_by_email, verify_verification_code, verify_email,
+    invalidate_token, generate_reset_code, generate_reset_token,verify_reset_code,set_password
 )
 
 

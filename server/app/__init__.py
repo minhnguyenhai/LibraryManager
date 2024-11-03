@@ -24,5 +24,8 @@ def create_app(config_class=Config):
     
     from .controllers.reader import reader_api
     app.register_blueprint(reader_api, url_prefix="/reader")
+    
+    from .controllers.admin import admin_api
+    app.register_blueprint(admin_api, url_prefix="/admin")
 
     return app

@@ -22,5 +22,8 @@ class Token(db.Model):
     verification_code_expiration: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     reset_code_expiration: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     
-    reader_id: Mapped[Optional[str]] = mapped_column(ForeignKey("readers.id"), nullable=True)
-    reader: Mapped["Reader"] = relationship("Reader", back_populates="token")
+    reader_id: Mapped[Optional[str]] = mapped_column(ForeignKey("readers.id"), unique=True, nullable=True)
+    admin_id: Mapped[Optional[str]] = mapped_column(ForeignKey("admins.id"), unique=True, nullable=True)
+    
+    reader: Mapped["Reader"] = relationship("Reader", backref="token")
+    admin: Mapped["Admin"] = relationship("Admin", backref="token")

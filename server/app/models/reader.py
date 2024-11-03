@@ -1,5 +1,4 @@
 import uuid
-from typing import Optional
 from datetime import date
 
 from sqlalchemy import String, Date, Boolean
@@ -22,8 +21,6 @@ class Reader(db.Model):
     address: Mapped[str] = mapped_column(String(255), nullable=False)
     phone_number: Mapped[str] = mapped_column(String(15), nullable=False)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
-    
-    token: Mapped["Token"] = relationship("Token", uselist=False, back_populates="reader")
 
     
     def __init__(self, email, password, name, dob, gender, address, phone_number):
