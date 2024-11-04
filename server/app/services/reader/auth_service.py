@@ -158,7 +158,7 @@ def is_email_registered(email):
 
 def save_new_reader(email, password, name, dob, gender, address, phone_number):
     """Saves a new reader to the database."""
-    new_reader = User(email, password, name, dob, gender, address, phone_number)
+    new_reader = Reader(email, password, name, dob, gender, address, phone_number)
     db.session.add(new_reader)
     db.session.commit()
     return new_reader
