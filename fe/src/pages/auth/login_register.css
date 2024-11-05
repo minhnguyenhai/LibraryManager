@@ -367,17 +367,6 @@ form .register-link {
     display: flex;
     align-items: center;
     
-
-    /* width: 100%;
-    height: 100%;
-    background: transparent;
-    border: none;
-    outline: none;
-    border: 2px solid rgba(255, 255, 255, .1);
-    border-radius: 40px;
-    font-size: 16px;
-    color: #fff;
-    padding: 20px 45px 20px 20px; */
 }
 
 .input-box .select__control:hover {
