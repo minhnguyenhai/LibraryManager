@@ -1,19 +1,21 @@
 import axios from "axios";
-const login=async(email, password) =>{
-    try{
-        const response= await axios.post("url_api",{
-            email:email,
-            password:password
-        })
+const login = async (email, password,remember) => {
+    try {
+        const response = await axios.post("https://apartment-management-kjj9.onrender.com/auth/login",
+            {
+                email: email,
+                password: password,
+            },
+        )
         console.log(response.status);
-        if(response.status==200){
-            console.log('Đăng nhập thành công: ',response.data);
+        if (response.status === 200) {
+            console.log('Đăng nhập thành công: ', response.data);
             return response.data;
-        }else{
+        } else {
             console.error(`Lỗi: ${response.status} - ${response.statusText}`);
             throw new Error(`Lỗi đăng nhập: ${response.status}`);
         }
-    }catch(error){
+    } catch (error) {
         console.error('Đăng nhập thất bại:', error);
         throw error;
     }
