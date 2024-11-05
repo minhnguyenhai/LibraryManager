@@ -1,0 +1,33 @@
+Remove Book from Favorites
+This API allows an authenticated user to remove a book from their favorites.
+---
+tags:
+  - Book - Favorite
+parameters:
+  - name: Authorization
+    in: header
+    required: true
+    description: Bearer token for authentication
+    schema:
+      type: string
+      example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  - name: book_id
+    in: path
+    required: true
+    description: Unique identifier of the book to remove from favorites
+    schema:
+      type: string
+      example: "e6b3562f-6cc5-4e2c-95d2-b7ac8ec478cc"
+
+responses:
+  200:
+    description: Successfully removed the book from favorites
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Successfully removed book from favorites."
