@@ -1,0 +1,117 @@
+Create Borrow Record
+This API allows an admin to create a new borrow record for a user.
+---
+tags:
+  - Borrowing
+parameters:
+  - name: Authorization
+    in: header
+    required: true
+    description: Bearer token for authentication (admin only)
+    schema:
+      type: string
+      example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+  - name: body
+    in: body
+    required: true
+    description: JSON payload containing borrow record details
+    schema:
+      type: object
+      required:
+        - user_id
+        - book_id
+        - quantity
+        - borrow_date
+        - due_date
+      properties:
+        user_id:
+          type: string
+          description: ID of the user borrowing the book
+          example: "e6b3562f-6cc5-4e2c-95d2-b7ac8ec478cc"
+        book_id:
+          type: string
+          description: ID of the book being borrowed
+          example: "9a1234b5-6cde-7890-1234-ab567890cdef"
+        quantity:
+          type: integer
+          description: Number of books borrowed
+          example: 1
+        borrow_date:
+          type: string
+          format: date
+          description: Date when the book was borrowed
+          example: "2024-01-01"
+        due_date:
+          type: string
+          format: date
+          description: Date when the book is due to be returned
+          example: "2024-01-15"
+
+responses:
+  201:
+    description: Successfully created a new borrow record
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Successfully saved new borrow record."
+        borrow_record:
+          type: object
+          description: Details of the created borrow record
+          properties:
+            id:
+              type: string
+              description: Unique identifier of the borrow record
+              example: "123e4567-e89b-12d3-a456-426614174000"
+            user_name:
+              type: string
+              description: Name of the user who borrowed the book
+              example: "John Doe"
+            user_email:
+              type: string
+              description: Email of the user
+              example: "johndoe@example.com"
+            book_title:
+              type: string
+              description: Title of the borrowed book
+              example: "Clean Code"
+            book_img_url:
+              type: string
+              description: URL of the book image
+              example: "https://example.com/clean-code.jpg"
+            quantity:
+              type: integer
+              description: Number of books borrowed
+              example: 1
+            borrow_date:
+              type: string
+              format: date
+              description: Borrow date
+              example: "2024-01-01"
+            due_date:
+              type: string
+              format: date
+              description: Due date
+              example: "2024-01-15"
+            return_date:
+              type: string
+              format: date
+              description: Date when the book was returned
+              example: null
+            status:
+              type: string
+              description: Status of the borrow record
+              example: "borrowing"
+            user_id:
+              type: string
+              description: ID of the user
+              example: "e6b3562f-6cc5-4e2c-95d2-b7ac8ec478cc"
+            book_id:
+              type: string
+              description: ID of the book
+              example: "9a1234b5-6cde-7890-1234-ab567890cdef"
