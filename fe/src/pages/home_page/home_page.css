@@ -6,12 +6,12 @@
 
 .home_page {
     font-family: "Poppins", sans-serif;
-    display: flex;
+    background: none;
+    /* display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: antiquewhite;
     background-size: cover;
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: center; */
 }

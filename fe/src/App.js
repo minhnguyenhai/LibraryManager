@@ -5,13 +5,14 @@ import HomePage from './pages/home_page/home_page';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<LoginRegister />} />
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/" element={<Navigate to="/login" />} />
-      </Routes>
-    </BrowserRouter>
+    // <BrowserRouter>
+    //   <Routes>
+    //     <Route path="/login" element={<LoginRegister />} />
+    //     <Route path="/home" element={<HomePage />} />
+    //     <Route path="/" element={<Navigate to="/login" />} />
+    //   </Routes>
+    // </BrowserRouter>
+    <HomePage/>
   );
 }
 
