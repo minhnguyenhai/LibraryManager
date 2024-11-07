@@ -7,6 +7,9 @@
 .home_page {
     font-family: "Poppins", sans-serif;
     background: none;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     /* display: flex;
     justify-content: center;
     align-items: center;
@@ -14,4 +17,7 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center; */
+}
+.body-content{
+    min-height: 2000px;
 }
