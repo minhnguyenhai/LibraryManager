@@ -3,9 +3,9 @@
     background-color: #00358c;
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: end;
     justify-content: space-between;
-    padding-bottom: 5px;
+    padding-bottom: 3px;
     padding-right: 10px;
 }
 
@@ -36,7 +36,6 @@
     padding-top: 70px;
     padding-right: 10px;
     width: 80%;
-    
 }
 
 .nav-link {
@@ -50,9 +49,12 @@
 }
 
 .nav-link:hover {
-    background-color: #003366;
-    text-decoration: underline;
-    /* Màu nền khi hover */
+    background-color: #88b0c2;
+    
+}
+.nav-link.active {
+    background-color: #88b0c2; /* Màu nền khi được chọn */
+    
 }
 
 .nav-link:last-child {
@@ -68,6 +70,8 @@
 .nav-link:last-child:hover {
     background-color: #e6e6e6;
 }
+
+
 @media (max-width: 1000px) {
     .header {
         flex-direction: column; /* Chuyển header sang dạng cột */
