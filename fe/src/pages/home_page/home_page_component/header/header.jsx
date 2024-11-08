@@ -8,7 +8,8 @@ const Header = ({ selectedNav, setSelectedNav }) => {
         <div className="header">
             <div className="header-left">
                 <img src={logo} alt="logo" className="header-logo" />
-                <Link to="/" >E-LIBRARY MANAGEMENT SYSTEM</Link>
+                <a href="/">E-LIBRARY MANAGEMENT SYSTEM</a>
+                
             </div>
             <div className="header-nav">
                 <Link 

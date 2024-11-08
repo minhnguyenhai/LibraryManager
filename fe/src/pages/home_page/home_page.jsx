@@ -16,6 +16,9 @@ const HomePage = () => {
         if (selectedNav) {
             localStorage.setItem('selectedNav', selectedNav);
         }
+        if(location.pathname==='/'){
+            setSelectedNav('');
+        }
     }, [selectedNav]);
 
     return (
