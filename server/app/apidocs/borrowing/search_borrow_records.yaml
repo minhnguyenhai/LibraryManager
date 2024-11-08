@@ -1,0 +1,95 @@
+Search Borrow Records
+This API allows an admin to search for borrow records using a query string.
+---
+tags:
+  - Borrowing
+parameters:
+  - name: Authorization
+    in: header
+    required: true
+    description: Bearer token for authentication (admin only)
+    schema:
+      type: string
+      example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+  - name: query
+    in: query
+    required: true
+    description: Search query for borrow records
+    schema:
+      type: string
+      example: "John Doe"
+
+responses:
+  200:
+    description: Search completed successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Search completed successfully."
+        total:
+          type: integer
+          description: Total number of matching borrow records
+          example: 1
+        borrow_records:
+          type: array
+          description: List of matching borrow records
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Unique identifier of the borrow record
+                example: "123e4567-e89b-12d3-a456-426614174000"
+              user_name:
+                type: string
+                description: Name of the user
+                example: "John Doe"
+              user_email:
+                type: string
+                description: Email of the user
+                example: "johndoe@example.com"
+              book_title:
+                type: string
+                description: Title of the borrowed book
+                example: "Learn Flask with Examples"
+              book_img_url:
+                type: string
+                description: URL of the book cover image
+                example: "https://example.com/book-cover.jpg"
+              quantity:
+                type: integer
+                description: Number of books borrowed
+                example: 1
+              borrow_date:
+                type: string
+                format: date
+                description: Date when the book was borrowed
+                example: "2024-01-01"
+              due_date:
+                type: string
+                format: date
+                description: Due date for returning the book
+                example: "2024-01-15"
+              return_date:
+                type: string
+                format: date
+                description: Date when the book was returned
+                example: "2024-01-10"
+              status:
+                type: string
+                description: Current status of the borrow record
+                example: "returned-ontime"
+              user_id:
+                type: string
+                description: ID of the user
+                example: "e6b3562f-6cc5-4e2c-95d2-b7ac8ec478cc"
+              book_id:
+                type: string
+                description: ID of the borrowed book
+                example: "9a1234b5-6cde-7890-1234-ab567890cdef"
