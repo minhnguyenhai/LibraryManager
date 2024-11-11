@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import './login_register.css';
 import { useNavigate } from 'react-router-dom';
-import login from "../../services/login_api";
-import register from "../../services/register_api";
-import forgotPassword from "../../services/forgot_password";
-import validation from "../../services/validate_code";
-import resetPassword from "../../services/reset_password";
+import { login, refrehToken, logout, register, forgotPassword, validation, resetPassword } from "../../services/user_services";
 import LoginForm from "./auth_component/login_form";
 import RegisterForm from "./auth_component/register_form";
 import ForgotPasswordForm from "./auth_component/forgotPassword_form";
@@ -47,17 +43,22 @@ const LoginRegister = () => {
         resetFields();
         setAction('forgotpassword-active');
     };
-
+    //xử lý login
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
         try {
             setLoading(true);
             const result = await login(email.trim(), password);
-            if (result && result.token) {
-                localStorage.setItem('tokenlogin', result.token);
-                console.log('lưu thành công');
+            if (result) {
+                if (!result.reader.is_verified) {
+                    setError('Tài khoản của bạn chưa được xác thực. Vui lòng xác thực qua email.');
+                }
+                localStorage.setItem('access_token', result.accessToken);
+                localStorage.setItem('refresh_token', result.refreshToken);
+                localStorage.setItem('reader_info', JSON.stringify(result.reader))
                 navigate('/home');
+                alert(result.message);
             }
         } catch (err) {
             setError('Đăng nhập thất bại, vui lòng kiểm tra lại thông tin')
@@ -65,7 +66,40 @@ const LoginRegister = () => {
             setLoading(false);
         }
     };
-
+    // Xử lý refreshtoken
+    const handleRefreshToken = async () => {
+        try {
+            const currentRefreshToken = localStorage.getItem('refresh_token');
+            const result = await refrehToken(currentRefreshToken);
+            if (result) {
+                localStorage.setItem('access_token', result.access_token);
+                localStorage.setItem('refresh_token', result.refresh_token);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    //xử lý logout
+    const handleLogout = async (e) => {
+        e.preventDefault();
+        setError('')
+        try {
+            setLoading(true);
+            const accessToken = localStorage.getItem('access_token');
+            const result = await logout(accessToken);
+            if (result) {
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+                localStorage.removeItem('reader_info');
+                alert("Đăng xuất thành công!");
+                navigate('/login');
+            }
+        } catch (error) {
+            setError('Tài khoản đã hết phiên đăng nhập trước đó');
+        } finally {
+            setLoading(false);
+        }
+    }
     const handleRegister = async (e) => {
         e.preventDefault();
         setError('')
@@ -139,7 +173,7 @@ const LoginRegister = () => {
     return (
         <div className="login_register-page">
             <div className={`wrapper ${action}`}>
-                {action === '' &&  (
+                {action === '' && (
                     <LoginForm
                         email={email}
                         password={password}

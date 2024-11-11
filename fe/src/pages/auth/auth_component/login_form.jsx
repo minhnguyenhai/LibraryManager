@@ -13,7 +13,6 @@ const LoginForm = ({ email, password, setEmail, setPassword, loading, handleLogi
                     placeholder="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    disabled={loading}
                     required />
                 <FaEnvelope className="icon" />
             </div>
@@ -23,25 +22,22 @@ const LoginForm = ({ email, password, setEmail, setPassword, loading, handleLogi
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    disabled={loading}
                     required />
                 <FaLock className="icon" />
             </div>
             <div className="remember-forgot">
-                <label><input type="checkbox" disabled={loading} />Remember me</label>
-                <a href="#" onClick={forgotPasswordLink}>Forgot password</a>
+                <label><input type="checkbox"  />Remember me</label>
+                <a href="#" onClick={forgotPasswordLink}>Forgot Password ?</a>
             </div>
 
             <button
                 type="submit"
-                disabled={loading}
-                className={`${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-                {loading ? <div className="spinner" /> : 'Login'}
+                Login
             </button>
             <div className="register-link">
                 <p>
-                    Don't have an account? <a href="#" onClick={registerLink}>Register</a>
+                    Don't you have an account? <a href="#" onClick={registerLink}>Register</a>
                 </p>
             </div>
         </form>
