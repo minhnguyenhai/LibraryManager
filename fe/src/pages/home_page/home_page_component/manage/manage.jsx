@@ -5,10 +5,10 @@ import { BiSolidReport } from "react-icons/bi";
 import './manage.css'
 const Manage = () => {
     const options = [
-        { label: 'Book resource management', icon: <FaBook />, link: '/manage/books' },
-        { label: 'Reader Management', icon: <FaUserCircle />, link: '/manage/readers' },
-        { label: 'Borrow-return management', icon: <IoLibrary />, link: '/manage/borrow-return' },
-        { label: 'Statistics & reports', icon: <BiSolidReport />, link: '/manage/statistics-reports' },
+        { label: 'Quản lý tài nguyên sách', icon: <FaBook />, link: '/manage/books' },
+        { label: 'Quản lý độc giả', icon: <FaUserCircle />, link: '/manage/readers' },
+        { label: 'Quản lý trả mượn', icon: <IoLibrary />, link: '/manage/borrow-return' },
+        { label: 'Thống kê & báo cáo', icon: <BiSolidReport />, link: '/manage/statistics-reports' },
     ];
 
     // Render the component

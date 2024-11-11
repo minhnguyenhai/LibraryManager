@@ -8,7 +8,7 @@ const Header = ({ selectedNav, setSelectedNav }) => {
         <div className="header">
             <div className="header-left">
                 <img src={logo} alt="logo" className="header-logo" />
-                <a href="/">E-LIBRARY MANAGEMENT SYSTEM</a>
+                <a href="/">HỆ THỐNG QUẢN LÝ THƯ VIỆN ĐIỆN TỬ</a>
                 
             </div>
             <div className="header-nav">
@@ -17,44 +17,44 @@ const Header = ({ selectedNav, setSelectedNav }) => {
                     className={`nav-link ${selectedNav === "Home" ? "active" : ""}`} 
                     onClick={() => setSelectedNav("Home")}
                 >
-                    HOME
+                    TRANG CHỦ
                 </Link>
                 <Link 
                     to="/manage" 
                     className={`nav-link ${selectedNav === "Manage" ? "active" : ""}`} 
                     onClick={() => setSelectedNav("Manage")}
                 >
-                    Manage
+                    QUẢN LÝ
                 </Link>
                 <Link 
                     to="/user" 
                     className={`nav-link ${selectedNav === "User" ? "active" : ""}`} 
                     onClick={() => setSelectedNav("User")}
                 >
-                    USER
+                    NGƯỜI DÙNG
                 </Link>
                 <Link 
                     to="/search" 
                     className={`nav-link ${selectedNav === "Search" ? "active" : ""}`} 
                     onClick={() => setSelectedNav("Search")}
                 >
-                    SEARCH
+                    TÌM KIẾM
                 </Link>
                 <Link 
                     to="/news" 
                     className={`nav-link ${selectedNav === "News" ? "active" : ""}`} 
                     onClick={() => setSelectedNav("News")}
                 >
-                    NEWS
+                    TIN TỨC
                 </Link>
                 <Link 
                     to="/contact" 
                     className={`nav-link ${selectedNav === "Contact" ? "active" : ""}`} 
                     onClick={() => setSelectedNav("Contact")}
                 >
-                    CONTACT
+                    LIÊN HỆ
                 </Link>
-                <Link to="/login" className="nav-link">LOGIN/REGISTER</Link>
+                <Link to="/login" className="nav-link">ĐĂNG NHẬP</Link>
             </div>
         </div>
     );

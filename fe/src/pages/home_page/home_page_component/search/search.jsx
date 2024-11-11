@@ -6,10 +6,10 @@ const Search = () => {
         <div className="search-container">
             <div className="search-input-wrapper">
                 <FaSearch className="search-icon" />
-                <input type="text" placeholder="Search..." className="search-input" />
-                <button className="search-button">Search</button>
+                <input type="text" placeholder="Tìm kiếm..." className="search-input" />
+                <button className="search-button">Tìm kiếm</button>
             </div>
-            <button className="catalog-button">Library Catalog</button>
+            <button className="catalog-button">Mục lục thư viện</button>
         </div>
     );
 }

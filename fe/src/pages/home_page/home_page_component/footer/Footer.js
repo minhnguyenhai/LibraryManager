@@ -5,13 +5,13 @@ function Footer() {
         <div className='wrapper'>
             <img src={image} />
             <div className='contact'>
-                Address: 34, Hà Nội<br />
+                Địa chỉ: Đại học Bách Khoa Hà Nội<br />
                 Mail: group34webhustsupport@gmail.com<br />
-                Phone number: (+84) 345 657 8888
+                Số điện thoại: (+84) 345 657 8888
             </div>
             <div className='box'>
-                <p className='text-box'>
-                    © Copyright belongs to 4M
+                <p className='footer-text-box'>
+                    © Bản quyền thuộc về 4M
                 </p>
             </div>
         </div>
