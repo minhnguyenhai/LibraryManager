@@ -1,23 +1,26 @@
 import React from 'react';
 import '../login_register.css';
-const ValidationForm = ({ code, setCode, loading, handleValidation, error, forgotPasswordLink }) => (
+const ValidationForm = ({ code, setCode, loading, handleVerifyEmail, error, handleResend }) => (
     <div className="form-box validation">
-        <form onSubmit={handleValidation}>
-            <h1>Enter Code</h1>
+        <form onSubmit={handleVerifyEmail}>
+            <h1>Xác thực</h1>
+            {error && <div className="error-message text-red-500">{error}</div>}
             <div className="input-box">
                 <input
                     type="text"
-                    placeholder="Enter code"
+                    placeholder="Nhập mã xác thực"
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
-                    disabled={loading}
                     required />
             </div>
 
-            <button type="submit">Submit</button>
+            <button type="submit">Xác nhận</button>
             <div className="register-link">
                 <p>
-                    Didn't receive a code? <a href="#" onClick={forgotPasswordLink}>Resend</a>
+                    Chưa nhận được code? <a href="#" onClick={(e) => {
+                        e.preventDefault();
+                        handleResend();
+                    }}>Gửi lại</a>
                 </p>
             </div>
         </form>

@@ -3,7 +3,9 @@ import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 import '../login_register.css';
 import { BsFillTelephoneFill } from "react-icons/bs";
 import Select from 'react-select';
-const RegisterForm = ({ email, password, username, setEmail, setPassword, setUsername, loading, handleRegister, error, agreeToTerms, setAgreeToTerms, loginLink }) => {
+const RegisterForm = ({ email, password, name, dob, gender, phone_number,
+    setEmail, setPassword, setName, setDob, setGender, setPhonenumber, setAddress,
+    handleRegister, error, agreeToTerms, setAgreeToTerms, loginLink }) => {
     const [provinces, setProvinces] = useState([]);
     const [selectedProvince, setSelectedProvince] = useState(null);
     // Lấy danh sách tỉnh từ API
@@ -16,118 +18,129 @@ const RegisterForm = ({ email, password, username, setEmail, setPassword, setUse
                 setProvinces(data.map(province => ({
                     value: province.code,
                     label: province.name,
-                    districts: province.districts || [] // Thêm danh sách huyện nếu có
                 })));
             })
             .catch(error => console.error('Error fetching provinces:', error));
     }, []);
 
+    useEffect(() => {
+        if (selectedProvince) {
+            setAddress(selectedProvince.label); // Gán địa chỉ bằng tên của tỉnh
+        }
+    }, [selectedProvince, setAddress]);
 
     return (
         <div className="form-box register">
             <form onSubmit={handleRegister}>
-                <h1>Registration</h1>
+                <h1>Đăng ký</h1>
                 {error && (
                     <div className="error-message text-red-500 text-sm mb-4">
                         {error}
                     </div>
                 )}
-                <div className="input-box">
-                    <input
-                        type="text"
-                        placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        disabled={loading}
-                        required />
-                    <FaUser className="icon" />
-                </div>
-                <div className="input-box">
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        disabled={loading}
-                        required />
-                    <FaEnvelope className="icon" />
-                </div>
-                <div className="input-box">
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        disabled={loading}
-                        required />
-                    <FaLock className="icon" />
-                </div>
-                <div className="input-box">
-                    <input
-                        type="date"
-                        placeholder="Date of birth"
-                        disabled={loading}
-                        required />
-                </div>
-                <div className="gender-box">
-                    <span>Gender</span>
-                    <div className="gender-options">
-                        <label className="gender-option">
-                            <input type="radio" name="gender" value="man" disabled={loading} required />
-                            <span>Man</span>
-                        </label>
-                        <label className="gender-option">
-                            <input type="radio" name="gender" value="woman" disabled={loading} required />
-                            <span>Woman</span>
-                        </label>
+                <div className="input-container">
+                    {/* Cột 1 */}
+                    <div className="input-column">
+                        <div className="input-box">
+                            <input
+                                type="text"
+                                placeholder="Họ và tên"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                required />
+                            <FaUser className="icon" />
+                        </div>
+                        <div className="input-box">
+                            <input
+                                type="date"
+                                placeholder="Ngày sinh"
+                                value={dob}
+                                onChange={(e) => setDob(e.target.value)}
+                                required />
+                        </div>
+                        <div className="gender-box">
+                            <span>Giới tính</span>
+                            <div className="gender-options">
+                                <label className="gender-option">
+                                    <input type="radio" name="gender" value="man" checked={gender === 'man'}
+                                        onChange={(e) => setGender(e.target.value)} required />
+                                    <span>Nam</span>
+                                </label>
+                                <label className="gender-option">
+                                    <input type="radio" name="gender" value="woman" checked={gender === 'woman'}
+                                        onChange={(e) => setGender(e.target.value)} required />
+                                    <span>Nữ</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                     {/* Cột 2 */}
+                    <div className="input-column">
+                        <div className="input-box">
+                            <input
+                                type="email"
+                                placeholder="Email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required />
+                            <FaEnvelope className="icon" />
+                        </div>
+                        <div className="input-box">
+                            <input
+                                type="tel"
+                                placeholder="Số điện thoại"
+                                value={phone_number}
+                                onChange={(e) => setPhonenumber(e.target.value)}
+                                required />
+                            <BsFillTelephoneFill className="icon" />
+                        </div>
+                    </div>
+                    {/* Cột 3 */}
+                    <div className="input-column">
+                        <div className="input-box">
+                            <input
+                                type="password"
+                                placeholder="Mật khẩu"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required />
+                            <FaLock className="icon" />
+                        </div>
+                        <div className="input-box">
+                            <Select
+                                options={provinces}
+                                value={selectedProvince}
+                                onChange={setSelectedProvince}
+                                placeholder="Địa chỉ"
+                                classNamePrefix="select"
+                                required
+                            />
+                        </div>
                     </div>
                 </div>
-                <div className="input-box">
-                    <input
-                        type="tel"
-                        placeholder="Phone number"
-                        disabled={loading}
-                        required />
-                    <BsFillTelephoneFill className="icon" />
-                </div>
-            
-        
-                 <div className="input-box">
-                    <Select
-                        options={provinces}
-                        value={selectedProvince}
-                        onChange={setSelectedProvince}
-                        placeholder="Province"
-                        isDisabled={loading}
-                        classNamePrefix="select"
-                    />
-                </div>
-
                 <div className="remember-forgot">
                     <label>
                         <input
                             type="checkbox"
                             checked={agreeToTerms}
                             onChange={(e) => setAgreeToTerms(e.target.checked)}
-                            disabled={loading}
+                            required
                         />
                         <span className="ml-2">
-                            I agree to the terms & conditions
+                            Tôi đồng ý với các điều khoản
                         </span>
                     </label>
                 </div>
 
                 <button
                     type="submit"
-                    disabled={loading || agreeToTerms}
-                    className={`${(loading || !agreeToTerms) ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-600'}`}
                 >
-                    {loading ? <div className="spinner" /> : 'Register'}
+                    Đăng ký
 
                 </button>
                 <div className="register-link">
                     <p>
-                        Already have an account? <a href="#" onClick={loginLink}>Login</a>
+                        Bạn đã có tài khoản? <a href="#" onClick={loginLink}>Login</a>
                     </p>
                 </div>
             </form>

@@ -1,7 +1,7 @@
 import axios from "axios";
 const BASE_URL = 'https://your-api-domain.com';
-
-const login = async (email, password) => {
+//đăng nhập
+const userlogin = async (email, password) => {
     try {
         const response = await axios.post(`${BASE_URL}/reader/login`,
             {
@@ -13,68 +13,101 @@ const login = async (email, password) => {
         if (response.status === 200) {
             return response.data;
         } else {
-            throw new Error(`Lỗi đăng nhập: ${response.statusText}`);
+            throw new Error(`Lỗi đăng nhập: ${response.status}`);
         }
     } catch (error) {
         throw error;
     }
 }
-
-const refrehToken= async(currentRefreshToken)=>{
+//refresh token
+const userrefrehToken= async(currentRefreshToken)=>{
     try {
-        const response=await axios.post(`${BASE_URL}/reader/refresh`,{
+        const response=await axios.post(`${BASE_URL}/reader/refresh-token`,{
             refresh_token:currentRefreshToken,
         });
         console.log(response.status);
         if(response.status===200){
             return response.data;
         }else{
-            throw new Error(`Lỗi làm mới token: ${response.statusText}`)
+            throw new Error(`Lỗi làm mới token: ${response.status}`)
         }
     } catch (error) {
         throw error;
     }
 }
-
-const logout=async(accessToken)=>{
+//đăng xuất
+const userlogout=async(accessToken)=>{
     try {
         const response=await axios.post(`${BASE_URL}/reader/logout`,{},{
             headers:{
                 Authorization:`Bearer ${accessToken}`
             }
         });
-        if(response.status===200){
+        if(response.status===204){
             return true;
         }else{
-            throw new Error(`Lỗi đăng xuất: ${response.statusText}`)
+            throw new Error(`Lỗi đăng xuất: ${response.status}`)
         }
     } catch (error) {
         throw error;
     }
 }
-
-const register = async (email, password, username) => {
+//đăng ký
+const register = async (email, password, name,dob,gender,address,phone_number) => {
     try {
-        const response = await axios.post('URL_API_REGISTER', {
+        const response = await axios.post(`${BASE_URL}/reader/register`, {
             email: email,
             password: password,
-            username: username
+            name: name,
+            dob:dob,
+            gender:gender,
+            address:address,
+            phone_number:phone_number
         });
-
-        if (response.status === 200) { 
-            console.log('Đăng ký thành công:', response.data);
+        console(response.status);
+        if (response.status === 201) { 
             return response.data;
         } else {
-            console.error(`Lỗi: ${response.status} - ${response.statusText}`);
             throw new Error(`Lỗi đăng ký: ${response.status}`);
         }
     } catch (error) {
-        console.error('Đăng ký thất bại:', error);
         throw error;
     }
 };
 
-
+//xác thực email
+const verify = async(confirm_token,verification_code)=>{
+    try {
+        const response=await axios.post(`${BASE_URL}/reader/register`,{
+            confirm_token:confirm_token,
+            verification_code:verification_code
+        })
+        if(response===200){
+            return response.data;
+        }else{
+            throw new Error(`Lỗi xác thực: ${response.status}`)
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+//gửi lại mã xác thực
+const resend_code =async (email)=>{
+    try {
+        const response=await axios.post(`${BASE_URL}/reader/send-verification-code`,{
+            email:email
+        });
+        console.log(response.status);
+        if(response.status===200){
+            return response.data;
+        }else{
+            throw new Error(`Lỗi gửi lại mã xác thực`);
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+//quên mật khẩu
 const forgotPassword = async (email) => {
     try {
         const response = await axios.post("url_api/forgot-password", {
@@ -83,14 +116,11 @@ const forgotPassword = async (email) => {
 
         console.log(response.status);
         if (response.status === 200) {
-            console.log('Gửi yêu cầu khôi phục mật khẩu thành công:', response.data);
             return response.data;
         } else {
-            console.error(`Lỗi: ${response.status} - ${response.statusText}`);
             throw new Error(`Lỗi gửi yêu cầu: ${response.status}`);
         }
     } catch (error) {
-        console.error('Gửi yêu cầu khôi phục mật khẩu thất bại:', error);
         throw error;
     }
 }
@@ -137,4 +167,4 @@ const resetPassword = async (newPassword,confirmPassword) => {
         throw error;
     }
 }
-export { login,refrehToken,logout, register, forgotPassword, validation, resetPassword };
+export { userlogin,userrefrehToken,userlogout, register,verify,resend_code, forgotPassword, validation, resetPassword };
