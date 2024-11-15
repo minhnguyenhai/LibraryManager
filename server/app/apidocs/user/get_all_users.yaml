@@ -1,0 +1,75 @@
+Get All Users
+This API fetches a list of all registered users. Requires admin privileges.
+---
+tags:
+  - User
+parameters:
+  - name: Authorization
+    in: header
+    required: true
+    description: Bearer token for authentication (admin access required)
+    schema:
+      type: string
+      example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+responses:
+  200:
+    description: Successfully fetched all users
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Successfully fetched all users."
+        users:
+          type: array
+          description: List of all registered users
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Unique identifier of the user
+                example: "e6b3562f-6cc5-4e2c-95d2-b7ac8ec478cc"
+              email:
+                type: string
+                description: Email address of the user
+                example: "johndoe@example.com"
+              name:
+                type: string
+                description: Full name of the user
+                example: "John Doe"
+              dob:
+                type: string
+                format: date
+                description: Date of birth of the user
+                example: "1990-01-01"
+              gender:
+                type: string
+                description: Gender of the user
+                example: "male"
+              phone_number:
+                type: string
+                description: Phone number of the user
+                example: "0123456789"
+              role:
+                type: string
+                description: Role of the user
+                example: "admin"
+              is_verified:
+                type: boolean
+                description: Indicates if the user's email is verified
+                example: true
+              created_at:
+                type: string
+                format: date-time
+                description: Timestamp when the user was created
+                example: "2024-01-01T12:00:00.000Z"
+              updated_at:
+                type: string
+                format: date-time
+                description: Timestamp when the user was last updated
+                example: "2024-02-01T12:00:00.000Z"
