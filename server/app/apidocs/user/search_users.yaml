@@ -1,0 +1,80 @@
+Search Users
+This API allows an admin to search for users based on a query string.
+---
+tags:
+  - User
+parameters:
+  - name: Authorization
+    in: header
+    required: true
+    description: Bearer token for authentication
+    schema:
+      type: string
+      example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  - name: query
+    in: query
+    required: true
+    description: The search query to look for matching users
+    schema:
+      type: string
+      example: "john"
+
+responses:
+  200:
+    description: Search completed successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Search completed successfully."
+        total:
+          type: integer
+          description: The total number of matched users
+          example: 1
+        users:
+          type: array
+          description: List of matched users
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: "e6b3562f-6cc5-4e2c-95d2-b7ac8ec478cc"
+              email:
+                type: string
+                example: "johndoe@example.com"
+              name:
+                type: string
+                example: "John Doe"
+              dob:
+                type: string
+                format: date
+                example: "1990-01-01"
+              gender:
+                type: string
+                example: "male"
+              phone_number:
+                type: string
+                example: "0123456789"
+              role:
+                type: string
+                description: Role of the user
+                example: "reader"
+              is_verified:
+                type: boolean
+                description: Whether the user's email is verified
+                example: true
+              created_at:
+                type: string
+                format: date-time
+                description: Timestamp of user creation
+                example: "2024-01-01T12:00:00.000Z"
+              updated_at:
+                type: string
+                format: date-time
+                description: Timestamp of last update
+                example: "2024-02-01T12:00:00.000Z"
