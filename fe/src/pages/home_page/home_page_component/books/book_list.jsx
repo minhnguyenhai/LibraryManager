@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './book_list.css';
+import Pagination from '../pagination/pagination';
+import BookModal from './book_modal';
 
 const BookList = () => {
   const [selectedBook, setSelectedBook] = useState(null);
@@ -26,61 +28,8 @@ const BookList = () => {
     return allBooks.slice(startIndex, endIndex);
   };
 
-  // Xử lý chuyển trang
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Tạo mảng các số trang để hiển thị
-  const getPageNumbers = () => {
-    const pageNumbers = [];
-    const maxPagesToShow = 5; // Số nút trang tối đa hiển thị
-
-    if (totalPages <= maxPagesToShow) {
-      // Nếu tổng số trang ít hơn maxPagesToShow, hiển thị tất cả
-      for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-      }
-    } else {
-      // Luôn hiển thị trang đầu
-      pageNumbers.push(1);
-
-      // Tính toán range của các trang giữa
-      let start = Math.max(2, currentPage - 1);
-      let end = Math.min(totalPages - 1, currentPage + 1);
-
-      // Thêm dấu ... nếu cần
-      if (start > 2) {
-        pageNumbers.push('...');
-      }
-
-      // Thêm các trang giữa
-      for (let i = start; i <= end; i++) {
-        pageNumbers.push(i);
-      }
-
-      // Thêm dấu ... và trang cuối
-      if (end < totalPages - 1) {
-        pageNumbers.push('...');
-      }
-      pageNumbers.push(totalPages);
-    }
-
-    return pageNumbers;
-  };
-
   const handleCardClick = (book) => {
     setSelectedBook(book);
-  };
-
-  const handleCloseModal = (e) => {
-    e.stopPropagation();
-    setSelectedBook(null);
-  };
-
-  const handleModalClick = (e) => {
-    e.stopPropagation();
   };
 
   return (
@@ -119,59 +68,26 @@ const BookList = () => {
       </div>
 
       {/* Phân trang */}
-      <div className="pagination">
-        <button
-          className="pagination-button"
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          Trước
-        </button>
-
-        {getPageNumbers().map((number, index) => (
-          <button
-            key={index}
-            className={`pagination-button ${currentPage === number ? 'active' : ''}`}
-            onClick={() => typeof number === 'number' ? handlePageChange(number) : null}
-            disabled={typeof number !== 'number'}
-          >
-            {number}
-          </button>
-        ))}
-
-        <button
-          className="pagination-button"
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          Sau
-        </button>
-
-        <span className="pagination-info">
-          Trang {currentPage} / {totalPages}
-        </span>
-      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        maxPagesToShow={5}
+        labels={{
+          previous: 'Trước',
+          next: 'Sau',
+          pageInfo: 'Trang {current} / {total}'
+        }}
+      />
 
       {/* Modal */}
-      {selectedBook && (
-        <div className="modal-overlay" onClick={handleCloseModal}>
-          <div className="modal-content" onClick={handleModalClick}>
-            <button className="modal-close" onClick={handleCloseModal}>×</button>
-            <img
-              src={selectedBook.imageUrl}
-              alt={selectedBook.title}
-              className="modal-image"
-            />
-            <h2 className="modal-title">{selectedBook.title}</h2>
-            <p className="modal-author">{selectedBook.author}</p>
-            <p className="modal-description">{selectedBook.description}</p>
-            <div className="modal-footer">
-              <span className="book-price">{selectedBook.price}</span>
-              <button className="add-to-cart-button">Thêm vào giỏ</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <BookModal
+        book={selectedBook}
+        onClose={() => setSelectedBook(null)}
+        labels={{
+          addToCart: 'Thêm vào giỏ'
+        }}
+      />
     </div>
   );
 };

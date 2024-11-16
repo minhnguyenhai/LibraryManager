@@ -1,7 +1,7 @@
 .search-container {
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-around;
     background-color: #88b0c2; /* Màu nền */
     padding: 10px;
 }

@@ -2,6 +2,7 @@ import React from "react";
 import "./search.css"
 import { FaSearch } from "react-icons/fa";
 import BookList from "../books/book_list";
+import SearchBar from "./search_bar";
 const Search = () => {
     return (
         <div className="search_wrapper">
@@ -13,7 +14,7 @@ const Search = () => {
                 </div>
                 <button className="catalog-button">Mục lục thư viện</button>
             </div>
-            <BookList/>
+            <BookList />
         </div>
     );
 }
