@@ -43,7 +43,7 @@
 }
 
 .catalog-button {
-    background-color: #f8f9fa; /* Màu nền của nút "Mục lục thư viện" */
+    background-color: #f8f9fa; 
     color: black;
     border: 1px solid #000;
     padding: 10px 20px;
@@ -51,6 +51,6 @@
     font-family: "Protest Strike";
     font-size: 16px;
     margin-left: 30px;
-    width: 200px;
+    display: flex;
     cursor: pointer;
 }

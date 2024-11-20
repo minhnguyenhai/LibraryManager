@@ -140,10 +140,12 @@ const ManageBooks = () => {
                 onSave={handleSaveEditedBook}
             />
 
-            {/* <AddBookModal
-                onClose={() => setIsAddingBook(false)}
-                onAdd={handleAddNewBook}
-            /> */}
+            {isAddingBook && (
+                <AddBookModal
+                    onClose={() => setIsAddingBook(false)}
+                    onAdd={handleAddNewBook}
+                />
+            )}
         </div>
     );
 };

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import './add_book_modal.css';
 
 const AddBookModal = ({ onClose, onAdd }) => {
     const [newBook, setNewBook] = useState({
@@ -11,6 +10,16 @@ const AddBookModal = ({ onClose, onAdd }) => {
         description: '',
         imageUrl: ''
     });
+
+    const handleOverlayClick = (e) => {
+        e.stopPropagation();
+        onClose();
+    };
+
+    const handleContentClick = (e) => {
+        e.stopPropagation();
+    };
+
 
     const handleChange = (field, value) => {
         setNewBook({
@@ -28,8 +37,8 @@ const AddBookModal = ({ onClose, onAdd }) => {
     };
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay" onClick={handleOverlayClick}>
+            <div className="modal-content" onClick={handleContentClick}>
                 <button className="modal-close" onClick={onClose}>×</button>
                 <h2 className="modal-title">Thêm Sách Mới</h2>
                 <form className="add-book-form">

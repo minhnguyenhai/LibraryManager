@@ -5,9 +5,9 @@ import { BiSolidReport } from "react-icons/bi";
 import './manage.css';
 
 import ManageBooks from "./manage_component/manage_books/manage_books";
-import ManageReaders from "./manage_component/manage_readers";
-import ManageBorrowReturn from "./manage_component/manage_borrowreturn";
-import StatisticsReports from "./manage_component/statistics_reports";
+import ManageReaders from "./manage_component/manage_readers/manage_readers";
+import ManageBorrowReturn from "./manage_component/manage_borrowreturn/manage_borrowreturn";
+import StatisticsReports from "./manage_component/statistics_reports/statistics_reports";
 
 const Manage = () => {
     const [activeContent, setActiveContent] = useState("books");

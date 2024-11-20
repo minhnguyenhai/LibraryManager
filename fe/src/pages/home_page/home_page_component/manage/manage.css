@@ -43,9 +43,12 @@
     display: block;
     font-family: "Protest Strike";
 }
-.searchbar-option{
-  justify-content: center;
-  margin-top: 50px;
-  display: flex;
-  flex-direction: row;
-}
+
+.searchbar-option {
+    justify-content: center;
+    align-items: center; 
+    margin-top: 50px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px; 
+  }
