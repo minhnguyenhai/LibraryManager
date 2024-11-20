@@ -280,7 +280,7 @@ def verify_verification_code(confirm_token, verification_code):
         raise
     
     
-def verify_email(email):
+def verify_user_email(email):
     """Verifies a reader's email."""
     try:
         reader = db.session.execute(

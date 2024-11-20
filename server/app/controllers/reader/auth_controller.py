@@ -6,7 +6,7 @@ from ...email import send_email
 from ...services.reader.auth_service import (
     validate_login, generate_access_token, generate_refresh_token, verify_access_token,
     verify_refresh_token, is_email_registered, save_new_reader, generate_verification_code,
-    generate_confirm_token, is_verified, get_reader_by_email, verify_verification_code, verify_email,
+    generate_confirm_token, is_verified, get_reader_by_email, verify_verification_code, verify_user_email,
     invalidate_token, generate_reset_code, generate_reset_token,verify_reset_code,set_password
 )
 
@@ -153,7 +153,7 @@ def register():
         return jsonify({
             "success": True,
             "message": "User registered successfully. An email has been sent to confirm your account.",
-            "user": new_reader.as_dict(),
+            "reader": new_reader.as_dict(),
             "confirm_token": confirm_token
         }), 201
         
@@ -249,7 +249,7 @@ def verify_email():
             }), 400
 
         reader = verify_verification_code(confirm_token, verification_code)
-        if reader and verify_email(reader.email):
+        if reader and verify_user_email(reader.email):
             access_token = generate_access_token(reader.id)
             refresh_token = generate_refresh_token(reader.id)
             return jsonify({
