@@ -1,23 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaBook } from "react-icons/fa";
 import { MdWorkHistory } from "react-icons/md";
-const User=()=>{
+const User = () => {
     const options = [
-        { label: 'Sách yêu thích', icon: <FaBook />, link: '/manage/books' },
-        { label: 'Lịch sử mượn sách', icon: <MdWorkHistory />, link: '/manage/readers' },
+        { label: 'Sách yêu thích', icon: <FaBook />, key: 'favourite books' },
+        { label: 'Lịch sử mượn sách', icon: <MdWorkHistory />, key: 'history borrow' },
     ];
 
-    // Render the component
+    const [activeContent, setActiveContent] = useState("favourite books")
+
+    const renderContent = () => {
+        switch (activeContent) {
+            case 'favourite books':
+            case 'history borrow':
+        }
+    }
     return (
-        <div className="manage-section">
-            {options.map((option, index) => (
-                <a href={option.link} className="manage-option" key={index}>
-                    <div className="manage-option-icon">
-                         {option.icon} 
-                    </div>
-                    <span className="label">{option.label}</span>
-                </a>
-            ))}
+        <div className="manage-container">
+            <div className="manage-section">
+                {options.map((option, index) => (
+                    <button
+                        key={index}
+                        className={`manage-option ${activeContent === option.key ? 'active' : ''}`}
+                        onClick={() => setActiveContent(option.key)}
+                    >
+                        <div className="manage-option-icon">
+                            {option.icon}
+                        </div>
+                        <span className="label">{option.label}</span>
+                    </button>
+                ))}
+            </div>
+            <div className="manage-content">
+                {renderContent()}
+            </div>
         </div>
     );
 }

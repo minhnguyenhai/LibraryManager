@@ -31,7 +31,7 @@ const Header = ({ selectedNav, setSelectedNav }) => {
                     className={`nav-link ${selectedNav === "User" ? "active" : ""}`} 
                     onClick={() => setSelectedNav("User")}
                 >
-                    NGƯỜI DÙNG
+                    DỊCH VỤ NGƯỜI DÙNG
                 </Link>
                 <Link 
                     to="/search" 
@@ -39,13 +39,6 @@ const Header = ({ selectedNav, setSelectedNav }) => {
                     onClick={() => setSelectedNav("Search")}
                 >
                     TÌM KIẾM
-                </Link>
-                <Link 
-                    to="/news" 
-                    className={`nav-link ${selectedNav === "News" ? "active" : ""}`} 
-                    onClick={() => setSelectedNav("News")}
-                >
-                    TIN TỨC
                 </Link>
                 <Link 
                     to="/contact" 

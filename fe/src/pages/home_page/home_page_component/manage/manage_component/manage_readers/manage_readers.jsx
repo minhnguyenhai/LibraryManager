@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SearchBar from '../../../search/search_bar';
 import Pagination from '../../../pagination/pagination';
+import ConfirmationDialog from '../../../confirmation_dialog/confirmation_dialog';
 
 const generateAccounts = (count) => {
     return Array.from({ length: count }, (_, index) => ({
@@ -20,11 +21,28 @@ const ManageReaders = () => {
     const accountsPerPage = 10;
     const allAccounts = generateAccounts(100);
     const totalPages = Math.ceil(allAccounts.length / accountsPerPage);
+    
+    const [deleteConfirmation, setDeleteConfirmation] = useState({
+        isOpen: false,
+    });
 
     const getCurrentAccounts = () => {
         const startIndex = (currentPage - 1) * accountsPerPage;
         const endIndex = startIndex + accountsPerPage;
         return allAccounts.slice(startIndex, endIndex);
+    };
+
+    const handleDeleteClick = () => {
+        setDeleteConfirmation({
+            isOpen: true,
+        });
+    };
+
+    const handleConfirmDelete = () => {
+        // Đóng modal
+        setDeleteConfirmation({
+            isOpen: false,
+        });
     };
     return (
         <div className="manage-accounts-content">
@@ -66,7 +84,7 @@ const ManageReaders = () => {
                                         >
                                             Sửa thông tin
                                         </button>
-                                        <button
+                                        <button onClick={()=> handleDeleteClick()}
                                         >
                                             Xóa
                                         </button>
@@ -91,6 +109,15 @@ const ManageReaders = () => {
                 }}
             />
 
+            <ConfirmationDialog
+                isOpen={deleteConfirmation.isOpen}
+                onClose={() => setDeleteConfirmation({ isOpen: false,})}
+                onConfirm={handleConfirmDelete}
+                title="Xác nhận xóa"
+                message={`Bạn có chắc chắn muốn xóa không?`}
+                confirmLabel="Xóa"
+                cancelLabel="Hủy"
+            />
         </div>
     );
 };

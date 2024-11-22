@@ -6,6 +6,7 @@ import Pagination from '../../../pagination/pagination';
 import BookModal from '../../../books/book_modal';
 import EditBookModal from '../../../edit_book_modal/edit_book_modal';
 import AddBookModal from '../../../add_book_modal/add_book_modal';
+import ConfirmationDialog from '../../../confirmation_dialog/confirmation_dialog';
 const generateBooks = (count) => {
     return Array.from({ length: count }, (_, index) => ({
         id: index + 1,
@@ -21,6 +22,10 @@ const ManageBooks = () => {
     const [selectedBook, setSelectedBook] = useState(null);
     const [editingBook, setEditingBook] = useState(null);
     const [isAddingBook, setIsAddingBook] = useState(false);
+    const [deleteConfirmation, setDeleteConfirmation] = useState({
+        isOpen: false,
+        bookToDelete: null
+    });
 
     const [currentPage, setCurrentPage] = useState(1);
     const booksPerPage = 10;
@@ -55,6 +60,30 @@ const ManageBooks = () => {
         allBooks.push(newBook); // Thêm sách mới vào danh sách
         setIsAddingBook(false); // Đóng modal
     };
+
+    const handleDeleteClick = (book) => {
+        setDeleteConfirmation({
+            isOpen: true,
+            bookToDelete: book
+        });
+    };
+
+    const handleConfirmDelete = () => {
+        if (deleteConfirmation.bookToDelete) {
+            // Xử lý logic xóa sách ở đây
+            const updatedBooks = allBooks.filter(
+                book => book.id !== deleteConfirmation.bookToDelete.id
+            );
+            // Cập nhật lại danh sách sách
+            // Trong trường hợp thực tế, bạn sẽ gọi API để xóa
+        }
+        // Đóng modal
+        setDeleteConfirmation({
+            isOpen: false,
+            bookToDelete: null
+        });
+    };
+
     return (
         <div className="manage-books-content">
             <div className="searchbar-option">
@@ -100,7 +129,7 @@ const ManageBooks = () => {
                                             Sửa thông tin
                                         </button>
                                         <button
-                                            onClick={() => handleReadClick(book)}
+                                            onClick={()=>handleDeleteClick(book)}
                                         >
                                             Xóa
                                         </button>
@@ -146,6 +175,16 @@ const ManageBooks = () => {
                     onAdd={handleAddNewBook}
                 />
             )}
+
+            <ConfirmationDialog
+                isOpen={deleteConfirmation.isOpen}
+                onClose={() => setDeleteConfirmation({ isOpen: false, bookToDelete: null })}
+                onConfirm={handleConfirmDelete}
+                title="Xác nhận xóa"
+                message={`Bạn có chắc chắn muốn xóa sách "${deleteConfirmation.bookToDelete?.title}" không?`}
+                confirmLabel="Xóa"
+                cancelLabel="Hủy"
+            />
         </div>
     );
 };
