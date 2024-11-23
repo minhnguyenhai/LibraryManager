@@ -48,9 +48,16 @@ def JWT_required(f):
                 "message": "Invalid Token"
             }), 401
             
-        user = db.session.execute(
-            db.select(User).where(User.id == user_id)
-        ).scalar()
+        try:
+            user = db.session.execute(
+                db.select(User).where(User.id == user_id)
+            ).scalar()
+        except Exception as e:
+            return jsonify({
+                "error": "Internal server error.",
+                "message": str(e)
+            }), 500
+            
         if not user:
             return jsonify({
                 "success": False,
@@ -60,6 +67,23 @@ def JWT_required(f):
         func_signature = signature(f)
         if "user_id" in func_signature.parameters:
             return f(user_id, *args, **kwargs)
+        elif "user" in func_signature.parameters:
+            return f(user, *args, **kwargs)
+        
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
+def admin_required(f):
+    """Decorator to require admin permission for API access."""
+    @wraps(f)
+    def decorated_function(user, *args, **kwargs):
+        if user.role != "admin":
+            return jsonify({
+                "success": False,
+                "message": "Unauthorized: Admin permission required"
+            }), 403
         
         return f(*args, **kwargs)
 

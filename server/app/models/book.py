@@ -18,5 +18,13 @@ class Book(db.Model):
     price: Mapped[int] = mapped_column(Integer, nullable=False)
     
     
+    def __init__(self, title, author, image_url, description, price):
+        self.title = title
+        self.author = author
+        self.image_url = image_url
+        self.description = description
+        self.price = price
+    
+    
     def as_dict(self):
         return {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}
