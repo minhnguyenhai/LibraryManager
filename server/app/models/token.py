@@ -13,7 +13,6 @@ class Token(db.Model):
     __tablename__ = "tokens"
     
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    access_token: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     refresh_token: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     confirm_token: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     reset_token: Mapped[Optional[str]] = mapped_column(String, nullable=True)
@@ -22,8 +21,5 @@ class Token(db.Model):
     verification_code_expiration: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     reset_code_expiration: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     
-    reader_id: Mapped[Optional[str]] = mapped_column(ForeignKey("readers.id"), unique=True, nullable=True)
-    admin_id: Mapped[Optional[str]] = mapped_column(ForeignKey("admins.id"), unique=True, nullable=True)
-    
-    reader: Mapped["Reader"] = relationship("Reader", backref="token")
-    admin: Mapped["Admin"] = relationship("Admin", backref="token")
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), unique=True, nullable=False)
+    user: Mapped["User"] = relationship("User", back_populates="token")

@@ -8,9 +8,9 @@ from werkzeug.security import generate_password_hash
 from app import db
 
 
-class Reader(db.Model):
+class User(db.Model):
     
-    __tablename__ = "readers"
+    __tablename__ = "users"
     
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
@@ -20,7 +20,10 @@ class Reader(db.Model):
     gender: Mapped[str] = mapped_column(String(10), nullable=False)
     address: Mapped[str] = mapped_column(String(255), nullable=False)
     phone_number: Mapped[str] = mapped_column(String(15), nullable=False)
+    role: Mapped[str] = mapped_column(String(10), default="reader")
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
+    
+    token: Mapped["Token"] = relationship("Token", uselist=False, back_populates="user")
 
     
     def __init__(self, email, password, name, dob, gender, address, phone_number):

@@ -1,6 +1,6 @@
 Welcome to 4M Library!
 
-Dear {{ reader.name }},
+Dear {{ user.name }},
 
 Thank you for joining us! To complete your registration and start exploring our resources, please use the verification code below:
 

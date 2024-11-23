@@ -6,43 +6,31 @@ import random
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
-from ...models.reader import Reader
+from ...models.user import User
 from ...models.token import Token
 from config import secret_key
 
 
 def validate_login(email, password):
-    """Validate the login credentials of a reader."""
-    reader = db.session.execute(
-        db.select(Reader).where(Reader.email == email)
+    """Validate the login credentials of an user."""
+    user = db.session.execute(
+        db.select(User).where(User.email == email)
     ).scalar()
 
-    if reader is None or not check_password_hash(reader.password_hash, password):
+    if user is None or not check_password_hash(user.password_hash, password):
         return None
     
-    return reader
+    return user
 
 
-def generate_access_token(reader_id, expires_in=600):
-    """Generate a new access token for the reader."""
+def generate_access_token(user_id, expires_in=300):
+    """Generate a new access token for the user."""
     try:
         payload = {
-            "reader_id": reader_id,
+            "user_id": user_id,
             "exp":  datetime.now(tz=timezone.utc) + timedelta(seconds=expires_in)
         }
         new_access_token = jwt.encode(payload, secret_key, algorithm="HS256")
-        
-        existing_token = db.session.execute(
-            db.select(Token).where(Token.reader_id == reader_id)
-        ).scalar()
-        
-        if not existing_token:
-            new_token = Token(access_token=new_access_token, reader_id=reader_id)
-            db.session.add(new_token)
-        else:
-            existing_token.access_token = new_access_token
-            
-        db.session.commit()
         return new_access_token
     
     except jwt.PyJWTError as e:
@@ -50,26 +38,25 @@ def generate_access_token(reader_id, expires_in=600):
         raise
 
     except Exception as e:
-        db.session.rollback() 
         logging.error(f"Error generating access token: {str(e)}")
         raise
 
 
-def generate_refresh_token(reader_id, expires_in=2592000): 
-    """Generate a new refresh token for the reader."""
+def generate_refresh_token(user_id, expires_in=2592000): 
+    """Generate a new refresh token for the user."""
     try:
         payload = {
-            "reader_id": reader_id,
+            "user_id": user_id,
             "exp":  datetime.now(tz=timezone.utc) + timedelta(seconds=expires_in)
         }
         new_refresh_token = jwt.encode(payload, secret_key, algorithm="HS256")
         
         existing_token = db.session.execute(
-            db.select(Token).where(Token.reader_id == reader_id)
+            db.select(Token).where(Token.user_id == user_id)
         ).scalar()
         
         if not existing_token:
-            new_token = Token(refresh_token=new_refresh_token, reader_id=reader_id)
+            new_token = Token(refresh_token=new_refresh_token, user_id=user_id)
             db.session.add(new_token)
         else:
             existing_token.refresh_token = new_refresh_token
@@ -91,19 +78,12 @@ def verify_access_token(token):
     """Verify if the provided access token is valid and not expired."""
     try:
         payload = jwt.decode(token, secret_key, algorithms=["HS256"])
-        reader_id = payload.get("reader_id")
-        if not reader_id:
-            logging.warning("Token missing required field: reader_id.")
+        user_id = payload.get("user_id")
+        if not user_id:
+            logging.warning("Token missing required field: user_id.")
             return None
 
-        existing_token = db.session.execute(
-            db.select(Token).where(Token.reader_id == reader_id)
-        ).scalar()
-        
-        if not existing_token or existing_token.access_token != token:
-            return None
-        
-        return reader_id
+        return user_id
 
     except jwt.ExpiredSignatureError:
         logging.warning("Access token expired.")
@@ -120,19 +100,19 @@ def verify_refresh_token(token):
     """Verify if the provided refresh token is valid and not expired."""
     try:
         payload = jwt.decode(token, secret_key, algorithms=["HS256"])
-        reader_id = payload.get("reader_id")
-        if not reader_id:
-            logging.warning("Token missing required field: reader_id.")
+        user_id = payload.get("user_id")
+        if not user_id:
+            logging.warning("Token missing required field: user_id.")
             return None
 
         existing_token = db.session.execute(
-            db.select(Token).where(Token.reader_id == reader_id)
+            db.select(Token).where(Token.user_id == user_id)
         ).scalar()
         
         if not existing_token or existing_token.refresh_token != token:
             return None
         
-        return reader_id
+        return user_id
 
     except jwt.ExpiredSignatureError:
         logging.warning("Refresh token expired.")
@@ -147,38 +127,38 @@ def verify_refresh_token(token):
 
 def is_email_registered(email):
     """Checks if an email is already registered."""
-    reader = db.session.execute(
-        db.select(Reader).where(Reader.email == email)
+    user = db.session.execute(
+        db.select(User).where(User.email == email)
     ).scalar()
     
-    if reader:
+    if user:
         return True
     return False
 
 
-def save_new_reader(email, password, name, dob, gender, address, phone_number):
-    """Saves a new reader to the database."""
-    new_reader = Reader(email, password, name, dob, gender, address, phone_number)
-    db.session.add(new_reader)
+def save_new_user(email, password, name, dob, gender, address, phone_number):
+    """Saves a new user to the database."""
+    new_user = User(email, password, name, dob, gender, address, phone_number)
+    db.session.add(new_user)
     db.session.commit()
-    return new_reader
+    return new_user
 
 
 def generate_verification_code(email):
-    """Generates a verification code for a reader."""
+    """Generates a verification code for an user."""
     try:
         verification_code = "".join([str(random.randint(0, 9)) for _ in range(6)])
         token = db.session.execute(
             db.select(Token)
-            .join(Reader, Reader.id == Token.reader_id)
-            .where(Reader.email == email)
+            .join(User, User.id == Token.user_id)
+            .where(User.email == email)
         ).scalar()
         
         if not token:
             new_token = Token(
                 verification_code=verification_code,
                 verification_code_expiration=datetime.now(tz=timezone.utc) + timedelta(minutes=10),
-                reader_id=get_reader_by_email(email).id
+                user_id=get_user_by_email(email).id
             )
             db.session.add(new_token)
         else:
@@ -195,21 +175,21 @@ def generate_verification_code(email):
 
 
 def generate_confirm_token(email, expires_in=3600):
-    """Generates a confirmation token for the reader."""
+    """Generates a confirmation token for the user."""
     try:
-        reader_id = get_reader_by_email(email).id
+        user_id = get_user_by_email(email).id
         payload = {
-            "reader_id": reader_id,
+            "user_id": user_id,
             "exp":  datetime.now(tz=timezone.utc) + timedelta(seconds=expires_in)
         }
         new_confirm_token = jwt.encode(payload, secret_key, algorithm="HS256")
         
         existing_token = db.session.execute(
-            db.select(Token).where(Token.reader_id == reader_id)
+            db.select(Token).where(Token.user_id == user_id)
         ).scalar()
         
         if not existing_token:
-            new_token = Token(confirm_token=new_confirm_token, reader_id=reader_id)
+            new_token = Token(confirm_token=new_confirm_token, user_id=user_id)
             db.session.add(new_token)
         else:
             existing_token.confirm_token = new_confirm_token
@@ -228,20 +208,20 @@ def generate_confirm_token(email, expires_in=3600):
 
 
 def is_verified(email):
-    """Checks if a reader has been verified."""
-    reader = db.session.execute(
-        db.select(Reader).where(Reader.email == email)
+    """Checks if an user has been verified."""
+    user = db.session.execute(
+        db.select(User).where(User.email == email)
     ).scalar()
     
-    if reader and reader.is_verified:
+    if user and user.is_verified:
         return True
     return False
 
 
-def get_reader_by_email(email):
-    """Retrieves a reader by email."""
+def get_user_by_email(email):
+    """Retrieves a user by email."""
     return db.session.execute(
-        db.select(Reader).where(Reader.email == email)
+        db.select(User).where(User.email == email)
     ).scalar()
     
     
@@ -249,13 +229,13 @@ def verify_verification_code(confirm_token, verification_code):
     """Verifies the confirmation token and verification code."""
     try:
         payload = jwt.decode(confirm_token, secret_key, algorithms=["HS256"])
-        reader_id = payload.get("reader_id")
-        if not reader_id:
-            logging.warning("Token missing required field: reader_id.")
+        user_id = payload.get("user_id")
+        if not user_id:
+            logging.warning("Token missing required field: user_id.")
             return None
 
         token = db.session.execute(
-            db.select(Token).where(Token.reader_id == reader_id)
+            db.select(Token).where(Token.user_id == user_id)
         ).scalar()
         
         if (
@@ -266,7 +246,7 @@ def verify_verification_code(confirm_token, verification_code):
             return None
         
         return db.session.execute(
-            db.select(Reader).where(Reader.id == reader_id)
+            db.select(User).where(User.id == user_id)
         ).scalar()
     
     except jwt.ExpiredSignatureError:
@@ -281,16 +261,16 @@ def verify_verification_code(confirm_token, verification_code):
     
     
 def verify_user_email(email):
-    """Verifies a reader's email."""
+    """Verifies an user's email."""
     try:
-        reader = db.session.execute(
-            db.select(Reader).where(Reader.email == email)
+        user = db.session.execute(
+            db.select(User).where(User.email == email)
         ).scalar()
         
-        if reader is None:
+        if user is None:
             return False
         
-        reader.is_verified = True
+        user.is_verified = True
         db.session.commit()
         return True
     
@@ -300,24 +280,17 @@ def verify_user_email(email):
         raise
     
     
-def invalidate_token(token):
-    """Invalidate the provided token by removing it from the database."""
+def invalidate_refresh_token(user_id):
+    """Invalidate an user's refresh token."""
     try:
-        payload = jwt.decode(token, secret_key, algorithms=["HS256"])
-        reader_id = payload.get("reader_id")
-        if not reader_id:
-            logging.warning("Token missing required field: reader_id.")
-            return False
-        
         existing_token = db.session.execute(
-            db.select(Token).where(Token.reader_id == reader_id)
+            db.select(Token).where(Token.user_id == user_id)
         ).scalar()
         
-        if not existing_token or existing_token.access_token != token:
+        if not existing_token:
             logging.warning("Invalid token.")
             return False
 
-        existing_token.access_token = None
         existing_token.refresh_token = None
         db.session.commit()
         return True
@@ -335,20 +308,20 @@ def invalidate_token(token):
     
     
 def generate_reset_code(email):
-    """Generates a reset password code for a reader."""
+    """Generates a reset password code for an user."""
     try:
         reset_code = "".join([str(random.randint(0, 9)) for _ in range(6)])
         token = db.session.execute(
             db.select(Token)
-            .join(Reader, Reader.id == Token.reader_id)
-            .where(Reader.email == email)
+            .join(User, User.id == Token.user_id)
+            .where(User.email == email)
         ).scalar()
         
         if not token:
             new_token = Token(
                 reset_code=reset_code,
                 reset_code_expiration=datetime.now(tz=timezone.utc) + timedelta(minutes=10),
-                reader_id=get_reader_by_email(email).id
+                user_id=get_user_by_email(email).id
             )
             db.session.add(new_token)
         else:
@@ -365,21 +338,21 @@ def generate_reset_code(email):
     
     
 def generate_reset_token(email, expires_in=1800):
-    """Generates a reset password token for the reader."""
+    """Generates a reset password token for the user."""
     try:
-        reader_id = get_reader_by_email(email).id
+        user_id = get_user_by_email(email).id
         payload = {
-            "reader_id": reader_id,
+            "user_id": user_id,
             "exp":  datetime.now(tz=timezone.utc) + timedelta(seconds=expires_in)
         }
         new_reset_token = jwt.encode(payload, secret_key, algorithm="HS256")
         
         existing_token = db.session.execute(
-            db.select(Token).where(Token.reader_id == reader_id)
+            db.select(Token).where(Token.user_id == user_id)
         ).scalar()
         
         if not existing_token:
-            new_token = Token(reset_token=new_reset_token, reader_id=reader_id)
+            new_token = Token(reset_token=new_reset_token, user_id=user_id)
             db.session.add(new_token)
         else:
             existing_token.reset_token = new_reset_token
@@ -401,13 +374,13 @@ def verify_reset_code(reset_token, reset_code):
     """Verifies the reset password token and reset password code."""
     try:
         payload = jwt.decode(reset_token, secret_key, algorithms=["HS256"])
-        reader_id = payload.get("reader_id")
-        if not reader_id:
-            logging.warning("Token missing required field: reader_id.")
+        user_id = payload.get("user_id")
+        if not user_id:
+            logging.warning("Token missing required field: user_id.")
             return None
 
         token = db.session.execute(
-            db.select(Token).where(Token.reader_id == reader_id)
+            db.select(Token).where(Token.user_id == user_id)
         ).scalar()
         
         if (
@@ -418,7 +391,7 @@ def verify_reset_code(reset_token, reset_code):
             return None
         
         return db.session.execute(
-            db.select(Reader).where(Reader.id == reader_id)
+            db.select(User).where(User.id == user_id)
         ).scalar()
     
     except jwt.ExpiredSignatureError:
@@ -432,17 +405,17 @@ def verify_reset_code(reset_token, reset_code):
         raise
     
     
-def set_password(reader_id, new_password):
-    """Set a new password for the reader."""
+def set_password(user_id, new_password):
+    """Set a new password for the user."""
     try:
-        reader = db.session.execute(
-            db.select(Reader).where(Reader.id == reader_id)
+        user = db.session.execute(
+            db.select(User).where(User.id == user_id)
         ).scalar()
 
-        if reader is None:
+        if user is None:
             return False
         
-        reader.password_hash = generate_password_hash(new_password)
+        user.password_hash = generate_password_hash(new_password)
         db.session.commit()
         return True
     
