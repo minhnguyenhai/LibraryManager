@@ -37,3 +37,17 @@ def save_new_book(title, author, image_url, description, price):
         db.session.rollback()
         logging.error(f"Error while saving new book: {str(e)}")
         raise
+    
+    
+def update_book_info(book, data):
+    """ Update a book in the database. """
+    try:
+        for key, value in data.items():
+            setattr(book, key, value)
+        
+        db.session.commit()
+        return book
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error while updating book: {str(e)}")
+        raise

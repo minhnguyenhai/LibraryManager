@@ -2,7 +2,7 @@ from flask import request, jsonify
 
 from . import book_api
 from ...services.book.book_service import (
-    list_books, get_book_by_id, save_new_book
+    list_books, get_book_by_id, save_new_book, update_book_info
 )
 from ...utils.decorators import JWT_required, admin_required
 
@@ -67,6 +67,50 @@ def add_book():
             "message": "Successfully added new book.",
             "new_book": new_book.as_dict()
         }), 201
+        
+    except ValueError as e:
+        return jsonify({
+            "error": "Invalid data.",
+            "message": str(e)
+        }), 400
+    
+    except Exception as e:
+        return jsonify({
+            "error": "Internal server error.",
+            "message": str(e)
+        }), 500
+
+
+@book_api.route('/<book_id>', methods=['PUT'])
+@JWT_required
+@admin_required
+def update_book(book_id):
+    try:
+        book = get_book_by_id(book_id)
+        if not book:
+            return jsonify({
+                "success": False,
+                "message": "Book not found."
+            }), 404
+            
+        data = request.get_json()
+        if data is None:
+            raise ValueError("Invalid JSON data.")
+        
+        ALLOW_FIELDS = {"title", "author", "image_url", "description", "price"}
+        unknown_fields = {field for field in data if field not in ALLOW_FIELDS}
+        if unknown_fields:
+            return jsonify({
+                "success": False,
+                "message": f"Unknown fields: {', '.join(unknown_fields)}"
+            }), 400
+            
+        updated_book = update_book_info(book, data)
+        return jsonify({
+            "success": True,
+            "message": "Successfully updated book.",
+            "updated_book": updated_book.as_dict()
+        }), 200
         
     except ValueError as e:
         return jsonify({
