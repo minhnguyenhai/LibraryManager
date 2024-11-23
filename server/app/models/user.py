@@ -24,6 +24,7 @@ class User(db.Model):
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
     
     token: Mapped["Token"] = relationship("Token", uselist=False, back_populates="user")
+    borrow_records: Mapped[list["BorrowRecord"]] = relationship(back_populates="user")
 
     
     def __init__(self, email, password, name, dob, gender, address, phone_number):

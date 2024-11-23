@@ -12,7 +12,7 @@ from config import secret_key
 
 
 def validate_login(email, password):
-    """Validate the login credentials of an user."""
+    """Validate the login credentials of a user."""
     user = db.session.execute(
         db.select(User).where(User.email == email)
     ).scalar()
@@ -145,7 +145,7 @@ def save_new_user(email, password, name, dob, gender, address, phone_number):
 
 
 def generate_verification_code(email):
-    """Generates a verification code for an user."""
+    """Generates a verification code for a user."""
     try:
         verification_code = "".join([str(random.randint(0, 9)) for _ in range(6)])
         token = db.session.execute(
@@ -208,7 +208,7 @@ def generate_confirm_token(email, expires_in=3600):
 
 
 def is_verified(email):
-    """Checks if an user has been verified."""
+    """Checks if a user has been verified."""
     user = db.session.execute(
         db.select(User).where(User.email == email)
     ).scalar()
@@ -261,7 +261,7 @@ def verify_verification_code(confirm_token, verification_code):
     
     
 def verify_user_email(email):
-    """Verifies an user's email."""
+    """Verifies a user's email."""
     try:
         user = db.session.execute(
             db.select(User).where(User.email == email)
@@ -281,7 +281,7 @@ def verify_user_email(email):
     
     
 def invalidate_refresh_token(user_id):
-    """Invalidate an user's refresh token."""
+    """Invalidate a user's refresh token."""
     try:
         existing_token = db.session.execute(
             db.select(Token).where(Token.user_id == user_id)
@@ -308,7 +308,7 @@ def invalidate_refresh_token(user_id):
     
     
 def generate_reset_code(email):
-    """Generates a reset password code for an user."""
+    """Generates a reset password code for a user."""
     try:
         reset_code = "".join([str(random.randint(0, 9)) for _ in range(6)])
         token = db.session.execute(

@@ -33,5 +33,8 @@ def create_app(config_class=Config):
     
     from .controllers.book import book_api
     app.register_blueprint(book_api, url_prefix="/book")
-
+    
+    from .controllers.borrowing import borrowing_api
+    app.register_blueprint(borrowing_api)
+    
     return app

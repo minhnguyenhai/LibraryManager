@@ -1,7 +1,7 @@
 import uuid
 
 from sqlalchemy import String, Integer
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app import db
 
@@ -17,6 +17,8 @@ class Book(db.Model):
     description: Mapped[str] = mapped_column(String, nullable=False)
     price: Mapped[int] = mapped_column(Integer, nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
+    
+    borrow_records: Mapped[list["BorrowRecord"]] = relationship(back_populates="book")
     
     
     def __init__(self, title, author, image_url, description, price, quantity):
