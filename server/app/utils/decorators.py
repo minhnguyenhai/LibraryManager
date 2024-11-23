@@ -1,7 +1,12 @@
 from functools import wraps
+from inspect import signature
 import jwt
+
 from flask import request, jsonify
+
 from config import secret_key
+from .. import db
+from ..models.user import User
 
 
 def JWT_required(f):
@@ -42,7 +47,20 @@ def JWT_required(f):
                 "success": False,
                 "message": "Invalid Token"
             }), 401
+            
+        user = db.session.execute(
+            db.select(User).where(User.id == user_id)
+        ).scalar()
+        if not user:
+            return jsonify({
+                "success": False,
+                "message": "Invalid Token: User does not exist"
+            }), 401
         
-        return f(user_id, *args, **kwargs)
+        func_signature = signature(f)
+        if "user_id" in func_signature.parameters:
+            return f(user_id, *args, **kwargs)
+        
+        return f(*args, **kwargs)
 
     return decorated_function

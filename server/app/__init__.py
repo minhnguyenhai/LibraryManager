@@ -30,5 +30,8 @@ def create_app(config_class=Config):
     
     from .controllers.user import user_api
     app.register_blueprint(user_api, url_prefix="/user")
+    
+    from .controllers.book import book_api
+    app.register_blueprint(book_api, url_prefix="/book")
 
     return app
