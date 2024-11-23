@@ -16,14 +16,16 @@ class Book(db.Model):
     image_url: Mapped[str] = mapped_column(String, nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=False)
     price: Mapped[int] = mapped_column(Integer, nullable=False)
+    quantity: Mapped[int] = mapped_column(Integer, nullable=False)
     
     
-    def __init__(self, title, author, image_url, description, price):
+    def __init__(self, title, author, image_url, description, price, quantity):
         self.title = title
         self.author = author
         self.image_url = image_url
         self.description = description
         self.price = price
+        self.quantity = quantity
     
     
     def as_dict(self):

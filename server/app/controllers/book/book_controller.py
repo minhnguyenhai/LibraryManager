@@ -53,7 +53,7 @@ def add_book():
         if data is None:
             raise ValueError("Invalid JSON data.")
         
-        REQUIRED_FIELDS = {"title", "author", "image_url", "description", "price"}
+        REQUIRED_FIELDS = {"title", "author", "image_url", "description", "price", "quantity"}
         missing_fields = {field for field in REQUIRED_FIELDS if data.get(field) is None}
         
         if missing_fields:
@@ -62,7 +62,7 @@ def add_book():
                 "message": f"Missing required fields: {', '.join(missing_fields)}"
             }), 400
             
-        new_book = save_new_book(data["title"], data["author"], data["image_url"], data["description"], data["price"])
+        new_book = save_new_book(data["title"], data["author"], data["image_url"], data["description"], data["price"], data["quantity"])
         return jsonify({
             "success": True,
             "message": "Successfully added new book.",
@@ -98,7 +98,7 @@ def update_book(book_id):
         if data is None:
             raise ValueError("Invalid JSON data.")
         
-        ALLOW_FIELDS = {"title", "author", "image_url", "description", "price"}
+        ALLOW_FIELDS = {"title", "author", "image_url", "description", "price", "quantity"}
         unknown_fields = {field for field in data if field not in ALLOW_FIELDS}
         if unknown_fields:
             return jsonify({
