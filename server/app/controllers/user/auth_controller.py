@@ -1,17 +1,18 @@
 from flask import request, jsonify
 from validate_email_address import validate_email
 
-from . import reader_api
+from . import user_api
 from ...email import send_email
-from ...services.reader.auth_service import (
+from ...services.user.auth_service import (
     validate_login, generate_access_token, generate_refresh_token, verify_access_token,
-    verify_refresh_token, is_email_registered, save_new_reader, generate_verification_code,
-    generate_confirm_token, is_verified, get_reader_by_email, verify_verification_code, verify_email,
-    invalidate_token, generate_reset_code, generate_reset_token,verify_reset_code,set_password
+    verify_refresh_token, is_email_registered, save_new_user, generate_verification_code,
+    generate_confirm_token, is_verified, get_user_by_email, verify_verification_code, verify_user_email,
+    invalidate_refresh_token, generate_reset_code, generate_reset_token,verify_reset_code,set_password
 )
+from ...utils.decorators import JWT_required
 
 
-@reader_api.route("/login", methods=["POST"])
+@user_api.route("/login", methods=["POST"])
 def login():
     try:
         data = request.get_json()
@@ -33,21 +34,21 @@ def login():
                 "message": "Invalid email address."
             }), 400
 
-        reader = validate_login(email, password)
+        user = validate_login(email, password)
         
-        if not reader:
+        if not user:
             return jsonify({
                 "success": False,
                 "message": "Bad email or password."
             }), 400
             
-        access_token = generate_access_token(reader.id)
-        refresh_token = generate_refresh_token(reader.id)
+        access_token = generate_access_token(user.id)
+        refresh_token = generate_refresh_token(user.id)
 
         return jsonify({
             "success": True,
             "message": "Login successful.",
-            "reader": reader.as_dict(),
+            "user": user.as_dict(),
             "access_token": access_token,
             "refresh_token": refresh_token
         }), 200
@@ -65,7 +66,7 @@ def login():
         }), 500
     
     
-@reader_api.route("/refresh-token", methods=["POST"])
+@user_api.route("/refresh-token", methods=["POST"])
 def refresh_token():
     try:
         data = request.get_json()
@@ -80,16 +81,16 @@ def refresh_token():
                 "message": "Refresh token is required."
             }), 400
         
-        reader_id = verify_refresh_token(refresh_token)
+        user_id = verify_refresh_token(refresh_token)
         
-        if reader_id is None:
+        if user_id is None:
             return jsonify({
                 "success": False,
                 "message": "Invalid or expired refresh token."
             }), 400
             
-        new_access_token = generate_access_token(reader_id)
-        new_refresh_token = generate_refresh_token(reader_id)
+        new_access_token = generate_access_token(user_id)
+        new_refresh_token = generate_refresh_token(user_id)
 
         return jsonify({
             "success": True,
@@ -111,7 +112,7 @@ def refresh_token():
         }), 500
         
         
-@reader_api.route("/register", methods=["POST"])
+@user_api.route("/register", methods=["POST"])
 def register():
     try:
         data = request.get_json()
@@ -139,21 +140,21 @@ def register():
                 "message": "Email is already registered."
             }), 400
             
-        new_reader = save_new_reader(data["email"], data["password"], data["name"], data["dob"], data["gender"], data["address"], data["phone_number"])
-        verification_code = generate_verification_code(new_reader.email)
-        confirm_token = generate_confirm_token(new_reader.email)
+        new_user = save_new_user(data["email"], data["password"], data["name"], data["dob"], data["gender"], data["address"], data["phone_number"])
+        verification_code = generate_verification_code(new_user.email)
+        confirm_token = generate_confirm_token(new_user.email)
         send_email(
             to=data["email"], 
             subject="Your Verification Code from 4M Library",
             template="confirm",
-            reader=new_reader,
+            user=new_user,
             code=verification_code
         )
         
         return jsonify({
             "success": True,
             "message": "User registered successfully. An email has been sent to confirm your account.",
-            "user": new_reader.as_dict(),
+            "user": new_user.as_dict(),
             "confirm_token": confirm_token
         }), 201
         
@@ -170,7 +171,7 @@ def register():
         }), 500
         
 
-@reader_api.route("/send-verification-code", methods=["POST"])
+@user_api.route("/send-verification-code", methods=["POST"])
 def send_verification_code():
     try:
         data = request.get_json()
@@ -209,7 +210,7 @@ def send_verification_code():
             to=data["email"], 
             subject="Your Verification Code from 4M Library",
             template="confirm",
-            reader=get_reader_by_email(email),
+            user=get_user_by_email(email),
             code=verification_code
         )
 
@@ -232,7 +233,7 @@ def send_verification_code():
         }), 500
 
 
-@reader_api.route("/verify-email", methods=["POST"])
+@user_api.route("/verify-email", methods=["POST"])
 def verify_email():
     try:
         data = request.get_json()
@@ -248,10 +249,10 @@ def verify_email():
                 "message": "Confirm token and verification code are required."
             }), 400
 
-        reader = verify_verification_code(confirm_token, verification_code)
-        if reader and verify_email(reader.email):
-            access_token = generate_access_token(reader.id)
-            refresh_token = generate_refresh_token(reader.id)
+        user = verify_verification_code(confirm_token, verification_code)
+        if user and verify_user_email(user.email):
+            access_token = generate_access_token(user.id)
+            refresh_token = generate_refresh_token(user.id)
             return jsonify({
                 "success": True,
                 "message": "Your email address was verified successfully.",
@@ -277,24 +278,17 @@ def verify_email():
         }), 500
         
         
-@reader_api.route("/logout", methods=["POST"])
-def logout():
+@user_api.route("/logout", methods=["POST"])
+@JWT_required
+def logout(user_id):
     try:
-        auth_header = request.headers.get("Authorization")
-        if not auth_header or not auth_header.startswith("Bearer "):
-            return jsonify({
-                "success": False,
-                "message": "Token is missing or invalid."
-            }), 401
-        
-        token = auth_header.split(" ")[1]
-        if invalidate_token(token):
+        if invalidate_refresh_token(user_id):
             return "", 204
-        else:
-            return jsonify({
-                "success": False,
-                "message": "Failed to log out. Invalid token."
-            }), 401
+        
+        return jsonify({
+            "success": False,
+            "message": "Failed to log out. Invalid token."
+        }), 401
 
     except Exception as e:
         return jsonify({
@@ -303,7 +297,7 @@ def logout():
         }), 500
         
         
-@reader_api.route("/request-reset-password", methods=["POST"])
+@user_api.route("/request-reset-password", methods=["POST"])
 def request_reset_password():
     try:
         data = request.get_json()
@@ -336,7 +330,7 @@ def request_reset_password():
             to=email, 
             subject="Reset Your Password from 4M Library",
             template="reset-password",
-            reader=get_reader_by_email(email),
+            user=get_user_by_email(email),
             code=reset_code
         )
 
@@ -359,7 +353,7 @@ def request_reset_password():
         }), 500
         
         
-@reader_api.route("/validate-reset-code", methods=["POST"])
+@user_api.route("/validate-reset-code", methods=["POST"])
 def validate_reset_code():
     try:
         data = request.get_json()
@@ -375,9 +369,9 @@ def validate_reset_code():
                 "message": "Reset token and reset code are required."
             }), 400
 
-        reader = verify_reset_code(reset_token, reset_code)
-        if reader:
-            temp_access_token = generate_access_token(reader.id)
+        user = verify_reset_code(reset_token, reset_code)
+        if user:
+            temp_access_token = generate_access_token(user.id)
             return jsonify({
                 "success": True,
                 "message": "Reset code verified successfully.",
@@ -402,7 +396,7 @@ def validate_reset_code():
         }), 500
        
         
-@reader_api.route("/reset-password", methods=["POST"])
+@user_api.route("/reset-password", methods=["POST"])
 def reset_password():
     try:
         data = request.get_json()
@@ -418,14 +412,14 @@ def reset_password():
                 "message": "Temporary access token and new password are required."
             }), 400
 
-        reader_id = verify_access_token(temp_access_token)
-        if not reader_id:
+        user_id = verify_access_token(temp_access_token)
+        if not user_id:
             return jsonify({
                 "success": False,
                 "message": "Invalid temporary access token."
             }), 400
             
-        if set_password(reader_id, new_password):
+        if set_password(user_id, new_password):
             return jsonify({
                 "success": True,
                 "message": "Password reset successfully."

@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-reader_api = Blueprint("reader_api", __name__)
+user_api = Blueprint("user_api", __name__)
 
 from . import auth_controller
