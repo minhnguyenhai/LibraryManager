@@ -2,7 +2,8 @@ from flask import request, jsonify
 
 from . import book_api
 from ...services.book.book_service import (
-    list_books, get_book_by_id, save_new_book, update_book_info
+    list_books, get_book_by_id, save_new_book, update_book_info,
+    delete_book_from_db
 )
 from ...utils.decorators import JWT_required, admin_required
 
@@ -118,6 +119,28 @@ def update_book(book_id):
             "message": str(e)
         }), 400
     
+    except Exception as e:
+        return jsonify({
+            "error": "Internal server error.",
+            "message": str(e)
+        }), 500
+        
+        
+@book_api.route('/<book_id>', methods=['DELETE'])
+@JWT_required
+@admin_required
+def delete_book(book_id):
+    try:
+        book = get_book_by_id(book_id)
+        if not book:
+            return jsonify({
+                "success": False,
+                "message": "Book not found."
+            }), 404
+            
+        delete_book_from_db(book)
+        return "", 204
+        
     except Exception as e:
         return jsonify({
             "error": "Internal server error.",

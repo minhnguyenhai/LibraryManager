@@ -51,3 +51,14 @@ def update_book_info(book, data):
         db.session.rollback()
         logging.error(f"Error while updating book: {str(e)}")
         raise
+    
+    
+def delete_book_from_db(book):
+    """ Delete a book from the database. """
+    try:
+        db.session.delete(book)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error while deleting book: {str(e)}")
+        raise
