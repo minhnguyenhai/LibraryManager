@@ -62,3 +62,21 @@ def delete_book_from_db(book):
         db.session.rollback()
         logging.error(f"Error while deleting book: {str(e)}")
         raise
+    
+    
+def search_books_by_query(query):
+    """ Search books by a query string. """
+    try:
+        filters = (
+            Book.title.ilike(f"%{query}%") |
+            Book.author.ilike(f"%{query}%") |
+            Book.description.ilike(f"%{query}%")
+        )
+        search_query = db.session.query(Book).filter(filters)
+        books = search_query.all()
+        books_data = [book.as_dict() for book in books]
+        return books_data
+    
+    except Exception as e:
+        logging.error(f"Error while searching books by query: {str(e)}")
+        raise
