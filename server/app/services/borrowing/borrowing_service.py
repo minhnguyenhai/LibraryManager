@@ -26,6 +26,16 @@ def get_borrow_record_by_id(borrow_record_id):
         raise
     
     
+def list_borrow_records():
+    """ Fetch all borrow records from the database. """
+    try:
+        borrow_records = BorrowRecord.query.all()
+        return [record.as_dict() for record in borrow_records]
+    except Exception as e:
+        logging.error(f"Error while fetching all borrow records: {str(e)}")
+        raise
+    
+    
 def save_new_borrow_record(user_id, book_id, quantity, borrow_date, due_date):
     """ Save a new borrow record to the database. """
     try:

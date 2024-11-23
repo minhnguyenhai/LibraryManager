@@ -3,9 +3,28 @@ from flask import request, jsonify
 from . import borrowing_api
 from ...services.borrowing.borrowing_service import (
     get_all_borrow_records_of_user, save_new_borrow_record, get_borrow_record_by_id,
-    update_borrow_record_info
+    update_borrow_record_info, list_borrow_records
 )
 from ...utils.decorators import JWT_required, admin_required
+
+
+@borrowing_api.route("/borrowing")
+@JWT_required
+@admin_required
+def get_all_borrow_records():
+    try:
+        borrow_records = list_borrow_records()
+        return jsonify({
+            "success": True,
+            "message": "Successfully fetched all borrow records.",
+            "borrow_records": borrow_records
+        }), 200
+    
+    except Exception as e:
+        return jsonify({
+            "error": "Internal server error.",
+            "message": str(e)
+        }), 500
 
 
 @borrowing_api.route("/user/<user_id>/borrowing")
@@ -26,7 +45,7 @@ def list_borrow_records_of_user(user_id):
             "message": str(e)
         }), 500
         
-        
+          
 @borrowing_api.route("/borrowing", methods=["POST"])
 @JWT_required
 @admin_required
