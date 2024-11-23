@@ -53,6 +53,10 @@ def update_borrow_record_info(borrow_record, return_date):
     """ Update a borrow record in the database. """
     try:
         borrow_record.return_date = return_date
+        if return_date <= borrow_record.due_date:
+            borrow_record.status = "returned-ontime"
+        else:
+            borrow_record.status = "returned-late"   
         db.session.commit()
         return borrow_record
     except Exception as e:
