@@ -26,10 +26,10 @@ def get_book_by_id(book_id):
         raise
     
     
-def save_new_book(title, author, image_url, description, price):
+def save_new_book(title, author, image_url, description, price, quantity):
     """ Save a new book to the database. """
     try:
-        new_book = Book(title, author, image_url, description, price)
+        new_book = Book(title, author, image_url, description, price, quantity)
         db.session.add(new_book)
         db.session.commit()
         return new_book
