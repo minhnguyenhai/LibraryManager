@@ -7,7 +7,7 @@ from ...services.user.user_service import(
 from ...utils.decorators import JWT_required, admin_required
 
 
-@user_api.route("/", method = ["get"])
+@user_api.route("/", methods = ["GET"])
 @JWT_required
 @admin_required
 def get_all_users():
@@ -28,7 +28,7 @@ def get_all_users():
             "message": str(e)
         }), 500
     
-@user_api.route("<user_id>", method = ["GET "])
+@user_api.route("<user_id>", methods = ["GET "])
 @JWT_required
 @admin_required
 def get_user(user_id):
