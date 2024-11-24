@@ -28,8 +28,7 @@ def update_user_byId(user_id, data):
         user = User.query.get(user_id)
         if not user:
             return None
-        if not data: 
-            return "No changes"
+       
         for key, value in data.items():
             setattr(user,key, value )
         db.session.commit()
