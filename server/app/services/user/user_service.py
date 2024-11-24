@@ -1,23 +1,13 @@
 import logging
 from app import db
 from ...models.user import User
-def list_users(page = 1, per_page = 10):
+def list_users():
     """Fecth all from the db"""
     try:
-        pagination = User.query.paginate(page =page , per_page= per_page, error_out=False)
-        users =  [user.as_dict() for user in pagination.items]
-        return{
-            "total_user":pagination.total,
-            "total_page":pagination.pages,
-            "current_page": pagination.page,
-            "user": users
-        }
-          
-            
-            
-
-    except Exception as e: 
-        logging.error(f"Error while fetching all book: {str(e)}")
+        users_list = User.query.all()
+        return [user.as_dict() for user in users_list]
+    except Exception as e:
+        logging.error(f"Error while fetching all user: {str(e)}")
         raise
 
 
