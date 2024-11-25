@@ -4,7 +4,7 @@ import '../login_register.css';
 const ForgotPasswordForm = ({ email, setEmail, loading, handleForgotPassword, error, loginLink }) => (
     <div className="form-box forgotpassword">
         <form onSubmit={handleForgotPassword}>
-            <h1>Forgot Password</h1>
+            <h1>Quên mật khẩu</h1>
             {error && <div className="error-message text-red-500">{error}</div>}
             <div className="input-box">
                 <input
@@ -17,10 +17,10 @@ const ForgotPasswordForm = ({ email, setEmail, loading, handleForgotPassword, er
                 <FaEnvelope className="icon" />
             </div>
 
-            <button type="submit">Verify</button>
+            <button type="submit">Xác nhận</button>
             <div className="register-link">
                 <p>
-                    Remembered your password? <a href="#" onClick={loginLink}>Login</a>
+                    Bạn đã nhớ mật khẩu? <a href="#" onClick={loginLink}>Login</a>
                 </p>
             </div>
         </form>

@@ -1,10 +1,10 @@
 import React from 'react';
 import './confirmation_dialog.css'
-const ConfirmationDialog = ({ 
-  isOpen, 
-  onClose, 
-  onConfirm, 
-  title = "", 
+const ConfirmationDialog = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title = "",
   message = "",
   confirmLabel = "",
   cancelLabel = ""
@@ -17,19 +17,19 @@ const ConfirmationDialog = ({
         <div className="modal-header">
           <h2 className="modal-title">{title}</h2>
         </div>
-        
+
         <div className="modal-body">
           {message}
         </div>
-        
+
         <div className="modal-footer">
-          <button 
+          <button
             className="modal-button cancel-button"
             onClick={onClose}
           >
             {cancelLabel}
           </button>
-          <button 
+          <button
             className="modal-button confirm-button"
             onClick={onConfirm}
           >

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { addBook } from '../../../../services/admin_services/main_services';
+import { handleRefreshToken } from '../../../auth/login_register';
 
 const AddBookModal = ({ onClose, onAdd }) => {
     const [newBook, setNewBook] = useState({
@@ -28,12 +30,17 @@ const AddBookModal = ({ onClose, onAdd }) => {
         });
     };
 
-    const handleAddBook = () => {
-        if (!newBook.title || !newBook.author || !newBook.price) {
-            alert('Vui lòng điền đầy đủ thông tin sách!');
-            return;
+    const handleAddBook = async() => {
+        try {
+            await handleRefreshToken();
+            const accessToken=localStorage.getItem('access_token');
+            const response= await addBook(newBook,accessToken);
+            onAdd(response.new_book);
+            alert('Thêm sách thành công');
+            onclose();
+        } catch (error) {
+            alert('Đã xảy ra lỗi khi thêm sách. Vui lòng thử lại!');
         }
-        onAdd(newBook);
     };
 
     return (
@@ -49,6 +56,7 @@ const AddBookModal = ({ onClose, onAdd }) => {
                             type="text"
                             value={newBook.title}
                             onChange={(e) => handleChange('title', e.target.value)}
+                            required
                         />
                     </div>
                     <div className="form-group">
@@ -58,6 +66,7 @@ const AddBookModal = ({ onClose, onAdd }) => {
                             type="text"
                             value={newBook.author}
                             onChange={(e) => handleChange('author', e.target.value)}
+                            required
                         />
                     </div>
                     <div className="form-group">
@@ -67,6 +76,7 @@ const AddBookModal = ({ onClose, onAdd }) => {
                             type="text"
                             value={newBook.price}
                             onChange={(e) => handleChange('price', e.target.value)}
+                            required
                         />
                     </div>
                     <div className="form-group">
@@ -76,6 +86,7 @@ const AddBookModal = ({ onClose, onAdd }) => {
                             type="number"
                             value={newBook.quantity}
                             onChange={(e) => handleChange('quantity', e.target.value)}
+                            required
                         />
                     </div>
                     <div className="form-group">
@@ -84,6 +95,7 @@ const AddBookModal = ({ onClose, onAdd }) => {
                             id="description"
                             value={newBook.description}
                             onChange={(e) => handleChange('description', e.target.value)}
+                            required
                         />
                     </div>
                     <div className="form-group">
@@ -93,6 +105,7 @@ const AddBookModal = ({ onClose, onAdd }) => {
                             type="text"
                             value={newBook.imageUrl}
                             onChange={(e) => handleChange('imageUrl', e.target.value)}
+                            required
                         />
                     </div>
                     <div className="form-actions">

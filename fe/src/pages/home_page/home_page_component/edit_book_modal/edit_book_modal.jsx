@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import './edit_book_modal.css';
+import { updateBook } from '../../../../services/admin_services/main_services';
+import { handleRefreshToken } from '../../../auth/login_register';
 
 const EditBookModal = ({ book, onClose, onSave }) => {
     const [editedBook, setEditedBook] = useState({ ...book });
@@ -21,7 +23,18 @@ const EditBookModal = ({ book, onClose, onSave }) => {
         });
     };
 
-    const handleSave = () => {
+    const handleSave = async()  => {
+        try {
+            await handleRefreshToken();
+            const accessToken=localStorage.getItem('access_token');
+            const response= await updateBook(editedBook.id,editedBook,accessToken);
+            onSave(response.updated_book);
+            alert('Thêm sách thành công');
+            onclose();
+
+        } catch (error) {
+            alert('Đã xảy ra lỗi cập nhật. Vui lòng thử lại');
+        }
         onSave(editedBook);
         onClose();
     };

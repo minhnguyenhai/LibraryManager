@@ -7,7 +7,6 @@ const generateAccounts = (count) => {
     return Array.from({ length: count }, (_, index) => ({
         id: index + 1,
         email: `Email ${index + 1}`,
-        author: `Author ${Math.floor(index / 5) + 1}`,
         name: `Name ${index + 1}`,
         dob: "22/10/2005",
         gender: "Male",
@@ -20,16 +19,25 @@ const ManageReaders = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const accountsPerPage = 10;
     const allAccounts = generateAccounts(100);
-    const totalPages = Math.ceil(allAccounts.length / accountsPerPage);
+    
     
     const [deleteConfirmation, setDeleteConfirmation] = useState({
         isOpen: false,
     });
 
+    //lọc tài khoản
+    const [filteredAccounts, setFilteredAccounts] = useState(allAccounts);
+
+    const handleSearch = (searchResults) => {
+        setFilteredAccounts(searchResults);
+        setCurrentPage(1); // Reset to first page after search
+    };
+
+    const totalPages = Math.ceil(filteredAccounts.length / accountsPerPage);
     const getCurrentAccounts = () => {
         const startIndex = (currentPage - 1) * accountsPerPage;
         const endIndex = startIndex + accountsPerPage;
-        return allAccounts.slice(startIndex, endIndex);
+        return filteredAccounts.slice(startIndex, endIndex);
     };
 
     const handleDeleteClick = () => {
@@ -47,7 +55,11 @@ const ManageReaders = () => {
     return (
         <div className="manage-accounts-content">
             <div className="searchbar-option">
-                <SearchBar />
+                <SearchBar 
+                onSearch={handleSearch}
+                data={allAccounts}
+                searchFields={['email','name','phone_number']}
+                />
             </div>
             <div className="table-container">
                 <table>

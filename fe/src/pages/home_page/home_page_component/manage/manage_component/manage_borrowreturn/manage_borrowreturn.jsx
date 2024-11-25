@@ -21,13 +21,23 @@ const ManageBorrowReturn = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const borrowsPerPage = 10;
     const allBorrows = generateBorrows(100);
-    const totalPages = Math.ceil(allBorrows.length / borrowsPerPage);
+    
     const [isAddingBorrow, setIsAddingBorrow] = useState(false);
+
+    //lọc tài khoản
+    const [filteredBorrows, setFilteredBorrows] = useState(allBorrows);
+
+    const totalPages = Math.ceil(filteredBorrows.length / borrowsPerPage);
+
+    const handleSearch = (searchResults) => {
+        setFilteredBorrows(searchResults);
+        setCurrentPage(1); // Reset to first page after search
+    };
 
     const getCurrentBorrows = () => {
         const startIndex = (currentPage - 1) * borrowsPerPage;
         const endIndex = startIndex + borrowsPerPage;
-        return allBorrows.slice(startIndex, endIndex);
+        return filteredBorrows.slice(startIndex, endIndex);
     };
 
     const handleAddnewBorrow = () => {
@@ -36,7 +46,11 @@ const ManageBorrowReturn = () => {
     return (
         <div className="manage-borrows-content">
             <div className="searchbar-option">
-                <SearchBar />
+                <SearchBar 
+                onSearch={handleSearch}
+                data={allBorrows}
+                searchFields={['name','email','book','status']}
+                />
                 <button className="catalog-button" onClick={() => setIsAddingBorrow(true)} >Thêm người mượn sách</button>
             </div>
             <div className="table-container">

@@ -5,7 +5,7 @@ const BookModal = ({
     book,
     onClose,
     labels = {
-        addToCart: 'Thêm vào giỏ'
+        addToCart: 'Thêm vào danh sách yêu thích'
     }
 }) => {
     const handleOverlayClick = (e) => {
