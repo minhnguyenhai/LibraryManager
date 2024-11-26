@@ -49,3 +49,6 @@ td.description-column{
   width: 400px;
   word-wrap: break-word;
 }
+td.quantity{
+  width: 150px;
+}

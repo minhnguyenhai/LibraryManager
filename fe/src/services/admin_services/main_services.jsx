@@ -1,4 +1,5 @@
 import axios from "axios";
+import Borrow from "../../models/borrow";
 
 const BASE_URL = '';
 
@@ -73,6 +74,80 @@ export const deleteBook= async(bookId,accessToken)=>{
             }
         )
         return response;
+    } catch (error) {
+        throw error;
+    }
+}
+
+//Lấy Danh Sách Tất Cả Các Lượt Mượn
+
+export const getAllBorrow = async(accessToken)=>{
+    try{
+        const response=await axios.get(
+            `${BASE_URL}/borrowing`,
+            {
+                header:{
+                    Authorization: `Bearer ${accessToken}`
+                }
+            }
+        )
+        if(response.status===200){
+            return response.data.borrow_records.map((borrow)=>new Borrow(borrow));
+        }else{
+            throw new Error(`Error: ${response.status}`)
+        }
+    }catch(error){
+        throw error;
+    }
+}
+
+//Tạo Lượt Mượn Sách
+export const addNewBorrow=async(borrowData,accessToken)=>{
+    try {
+        const response=await axios.post(
+            `${BASE_URL}/borrowing`,
+            {
+                user_id: borrowData.userId,
+                book_id: borrowData.bookId,
+                quantity: borrowData.quantity,
+                borrow_date: borrowData.borrowDate,
+                due_date: borrowData.dueDate,
+            },
+            {
+                header:{
+                    Authorization:`Bearer ${accessToken}`
+                }
+            }
+        )
+        if (response.status===201){
+            return response.data;
+        }else{
+            throw new Error(`Error: ${response.status}`);
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+//trả sách
+export const returnBorrowBook =async(borrowId,borrowData,accessToken)=>{
+    try {
+        const response=await axios.put(
+            `${BASE_URL}/borrowing/${borrowId}/return`,
+            {
+                return_date: borrowData.returnDate,
+            },
+            {
+                header:{
+                    Authorization:`Bearer ${accessToken}`
+                }
+            }
+        )
+        if (response.status===200){
+            return response.data;
+        }else{
+            throw new Error(response.status);
+        }
     } catch (error) {
         throw error;
     }

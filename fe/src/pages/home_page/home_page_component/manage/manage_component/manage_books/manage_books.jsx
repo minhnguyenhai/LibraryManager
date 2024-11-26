@@ -140,7 +140,7 @@ const ManageBooks = () => {
                 <SearchBar
                     onSearch={handleSearch}
                     data={allBooks}
-                    searchFields={['title','author']}
+                    searchFields={['title','author','id']}
                 />
                 <button className="catalog-button" onClick={() => setIsAddingBook(true)}>Thêm sách</button>
             </div>
@@ -169,7 +169,7 @@ const ManageBooks = () => {
                                 <td>{book.author}</td>
                                 <td className='description-column' >{book.description}</td>
                                 <td>{book.price}</td>
-                                <td>{book.quantity}</td>
+                                <td className='quantity'>{book.quantity}</td>
                                 <td>
                                     <div className="button-option">
                                         <button
