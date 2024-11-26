@@ -1,18 +1,27 @@
 import React, { useState } from "react";
 import { FaBook } from "react-icons/fa";
 import { MdWorkHistory } from "react-icons/md";
+import FavouriteBooks from "./favourite_books/favourite_books";
+import HistoryBorrow from "./history_borrow/history_borrow";
 const User = () => {
+    const [activeContent, setActiveContent] = useState("favourite_books");
+    
+
     const options = [
-        { label: 'Sách yêu thích', icon: <FaBook />, key: 'favourite books' },
-        { label: 'Lịch sử mượn sách', icon: <MdWorkHistory />, key: 'history borrow' },
+        { label: 'Sách yêu thích', icon: <FaBook />, key: "favourite_books" },
+        { label: 'Lịch sử mượn sách', icon: <MdWorkHistory />, key: "history_borrow" },
     ];
 
-    const [activeContent, setActiveContent] = useState("favourite books")
+
 
     const renderContent = () => {
         switch (activeContent) {
-            case 'favourite books':
-            case 'history borrow':
+            case "favourite_books":
+                return <FavouriteBooks />;
+            case "history_borrow":
+                return <HistoryBorrow />;
+            default:
+                return <p>Chọn một mục để xem nội dung</p>;
         }
     }
     return (
