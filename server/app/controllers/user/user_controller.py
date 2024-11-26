@@ -63,12 +63,26 @@ def update_user(user_id):
     API để cập nhật thông tin người dùng dựa trên ID.
     """
     try:
-        
+        user = get_user_byId(user_id)
+        if not user: 
+            return jsonify({
+                "success": False,
+                "message": "User not found."
+            }), 404
+            
         data = request.get_json()
+        
         if data is None:
             raise ValueError("Invalid JSON data.")
 
-      
+        ALLOW_FIELDS = {"name","gender","address","phone_number"}  
+        unknown_fields = {field for field in data if field not in ALLOW_FIELDS}
+        if unknown_fields:
+            return jsonify({
+                "success": False,
+                "message": f"Unknown fields: {', '.join(unknown_fields)}" 
+            }), 400    
+             
         updated_user = update_user_byId(user_id, data)
         if not updated_user:
             return jsonify({
