@@ -1,6 +1,5 @@
 import React from "react";
 import "./search.css"
-import { FaSearch } from "react-icons/fa";
 import BookList from "../books/book_list";
 import SearchBar from "./search_bar";
 const Search = () => {

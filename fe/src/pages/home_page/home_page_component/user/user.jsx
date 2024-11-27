@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaBook } from "react-icons/fa";
 import { MdWorkHistory } from "react-icons/md";
+import { HistoryBorrow } from "./user_component/history_borrow/history_borrow";
 const User = () => {
     const options = [
         { label: 'Sách yêu thích', icon: <FaBook />, key: 'favourite books' },
@@ -13,6 +14,7 @@ const User = () => {
         switch (activeContent) {
             case 'favourite books':
             case 'history borrow':
+                return <HistoryBorrow/>
         }
     }
     return (

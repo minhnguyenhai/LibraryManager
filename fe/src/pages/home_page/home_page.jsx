@@ -25,7 +25,7 @@ const HomePage = () => {
         <div className="home-page">
             <Header selectedNav={selectedNav} setSelectedNav={setSelectedNav} />
             <div className="body-content">
-                {location.pathname === '/' ? <Home /> : <Outlet />}
+                {location.pathname === '/' ? <Home setSelectedNav={setSelectedNav}/> : <Outlet />}
             </div>
             <Footer />
         </div>
