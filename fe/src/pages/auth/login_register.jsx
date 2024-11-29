@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import './login_register.css';
 import { useNavigate } from 'react-router-dom';
-import { userlogin, userrefrehToken, userlogout, register, verify, resend_code, forgotPassword, validation, resetPassword } from "../../services/user_services";
-import { adminlogin, adminlogout,adminrefrehToken } from "../../services/admin_services";
+import { login, refrehToken, logout, register, verify, resend_code, forgotPassword, resetPassword } from "../../services/user_services";
 import LoginForm from "./auth_component/login_form";
 import RegisterForm from "./auth_component/register_form";
 import ForgotPasswordForm from "./auth_component/forgotPassword_form";
@@ -14,7 +13,6 @@ const LoginRegister = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmpassword, setConfirmpassword] = useState('');
-    const [isAdmin, setIsAdmin] = useState(false);
     const [name, setName] = useState('');
     const [dob, setDob] = useState('');
     const [gender, setGender] = useState('');
@@ -24,6 +22,7 @@ const LoginRegister = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [agreeToTerms, setAgreeToTerms] = useState(false);
+    const [validationType,setValidationType]=useState('')
 
     const navigate = useNavigate();
 
@@ -55,20 +54,11 @@ const LoginRegister = () => {
         setError('');
         try {
             setLoading(true);
-            const result = isAdmin ? await adminlogin(email.trim(), password) : await userlogin(email.trim(), password);
+            const result =  await login(email.trim(), password);
             if (result) {
-                if (!result.reader.is_verified) {
-                    setError('Tài khoản của bạn chưa được xác thực. Vui lòng xác thực qua email.');
-                    //xử lý sau
-                }
-                localStorage.setItem('access_token', result.accessToken);
-                localStorage.setItem('refresh_token', result.refreshToken);
-                if (isAdmin) {
-                    localStorage.setItem('admin_info', JSON.stringify(result.admin))
-
-                } else {
-                    localStorage.setItem('reader_info', JSON.stringify(result.reader))
-                }
+                localStorage.setItem('access_token', result.access_token);
+                localStorage.setItem('refresh_token', result.refresh_token);
+                localStorage.setItem('user_info', JSON.stringify(result.user));
                 navigate('/home');
                 alert(result.message);
             }
@@ -93,8 +83,7 @@ const LoginRegister = () => {
         if(isTokenExpired(currentAccessToken)){
             try {
                 const currentRefreshToken = localStorage.getItem('refresh_token');
-                const isAdmin = localStorage.getItem('admin_info') ? true : false;
-                const result = isAdmin? await userrefrehToken(currentRefreshToken):await adminrefrehToken(currentRefreshToken);
+                const result =await refrehToken(currentRefreshToken);
                 if (result) {
                     localStorage.setItem('access_token', result.access_token);
                     localStorage.setItem('refresh_token', result.refresh_token);
@@ -110,13 +99,11 @@ const LoginRegister = () => {
         try {
             await handleRefreshToken();
             const accessToken = localStorage.getItem('access_token');
-            const isAdmin = localStorage.getItem('admin_info') ? true : false;
-            const result = isAdmin? await userlogout(accessToken): await adminlogout(accessToken);
+            const result =  await logout(accessToken);
             if (result) {
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
-                localStorage.removeItem('reader_info');
-                localStorage.removeItem('admin_info');
+                localStorage.removeItem('user_info');
                 alert("Đăng xuất thành công!");
                 navigate('/login');
             }
@@ -132,13 +119,13 @@ const LoginRegister = () => {
             setLoading(true);
             const result = await register(email.trim(), password, name.trim(), dob, gender, address, phone_number);
             if (result) {
-                localStorage.setItem('reader_info', JSON.stringify(result.reader));
+                localStorage.setItem('user_info', JSON.stringify(result.user));
                 localStorage.setItem('confirm_token', result.confirm_token);
                 setAction('validation-active');
+                setValidationType('register')
                 alert('User registered successfully. An email has been sent to confirm your account');
             }
         } catch (err) {
-            alert('Đăng ký thất bại, vui lòng thử lại');
             setError('Đăng ký thất bại, vui lòng thử lại');
         } finally {
             setLoading(false);
@@ -156,8 +143,12 @@ const LoginRegister = () => {
             if (result) {
                 localStorage.setItem('access_token', result.access_token);
                 localStorage.setItem('refresh_token', result.refresh_token);
-                alert('Your email address was verified successfully.');
-                navigate('/login');
+                if(validationType==='register'){
+                    setAction('');
+                    alert('Your email address was verified successfully.');
+                }else if(validationType==='resetPassword'){
+                    setAction('resetpassword-active');
+                }
             }
         } catch (error) {
             setError('Mã xác thực không chính xác')
@@ -171,8 +162,6 @@ const LoginRegister = () => {
         setError('');
         try {
             setLoading(true);
-            const readerInfo = JSON.parse(localStorage.getItem('reader_info'));
-            const email = readerInfo ? readerInfo.email : null;
             const result = await resend_code(email);
             if (result) {
                 localStorage.setItem('confirm_token', result.confirm_token);
@@ -190,10 +179,11 @@ const LoginRegister = () => {
         try {
             setLoading(true);
             const result = await forgotPassword(email.trim());
-            if (result && result.token) {
-                localStorage.setItem('tokenforgot', result.token);
+            if (result) {
+                localStorage.setItem('confirm_token', result.confirm_token);
                 console.log('Gửi yêu cầu thành công');
                 setAction('validation-active');
+                setValidationType('resetPassword')
             }
         } catch (err) {
             setError('Gửi yêu cầu thất bại, vui lòng kiểm tra lại email của bạn');
@@ -203,38 +193,25 @@ const LoginRegister = () => {
         setAction('validation-active');
     };
 
-    const handleValidation = async (e) => {
-        e.preventDefault();
-        setError('');
-        try {
-            setLoading(true);
-            const result = await validation(code);
-            if (result) {
-                console.log('Mã xác thực chính xác');
-                setAction('resetpassword-active');
-            }
-        } catch (err) {
-            setError('Nhập mã xác thực thất bại');
-        } finally {
-            setLoading(false);
-        }
-        setAction('resetpassword-active');
-    };
-
     const handleResetPassword = async (e) => {
         e.preventDefault();
         setError('');
-        try {
-            setLoading(true);
-            const result = await resetPassword(password, confirmpassword);
-            if (result) {
-                console.log('Thành công');
-                navigate('/home');
+        if(password!==confirmpassword){
+            setError('Kiểm tra lại mật khẩu');
+        }else{
+            try {
+                const tempAccessToken=localStorage.getItem('confirm_token');
+                setLoading(true);
+                const result = await resetPassword(password, tempAccessToken);
+                if (result) {
+                    console.log('Thành công');
+                    navigate('/home');
+                }
+            } catch (err) {
+                setError('Đổi mật khẩu thất bại');
+            } finally {
+                setLoading(false);
             }
-        } catch (err) {
-            setError('Đổi mật khẩu thất bại');
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -252,8 +229,6 @@ const LoginRegister = () => {
                         handleLogin={handleLogin}
                         forgotPasswordLink={forgotPasswordLink}
                         registerLink={registerLink}
-                        isAdmin={isAdmin}
-                        setIsAdmin={setIsAdmin}
                     />
                 )}
                 {action === 'register-active' && (
@@ -298,6 +273,7 @@ const LoginRegister = () => {
                         error={error}
                         handleVerifyEmail={handleVerifyEmail}
                         handleResend={handleResend}
+                        validationType={validationType}
                     />
                 )}
                 {action === 'resetpassword-active' && (
