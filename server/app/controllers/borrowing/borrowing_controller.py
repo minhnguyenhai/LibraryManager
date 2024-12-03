@@ -27,15 +27,15 @@ def get_all_borrow_records():
         }), 500
 
 
-@borrowing_api.route("/user/<user_id>/borrowing")
+@borrowing_api.route("/user/<id>/borrowing")
 @JWT_required
-def list_borrow_records_of_user(user_id):
+def list_borrow_records_of_user(id):
     try:
-        borrow_records = get_all_borrow_records_of_user(user_id)
+        borrow_records = get_all_borrow_records_of_user(id)
         return jsonify({
             "success": True,
             "message": "Successfully fetched all borrow records of the user.",
-            "user_id": user_id,
+            "user_id": id,
             "borrow_records": borrow_records
         }), 200
     
