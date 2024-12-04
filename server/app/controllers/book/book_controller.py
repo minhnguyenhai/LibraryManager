@@ -3,12 +3,12 @@ from flask import request, jsonify
 from . import book_api
 from ...services.book.book_service import (
     list_books, get_book_by_id, save_new_book, update_book_info,
-    delete_book_from_db, search_books_by_query
+    delete_book_from_db, search_books_by_query, list_favorite_books
 )
 from ...utils.decorators import JWT_required, admin_required
 
 
-@book_api.route("/")
+@book_api.route("/book", methods=["GET"])
 @JWT_required
 def get_all_books():
     try:
@@ -26,7 +26,7 @@ def get_all_books():
         }), 500
 
 
-@book_api.route("/<book_id>")
+@book_api.route("/book/<book_id>", methods=["GET"])
 @JWT_required
 def get_book(book_id):
     try:
@@ -44,7 +44,7 @@ def get_book(book_id):
         }), 500
         
         
-@book_api.route("/", methods=["POST"])
+@book_api.route("/book", methods=["POST"])
 @JWT_required
 @admin_required
 def add_book():
@@ -82,7 +82,7 @@ def add_book():
         }), 500
 
 
-@book_api.route("/<book_id>", methods=["PUT"])
+@book_api.route("/book/<book_id>", methods=["PUT"])
 @JWT_required
 @admin_required
 def update_book(book_id):
@@ -126,7 +126,7 @@ def update_book(book_id):
         }), 500
         
         
-@book_api.route("/<book_id>", methods=["DELETE"])
+@book_api.route("/book/<book_id>", methods=["DELETE"])
 @JWT_required
 @admin_required
 def delete_book(book_id):
@@ -148,7 +148,7 @@ def delete_book(book_id):
         }), 500
         
         
-@book_api.route("/search", methods=["GET"])
+@book_api.route("/book/search", methods=["GET"])
 @JWT_required
 def search_books():
     try:
@@ -165,6 +165,24 @@ def search_books():
             "message": "Search completed successfully.",
             "total": len(book_search_results),
             "books": book_search_results
+        }), 200
+    
+    except Exception as e:
+        return jsonify({
+            "error": "Internal server error.",
+            "message": str(e)
+        }), 500
+        
+
+@book_api.route("/user/favorite", methods=["GET"])
+@JWT_required
+def get_favorite_books_for_user(user_id):
+    try:
+        favorite_books = list_favorite_books(user_id)
+        return jsonify({
+            "success": True,
+            "message": "Successfully fetched favorite books.",
+            "books": favorite_books
         }), 200
     
     except Exception as e:

@@ -37,7 +37,7 @@ def create_app(config_class=Config):
     app.register_blueprint(user_api, url_prefix="/user")
     
     from .controllers.book import book_api
-    app.register_blueprint(book_api, url_prefix="/book")
+    app.register_blueprint(book_api)
     
     from .controllers.borrowing import borrowing_api
     app.register_blueprint(borrowing_api)

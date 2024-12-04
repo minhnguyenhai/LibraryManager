@@ -2,6 +2,7 @@ import logging
 
 from app import db
 from ...models.book import Book
+from ...models.favorite import Favorite
 
 
 def list_books():
@@ -79,4 +80,20 @@ def search_books_by_query(query):
     
     except Exception as e:
         logging.error(f"Error while searching books by query: {str(e)}")
+        raise
+    
+    
+def list_favorite_books(user_id):
+    """ Fetch all favorite books for a user. """
+    try:
+        favorite_books = db.session.execute(
+            db.select(Book)
+            .join(Favorite, Favorite.book_id == Book.id)
+            .where(Favorite.user_id == user_id)
+        ).scalars().all()
+        
+        return [book.as_dict() for book in favorite_books]
+    
+    except Exception as e:
+        logging.error(f"Error while fetching favorite books: {str(e)}")
         raise
