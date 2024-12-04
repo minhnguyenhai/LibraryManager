@@ -22,7 +22,7 @@ const LoginRegister = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [agreeToTerms, setAgreeToTerms] = useState(false);
-    const [validationType,setValidationType]=useState('')
+    const [validationType, setValidationType] = useState('')
 
     const navigate = useNavigate();
 
@@ -54,7 +54,7 @@ const LoginRegister = () => {
         setError('');
         try {
             setLoading(true);
-            const result =  await login(email.trim(), password);
+            const result = await login(email.trim(), password);
             if (result) {
                 localStorage.setItem('access_token', result.access_token);
                 localStorage.setItem('refresh_token', result.refresh_token);
@@ -76,14 +76,14 @@ const LoginRegister = () => {
         const expTime = payload.exp * 1000; // chuyển thành milliseconds
         return Date.now() >= expTime; // Trả về true nếu token đã hết hạn
     };
-    
+
     // Xử lý refreshtoken
     const handleRefreshToken = async () => {
         const currentAccessToken = localStorage.getItem('access_token');
-        if(isTokenExpired(currentAccessToken)){
+        if (isTokenExpired(currentAccessToken)) {
             try {
                 const currentRefreshToken = localStorage.getItem('refresh_token');
-                const result =await refrehToken(currentRefreshToken);
+                const result = await refrehToken(currentRefreshToken);
                 if (result) {
                     localStorage.setItem('access_token', result.access_token);
                     localStorage.setItem('refresh_token', result.refresh_token);
@@ -99,7 +99,7 @@ const LoginRegister = () => {
         try {
             await handleRefreshToken();
             const accessToken = localStorage.getItem('access_token');
-            const result =  await logout(accessToken);
+            const result = await logout(accessToken);
             if (result) {
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
@@ -109,7 +109,7 @@ const LoginRegister = () => {
             }
         } catch (error) {
             alert('Tài khoản đã hết phiên đăng nhập trước đó');
-        } 
+        }
     }
     //xử lý đăng ký
     const handleRegister = async (e) => {
@@ -138,14 +138,14 @@ const LoginRegister = () => {
         try {
             setLoading(true);
             const confirmtoken = localStorage.getItem('confirm_token');
-            const result = await verify(confirmtoken, code,validationType);
+            const result = await verify(confirmtoken, code, validationType);
             if (result) {
                 localStorage.setItem('access_token', result.access_token);
                 localStorage.setItem('refresh_token', result.refresh_token);
-                if(validationType==='verify-email'){
+                if (validationType === 'verify-email') {
                     setAction('');
                     alert('Your email address was verified successfully.');
-                }else if(validationType==='validate-reset-code'){
+                } else if (validationType === 'validate-reset-code') {
                     setAction('resetpassword-active');
                 }
             }
@@ -161,13 +161,13 @@ const LoginRegister = () => {
         setError('');
         try {
             setLoading(true);
-            const result = await resend_code(email);
+            const result= validationType==='verify-email'? await resend_code(email.trim()): await forgotPassword(email.trim());
             if (result) {
                 localStorage.setItem('confirm_token', result.confirm_token);
                 alert('Đã gửi lại mã xác thức tới email của bạn')
             }
         } catch (error) {
-            console.log('Gửi lại mã xác thực thất bại',error);
+            console.log('Gửi lại mã xác thực thất bại', error);
             //alert('Gửi lại mã xác thực thất bại');
         } finally {
             setLoading(false);
@@ -196,11 +196,11 @@ const LoginRegister = () => {
     const handleResetPassword = async (e) => {
         e.preventDefault();
         setError('');
-        if(password!==confirmpassword){
+        if (password !== confirmpassword) {
             setError('Kiểm tra lại mật khẩu');
-        }else{
+        } else {
             try {
-                const tempAccessToken=localStorage.getItem('confirm_token');
+                const tempAccessToken = localStorage.getItem('confirm_token');
                 setLoading(true);
                 const result = await resetPassword(password, tempAccessToken);
                 if (result) {
