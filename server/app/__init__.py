@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_mail import Mail
@@ -12,6 +13,7 @@ class Base(DeclarativeBase):
     pass
 
 
+cors = CORS()
 db = SQLAlchemy(model_class=Base)
 migrate = Migrate()
 mail = Mail()
@@ -22,6 +24,7 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     
+    cors.init_app(app, resources={r"/*": {"origins": app.config["CORS_ALLOWED_ORIGINS"]}})
     db.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)

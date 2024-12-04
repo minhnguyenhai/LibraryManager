@@ -9,6 +9,7 @@ load_dotenv(dotenv_path=env_path)
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "secret_key")
+    CORS_ALLOWED_ORIGINS = "*"
     CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
 
     POSTGRESQL_USERNAME = os.environ.get("POSTGRESQL_USERNAME")
