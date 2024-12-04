@@ -1,5 +1,5 @@
 import axios from "axios";
-const BASE_URL = 'https://your-api-domain.com';
+const BASE_URL = 'https://librarymanager-aict.onrender.com';
 //đăng nhập
 const login = async (email, password) => {
     try {
@@ -55,7 +55,7 @@ const logout=async(accessToken)=>{
 //đăng ký
 const register = async (email, password, name,dob,gender,address,phone_number) => {
     try {
-        const response = await axios.post(`${BASE_URL}/user/register`, {
+        const body={
             email: email,
             password: password,
             name: name,
@@ -63,12 +63,16 @@ const register = async (email, password, name,dob,gender,address,phone_number) =
             gender:gender,
             address:address,
             phone_number:phone_number
-        });
-        console(response.status);
+        }
+        console.log(body);
+        const response = await axios.post(`${BASE_URL}/user/register`, 
+            body
+        );
+        console.log(response.status);
         if (response.status === 201) { 
             return response.data;
         } else {
-            throw new Error(`Lỗi đăng ký: ${response.status}`);
+            console.log(response.status);
         }
     } catch (error) {
         throw error;
@@ -76,13 +80,15 @@ const register = async (email, password, name,dob,gender,address,phone_number) =
 };
 
 //xác thực email
-const verify = async(confirm_token,verification_code)=>{
+const verify = async(confirm_token,verification_code,endPoint)=>{
     try {
-        const response=await axios.post(`${BASE_URL}/user/verify-email`,{
+        console.log(confirm_token, verification_code);
+        const response=await axios.post(`${BASE_URL}/user/${endPoint}`,{
             confirm_token:confirm_token,
             verification_code:verification_code
         })
-        if(response===200){
+        console.log(response)
+        if(response.status===200){
             return response.data;
         }else{
             throw new Error(`Lỗi xác thực: ${response.status}`)
@@ -97,7 +103,8 @@ const resend_code =async (email)=>{
         const response=await axios.post(`${BASE_URL}/user/send-verification-code`,{
             email:email
         });
-        console.log(response.status);
+        console.log(email);
+        console.log(response);
         if(response.status===200){
             return response.data;
         }else{
@@ -127,7 +134,7 @@ const forgotPassword = async (email) => {
 //đặt mật khẩu mới
 const resetPassword = async (newPassword,tempAccessToken) => {
     try {
-        const response = await axios.post("url_api/reset_password", {
+        const response = await axios.post(`${BASE_URL}/user/reset-password`, {
             new_password: newPassword,
             temp_access_token:tempAccessToken
         });
