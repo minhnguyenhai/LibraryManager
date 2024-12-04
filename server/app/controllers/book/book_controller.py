@@ -4,7 +4,7 @@ from . import book_api
 from ...services.book.book_service import (
     list_books, get_book_by_id, save_new_book, update_book_info,
     delete_book_from_db, search_books_by_query, list_favorite_books,
-    add_book_to_favorites
+    add_book_to_favorites, remove_favorite_book
 )
 from ...utils.decorators import JWT_required, admin_required
 
@@ -227,6 +227,36 @@ def add_favorite_book_for_user(user_id):
             "message": str(e)
         }), 400
     
+    except Exception as e:
+        return jsonify({
+            "error": "Internal server error.",
+            "message": str(e)
+        }), 500
+        
+        
+@book_api.route("/user/favorite/<book_id>", methods=["DELETE"])
+@JWT_required
+def remove_book_from_favorites(user_id, book_id):
+    try:
+        book = get_book_by_id(book_id)
+        if not book:
+            return jsonify({
+                "success": False,
+                "message": "Book not found."
+            }), 404
+            
+        is_removed = remove_favorite_book(user_id, book_id)
+        if is_removed:
+            return jsonify({
+                "success": True,
+                "message": "Successfully removed book from favorites."
+            }), 200
+        
+        return jsonify({
+            "success": False,
+            "message": "Book not found in favorites."
+        }), 404
+
     except Exception as e:
         return jsonify({
             "error": "Internal server error.",

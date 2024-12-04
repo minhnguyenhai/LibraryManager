@@ -110,3 +110,20 @@ def add_book_to_favorites(user_id, book_id):
         db.session.rollback()
         logging.error(f"Error while adding book to favorites: {str(e)}")
         raise
+    
+    
+def remove_favorite_book(user_id, book_id):
+    """ Remove a book from the user's favorites. """
+    try:
+        favorite_book = Favorite.query.filter_by(user_id=user_id, book_id=book_id).first()
+        if not favorite_book:
+            return False
+        
+        db.session.delete(favorite_book)
+        db.session.commit()
+        return True
+        
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error while removing favorite book: {str(e)}")
+        raise
