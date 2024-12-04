@@ -337,7 +337,7 @@ def request_reset_password():
         return jsonify({
             "success": True,
             "message": "Reset password code sent to your email successfully.",
-            "reset_token": reset_token
+            "confirm_token": reset_token
         }), 200
         
     except ValueError as e:
@@ -360,8 +360,8 @@ def validate_reset_code():
         if data is None:
             raise ValueError("Invalid JSON data.")
         
-        reset_token = data.get("reset_token")
-        reset_code = data.get("reset_code")
+        reset_token = data.get("confirm_token")
+        reset_code = data.get("verification_code")
 
         if not reset_token or not reset_code:
             return jsonify({
