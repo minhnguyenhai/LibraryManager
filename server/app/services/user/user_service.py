@@ -1,6 +1,10 @@
 import logging
 from app import db
 from ...models.user import User
+from ...models.token import Token
+from ...models.borrow_record import BorrowRecord
+
+
 def list_users():
     """Fecth all from the db"""
     try:
@@ -11,6 +15,11 @@ def list_users():
         raise
 
 
+def is_admin(user):
+    """Check if a user is an admin"""
+    return user.role == "admin"
+    
+
 def get_user_byId(user_id):
     """"Fecth a user by id"""
     try: 
@@ -19,37 +28,41 @@ def get_user_byId(user_id):
             return None
         return user.as_dict()
     except Exception as e: 
-        logging.error(f"Error while fetching user_id: {str(e)}")
+        logging.error(f"Error while fetching user by ID: {str(e)}")
         raise
 
-def update_user_byId(user_id, data):
-    """Change user information by Id"""
+
+def update_user_info(user, data):
+    """Update user information"""
     try: 
-        user = User.query.get(user_id)
-        if not user:
-            return None
-       
         for key, value in data.items():
-            setattr(user,key, value )
+            setattr(user, key, value)
         db.session.commit()
-        return  user.as_dict()
+        return user.as_dict()
     except Exception as e:
-        db.session.rollback()  # Hoàn tác nếu commit thất bại       
-        logging.error(f"Error while updating user by ID: {str(e)}")
+        db.session.rollback()  
+        logging.error(f"Error while updating user: {str(e)}")
         raise  
     
-def delete_user_byId(user_id):
-    """Delete a user"""
+    
+def delete_user_from_db(user):
+    """Delete a user from the database"""
     try:
-        user = User.query.get(user_id)
-        if not user:
-            return "User does not exist"
+        token_to_delete = db.session.execute(
+            db.select(Token).where(Token.user_id == user.id)
+        ).scalar()
+        db.session.delete(token_to_delete)
+        
+        borrow_records_to_delete = db.session.execute(
+            db.select(BorrowRecord).where(BorrowRecord.user_id == user.id)
+        ).scalars().all()
+        db.session.delete(borrow_records_to_delete)
+        
         db.session.delete(user)
         db.session.commit()
-        return( f"User with ID {user_id} has been deleted successfully.")
+        
     except Exception as e: 
         db.session.rollback() 
-        
-        logging.error(f"Error while deleting user with ID {user_id}: {str(e)}")
+        logging.error(f"Error while deleting user from database: {str(e)}")
         raise 
         
