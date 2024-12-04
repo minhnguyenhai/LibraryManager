@@ -19,6 +19,7 @@ class Book(db.Model):
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
     
     borrow_records: Mapped[list["BorrowRecord"]] = relationship(back_populates="book")
+    favorites: Mapped[list["Favorite"]] = relationship(back_populates="book")
     
     
     def __init__(self, title, author, image_url, description, price, quantity):

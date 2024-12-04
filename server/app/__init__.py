@@ -31,6 +31,8 @@ def create_app(config_class=Config):
     
     celery.conf.update(app.config)
     
+    from .models import user, token, book, borrow_record, favorite
+    
     from .controllers.user import user_api
     app.register_blueprint(user_api, url_prefix="/user")
     
