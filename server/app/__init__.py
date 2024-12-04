@@ -24,7 +24,7 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     
-    cors.init_app(app, resources={r"/*": {"origins": app.config["CORS_ALLOWED_ORIGINS"]}})
+    CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "PUT", "DELETE"], "allow_headers": "*"}})
     db.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
