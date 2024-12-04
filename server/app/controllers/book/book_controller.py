@@ -3,7 +3,8 @@ from flask import request, jsonify
 from . import book_api
 from ...services.book.book_service import (
     list_books, get_book_by_id, save_new_book, update_book_info,
-    delete_book_from_db, search_books_by_query, list_favorite_books
+    delete_book_from_db, search_books_by_query, list_favorite_books,
+    add_book_to_favorites
 )
 from ...utils.decorators import JWT_required, admin_required
 
@@ -184,6 +185,47 @@ def get_favorite_books_for_user(user_id):
             "message": "Successfully fetched favorite books.",
             "books": favorite_books
         }), 200
+    
+    except Exception as e:
+        return jsonify({
+            "error": "Internal server error.",
+            "message": str(e)
+        }), 500
+        
+        
+@book_api.route("/user/favorite", methods=["POST"])
+@JWT_required
+def add_favorite_book_for_user(user_id):
+    try:
+        data = request.get_json()
+        if not data:
+            raise ValueError("Invalid JSON data.")
+        
+        book_id = data.get("book_id")
+        if not book_id:
+            return jsonify({
+                "success": False,
+                "message": "Missing 'book_id' field."
+            }), 400
+            
+        book = get_book_by_id(book_id)
+        if not book:
+            return jsonify({
+                "success": False,
+                "message": "Book not found."
+            }), 404
+        
+        add_book_to_favorites(user_id, book_id)
+        return jsonify({
+            "success": True,
+            "message": "Successfully added book to favorites."
+        }), 200
+        
+    except ValueError as e:
+        return jsonify({
+            "error": "Invalid data.",
+            "message": str(e)
+        }), 400
     
     except Exception as e:
         return jsonify({

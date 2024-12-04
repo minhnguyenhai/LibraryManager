@@ -97,3 +97,16 @@ def list_favorite_books(user_id):
     except Exception as e:
         logging.error(f"Error while fetching favorite books: {str(e)}")
         raise
+    
+    
+def add_book_to_favorites(user_id, book_id):
+    """ Add book to user's favorites. """
+    try:
+        new_favorite = Favorite(user_id, book_id)
+        db.session.add(new_favorite)
+        db.session.commit()
+        
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error while adding book to favorites: {str(e)}")
+        raise
