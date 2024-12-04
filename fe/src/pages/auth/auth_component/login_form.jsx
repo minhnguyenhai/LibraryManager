@@ -2,7 +2,7 @@ import React from 'react';
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import '../login_register.css';
 
-const LoginForm = ({ email, password, setEmail, setPassword, handleLogin, error, forgotPasswordLink, registerLink, isAdmin, setIsAdmin }) => (
+const LoginForm = ({ email, password, setEmail, setPassword, handleLogin, error, forgotPasswordLink, registerLink }) => (
     <div className="form-box login">
         <form onSubmit={handleLogin}>
             <h1>Đăng nhập</h1>
@@ -29,10 +29,8 @@ const LoginForm = ({ email, password, setEmail, setPassword, handleLogin, error,
                 <label>
                     <input
                         type="checkbox"
-                        checked={isAdmin}
-                        onChange={(e)=>setIsAdmin(e.target.checked)}
                     />
-                    Vai trò Admin?
+                    Nhớ mật khẩu?
                 </label>
                 <a href="#" onClick={forgotPasswordLink}>Quên mật khẩu?</a>
             </div>

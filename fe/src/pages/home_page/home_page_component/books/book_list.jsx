@@ -3,6 +3,7 @@ import './book_list.css';
 import Pagination from '../pagination/pagination';
 import BookModal from './book_modal';
 import { getAllBooks } from '../../../../services/user_services/main_services';
+import { handleRefreshToken } from '../../../auth/login_register';
 
 const BookList = () => {
   const [selectedBook, setSelectedBook] = useState(null);
@@ -23,10 +24,12 @@ const BookList = () => {
   const fetchBooks = async () => {
     setLoading(true);
     try {
-      const data = await getAllBooks();
+      await handleRefreshToken();
+      const accessToken=localStorage.getItem('access_token');
+      const data = await getAllBooks(accessToken);
       setBooks(data || []);
     } catch (error) {
-      console.log(`Error: ${error}`);
+        console.log('Error: ',error);
     } finally {
       setLoading(false);
     }

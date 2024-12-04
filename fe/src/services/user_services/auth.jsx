@@ -1,9 +1,9 @@
 import axios from "axios";
-const BASE_URL = 'https://your-api-domain.com';
+const BASE_URL = 'https://librarymanager-aict.onrender.com';
 //đăng nhập
-const userlogin = async (email, password) => {
+const login = async (email, password) => {
     try {
-        const response = await axios.post(`${BASE_URL}/reader/login`,
+        const response = await axios.post(`${BASE_URL}/user/login`,
             {
                 email: email,
                 password: password,
@@ -20,9 +20,9 @@ const userlogin = async (email, password) => {
     }
 }
 //refresh token
-const userrefrehToken= async(currentRefreshToken)=>{
+const refrehToken= async(currentRefreshToken)=>{
     try {
-        const response=await axios.post(`${BASE_URL}/reader/refresh-token`,{
+        const response=await axios.post(`${BASE_URL}/user/refresh-token`,{
             refresh_token:currentRefreshToken,
         });
         console.log(response.status);
@@ -36,9 +36,9 @@ const userrefrehToken= async(currentRefreshToken)=>{
     }
 }
 //đăng xuất
-const userlogout=async(accessToken)=>{
+const logout=async(accessToken)=>{
     try {
-        const response=await axios.post(`${BASE_URL}/reader/logout`,{},{
+        const response=await axios.post(`${BASE_URL}/user/logout`,{},{
             headers:{
                 Authorization:`Bearer ${accessToken}`
             }
@@ -55,7 +55,7 @@ const userlogout=async(accessToken)=>{
 //đăng ký
 const register = async (email, password, name,dob,gender,address,phone_number) => {
     try {
-        const response = await axios.post(`${BASE_URL}/reader/register`, {
+        const body={
             email: email,
             password: password,
             name: name,
@@ -63,12 +63,16 @@ const register = async (email, password, name,dob,gender,address,phone_number) =
             gender:gender,
             address:address,
             phone_number:phone_number
-        });
-        console(response.status);
+        }
+        console.log(body);
+        const response = await axios.post(`${BASE_URL}/user/register`, 
+            body
+        );
+        console.log(response.status);
         if (response.status === 201) { 
             return response.data;
         } else {
-            throw new Error(`Lỗi đăng ký: ${response.status}`);
+            console.log(response.status);
         }
     } catch (error) {
         throw error;
@@ -76,13 +80,15 @@ const register = async (email, password, name,dob,gender,address,phone_number) =
 };
 
 //xác thực email
-const verify = async(confirm_token,verification_code)=>{
+const verify = async(confirm_token,verification_code,endPoint)=>{
     try {
-        const response=await axios.post(`${BASE_URL}/reader/register`,{
+        console.log(confirm_token, verification_code);
+        const response=await axios.post(`${BASE_URL}/user/${endPoint}`,{
             confirm_token:confirm_token,
             verification_code:verification_code
         })
-        if(response===200){
+        console.log(response)
+        if(response.status===200){
             return response.data;
         }else{
             throw new Error(`Lỗi xác thực: ${response.status}`)
@@ -94,10 +100,11 @@ const verify = async(confirm_token,verification_code)=>{
 //gửi lại mã xác thực
 const resend_code =async (email)=>{
     try {
-        const response=await axios.post(`${BASE_URL}/reader/send-verification-code`,{
+        const response=await axios.post(`${BASE_URL}/user/send-verification-code`,{
             email:email
         });
-        console.log(response.status);
+        console.log(email);
+        console.log(response);
         if(response.status===200){
             return response.data;
         }else{
@@ -107,12 +114,13 @@ const resend_code =async (email)=>{
         throw error;
     }
 }
-//quên mật khẩu
+//yêu cầu đặt lại mật khẩu
 const forgotPassword = async (email) => {
     try {
-        const response = await axios.post("url_api/forgot-password", {
+        const response = await axios.post(`${BASE_URL}/user/request-reset-password`, {
             email: email
         });
+
         console.log(response.status);
         if (response.status === 200) {
             return response.data;
@@ -123,34 +131,12 @@ const forgotPassword = async (email) => {
         throw error;
     }
 }
-
-const validation = async (code) => {
+//đặt mật khẩu mới
+const resetPassword = async (newPassword,tempAccessToken) => {
     try {
-        const tokenforgot=localStorage.getItem('tokenforgot');
-        const response = await axios.post("url_api/validate_code", {
-            code: code,
-            token:tokenforgot
-        });
-
-        console.log(response.status);
-        if (response.status === 200) {
-            console.log('Mã xác thực chính xác:', response.data);
-            return response.data;
-        } else {
-            console.error(`Lỗi: ${response.status} - ${response.statusText}`);
-            throw new Error(`Lỗi : ${response.status}`);
-        }
-    } catch (error) {
-        console.error('Gửi mã xác thực thất bại:', error);
-        throw error;
-    }
-}
-const resetPassword = async (newPassword,confirmPassword) => {
-    try {
-        const tokenforgot=localStorage.getItem('tokenforgot');
-        const response = await axios.post("url_api/reset_password", {
-            newPassword: newPassword,
-            token:tokenforgot
+        const response = await axios.post(`${BASE_URL}/user/reset-password`, {
+            new_password: newPassword,
+            temp_access_token:tempAccessToken
         });
 
         console.log(response.status);
@@ -166,5 +152,4 @@ const resetPassword = async (newPassword,confirmPassword) => {
         throw error;
     }
 }
-
-export { userlogin,userrefrehToken,userlogout, register,verify,resend_code, forgotPassword, validation, resetPassword };
+export { login,refrehToken,logout, register,verify,resend_code, forgotPassword, resetPassword };
