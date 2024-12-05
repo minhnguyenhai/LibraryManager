@@ -13,9 +13,12 @@ const User = () => {
     const renderContent = () => {
         switch (activeContent) {
             case 'favourite books':
+                return <FavouriteBook />;
             case 'history borrow':
-                return <HistoryBorrow/>
-        }
+                return <HistoryBorrow />;
+            default:
+                return null; 
+         }
     }
     return (
         <div className="manage-container">
