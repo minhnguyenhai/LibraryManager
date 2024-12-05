@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import './login_register.css';
 import { useNavigate } from 'react-router-dom';
-import { login, refrehToken, logout, register, verify, resend_code, forgotPassword, resetPassword } from "../../services/user_services/auth";
+import { login, refrehToken, register, verify, resend_code, forgotPassword, resetPassword } from "../../services/user_services/auth";
 import LoginForm from "./auth_component/login_form";
 import RegisterForm from "./auth_component/register_form";
 import ForgotPasswordForm from "./auth_component/forgotPassword_form";
@@ -86,7 +86,6 @@ const LoginRegister = () => {
                 localStorage.setItem('refresh_token', result.refresh_token);
                 localStorage.setItem('user_info', JSON.stringify(result.user));
                 navigate('/home');
-                alert(result.message);
             }
         } catch (err) {
             setError('Đăng nhập thất bại, vui lòng kiểm tra lại thông tin')
@@ -94,24 +93,6 @@ const LoginRegister = () => {
             setLoading(false);
         }
     };
-    //xử lý logout
-    const handleLogout = async (e) => {
-        e.preventDefault();
-        try {
-            await handleRefreshToken();
-            const accessToken = localStorage.getItem('access_token');
-            const result = await logout(accessToken);
-            if (result) {
-                localStorage.removeItem('access_token');
-                localStorage.removeItem('refresh_token');
-                localStorage.removeItem('user_info');
-                alert("Đăng xuất thành công!");
-                navigate('/login');
-            }
-        } catch (error) {
-            alert('Tài khoản đã hết phiên đăng nhập trước đó');
-        }
-    }
     //xử lý đăng ký
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -124,7 +105,7 @@ const LoginRegister = () => {
                 localStorage.setItem('confirm_token', result.confirm_token);
                 setAction('validation-active');
                 setValidationType('verify-email')
-                alert('User registered successfully. An email has been sent to confirm your account');
+                alert('Đăng ký thành công. Vui lòng nhập mã xác thực từ email');
             }
         } catch (err) {
             setError('Đăng ký thất bại, vui lòng thử lại');
@@ -191,7 +172,7 @@ const LoginRegister = () => {
         } finally {
             setLoading(false);
         }
-        setAction('validation-active');
+
     };
 
     const handleResetPassword = async (e) => {

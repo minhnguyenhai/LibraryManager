@@ -43,11 +43,11 @@
 }
 
 .wrapper.forgotpassword-active {
-    height: 400px;
+    height: 350px;
 }
 
 .wrapper.validation-active {
-    height: 300px;
+    height: 340px;
     /* Đặt chiều cao phù hợp cho form nhập mã code */
 }
 

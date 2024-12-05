@@ -17,7 +17,9 @@ const ForgotPasswordForm = ({ email, setEmail, loading, handleForgotPassword, er
                 <FaEnvelope className="icon" />
             </div>
 
-            <button type="submit">Xác nhận</button>
+            <button type="submit" disabled={loading}>
+                {loading ? "Loading..." : "Xác nhận"}
+            </button>
             <div className="register-link">
                 <p>
                     Bạn đã nhớ mật khẩu? <a href="#" onClick={loginLink}>Login</a>

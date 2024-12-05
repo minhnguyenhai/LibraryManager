@@ -43,6 +43,7 @@ const logout=async(accessToken)=>{
                 Authorization:`Bearer ${accessToken}`
             }
         });
+        console.log(response);
         if(response.status===204){
             return true;
         }else{

@@ -5,7 +5,7 @@ import { BsFillTelephoneFill } from "react-icons/bs";
 import Select from 'react-select';
 const RegisterForm = ({ email, password, name, dob, gender, phone_number,
     setEmail, setPassword, setName, setDob, setGender, setPhonenumber, setAddress,
-    handleRegister, error, agreeToTerms, setAgreeToTerms, loginLink }) => {
+    handleRegister, error, agreeToTerms, setAgreeToTerms, loginLink,loading }) => {
     const [provinces, setProvinces] = useState([]);
     const [selectedProvince, setSelectedProvince] = useState(null);
     // Lấy danh sách tỉnh từ API
@@ -21,6 +21,7 @@ const RegisterForm = ({ email, password, name, dob, gender, phone_number,
                 })));
             })
             .catch(error => console.error('Error fetching provinces:', error));
+
     }, []);
 
     useEffect(() => {
@@ -134,8 +135,9 @@ const RegisterForm = ({ email, password, name, dob, gender, phone_number,
 
                 <button
                     type="submit"
+                    disabled={loading}
                 >
-                    Đăng ký
+                    {loading ? "Loading..." : "Đăng ký"}
 
                 </button>
                 <div className="register-link">

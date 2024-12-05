@@ -26,7 +26,9 @@ const ResetPasswordForm = ({ password, confirmpassword, setPassword, setConfirmp
                     required />
                 <FaLock className="icon" />
             </div>
-            <button type="submit" disabled={loading}>Xác nhận</button>
+            <button type="submit" disabled={loading}>
+                {loading ? "Loading..." : "Đăng nhập"}
+            </button>
         </form>
     </div>
 );

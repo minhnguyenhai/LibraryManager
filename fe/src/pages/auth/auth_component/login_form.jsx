@@ -2,7 +2,7 @@ import React from 'react';
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import '../login_register.css';
 
-const LoginForm = ({ email, password, setEmail, setPassword, handleLogin, error, forgotPasswordLink, registerLink }) => (
+const LoginForm = ({ email, password, setEmail,loading, setPassword, handleLogin, error, forgotPasswordLink, registerLink }) => (
     <div className="form-box login">
         <form onSubmit={handleLogin}>
             <h1>Đăng nhập</h1>
@@ -37,8 +37,10 @@ const LoginForm = ({ email, password, setEmail, setPassword, handleLogin, error,
 
             <button
                 type="submit"
+                disabled={loading}
+                
             >
-                Đăng nhập
+                {loading ? "Loading..." : "Đăng nhập"}
             </button>
             <div className="register-link">
                 <p>

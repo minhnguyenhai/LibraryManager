@@ -14,7 +14,9 @@ const ValidationForm = ({ code, setCode, loading, handleVerifyEmail, error, hand
                     required />
             </div>
 
-            <button type="submit">Xác nhận</button>
+            <button type="submit" disabled={loading} >
+                {loading ? "Loading..." : "Xác nhận"}
+            </button>
             <div className="register-link">
                 <p>
                     Chưa nhận được code? <a href="#" onClick={(e) => {
