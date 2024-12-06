@@ -42,4 +42,6 @@ def create_app(config_class=Config):
     from .controllers.borrowing import borrowing_api
     app.register_blueprint(borrowing_api)
     
+    from.controllers.statistic import statistic_api
+    app.register_blueprint(statistic_api)
     return app
