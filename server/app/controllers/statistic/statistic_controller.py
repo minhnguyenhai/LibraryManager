@@ -5,8 +5,11 @@ from ...services.statistic.statistic_service import(
     get_books_currently_borrowed,
     get_users_currently_borrowing
 )
+from ...utils.decorators import JWT_required, admin_required
 
 @statistic_api.route('/user-statistics', methods=['GET'])
+@JWT_required
+@admin_required
 def user_statistics():
     """Endpoint to get total user count and new users this month"""
     try:
@@ -16,6 +19,8 @@ def user_statistics():
         return jsonify({"error": str(e)}), 500
 
 @statistic_api.route('/book-statistics', methods=['GET'])
+@JWT_required
+@admin_required
 def book_statistics():
     """Endpoint to get total book count and new books added this month"""
     try:
@@ -26,6 +31,8 @@ def book_statistics():
     
     
 @statistic_api.route('/books-currently-borrowed', methods=['GET'])
+@JWT_required
+@admin_required
 def books_currently_borrowed():
     """ Endpoint to get the total number of books currently borrowed """
     try:
@@ -35,6 +42,8 @@ def books_currently_borrowed():
         return jsonify({"error": str(e)}), 500
 
 @statistic_api.route('/users-currently-borrowing', methods=['GET'])
+@JWT_required
+@admin_required
 def users_currently_borrowing():
     """ Endpoint to get the total number of users currently borrowing books """
     try:
