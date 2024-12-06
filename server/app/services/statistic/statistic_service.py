@@ -48,3 +48,13 @@ def get_books_currently_borrowed():
         raise Exception(f"Error while fetching the borrowed books count: {str(e)}")
    
     
+def get_users_currently_borrowing():
+    """ Get the total number of unique users currently borrowing books """
+    try:
+        # Lấy số lượng người dùng đang mượn sách (trạng thái 'borrowing')
+        count = db.session.query(func.count(func.distinct(BorrowRecord.user_id)))\
+                          .filter(BorrowRecord.status == 'borrowing')\
+                          .scalar()
+        return count if count else 0
+    except Exception as e:
+        raise Exception(f"Error while fetching the users borrowing books count: {str(e)}")

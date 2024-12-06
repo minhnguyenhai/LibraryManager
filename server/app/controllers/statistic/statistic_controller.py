@@ -34,3 +34,11 @@ def books_currently_borrowed():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@statistic_api.route('/users-currently-borrowing', methods=['GET'])
+def users_currently_borrowing():
+    """ Endpoint to get the total number of users currently borrowing books """
+    try:
+        total_users_borrowing = get_users_currently_borrowing()
+        return jsonify({"total_users_borrowing": total_users_borrowing}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500    
