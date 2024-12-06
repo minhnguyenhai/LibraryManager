@@ -1,8 +1,11 @@
 import logging
 from datetime import datetime
 from app import db
+from sqlalchemy.orm import aliased
+from sqlalchemy import func
 from ...models.user import User
 from ...models.book import Book
+from ...models.borrow_record import BorrowRecord
 
 def get_user_statistic():
     """Fecth total number of users and new users in the current month"""
@@ -35,3 +38,13 @@ def get_book_statistic():
     except Exception as e:
         logging.error(f"Error while fetching book statistics: {str(e)}")
         raise
+    
+def get_books_currently_borrowed():
+    """ Get the total number of books currently borrowed """
+    try:
+        count = db.session.query(func.sum(BorrowRecord.quantity)).filter(BorrowRecord.status == 'borrowing').scalar()
+        return count if count else 0
+    except Exception as e:
+        raise Exception(f"Error while fetching the borrowed books count: {str(e)}")
+   
+    

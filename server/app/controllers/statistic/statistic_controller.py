@@ -1,7 +1,9 @@
 from flask import jsonify
 from . import statistic_api
 from ...services.statistic.statistic_service import(
-    get_book_statistic, get_user_statistic
+    get_book_statistic, get_user_statistic,
+    get_books_currently_borrowed,
+    get_users_currently_borrowing
 )
 
 @statistic_api.route('/user-statistics', methods=['GET'])
@@ -21,3 +23,14 @@ def book_statistics():
         return jsonify(stats), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+    
+@statistic_api.route('/books-currently-borrowed', methods=['GET'])
+def books_currently_borrowed():
+    """ Endpoint to get the total number of books currently borrowed """
+    try:
+        total_books_borrowed = get_books_currently_borrowed()
+        return jsonify({"total_books_borrowed": total_books_borrowed}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
