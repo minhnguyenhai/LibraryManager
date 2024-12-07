@@ -86,7 +86,7 @@ def add_book(user):
 @book_api.route("/book/<book_id>", methods=["PUT"])
 @JWT_required
 @admin_required
-def update_book(book_id):
+def update_book(user, book_id):
     try:
         book = get_book_by_id(book_id)
         if not book:
@@ -130,7 +130,7 @@ def update_book(book_id):
 @book_api.route("/book/<book_id>", methods=["DELETE"])
 @JWT_required
 @admin_required
-def delete_book(book_id):
+def delete_book(user, book_id):
     try:
         book = get_book_by_id(book_id)
         if not book:

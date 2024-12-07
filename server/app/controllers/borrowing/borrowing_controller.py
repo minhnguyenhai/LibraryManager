@@ -11,7 +11,7 @@ from ...utils.decorators import JWT_required, admin_required
 @borrowing_api.route("/borrowing")
 @JWT_required
 @admin_required
-def get_all_borrow_records():
+def get_all_borrow_records(user):
     try:
         borrow_records = list_borrow_records()
         return jsonify({
@@ -49,7 +49,7 @@ def list_borrow_records_of_user(id):
 @borrowing_api.route("/borrowing", methods=["POST"])
 @JWT_required
 @admin_required
-def create_borrow_record():
+def create_borrow_record(user):
     try:
         data = request.get_json()
         if data is None:
@@ -87,7 +87,7 @@ def create_borrow_record():
 @borrowing_api.route("/borrowing/<borrow_record_id>/return", methods=["PUT"])
 @JWT_required
 @admin_required
-def update_borrow_record(borrow_record_id):
+def update_borrow_record(user, borrow_record_id):
     try:
         borrow_record = get_borrow_record_by_id(borrow_record_id)
         if not borrow_record:
