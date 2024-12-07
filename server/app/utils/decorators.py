@@ -85,6 +85,6 @@ def admin_required(f):
                 "message": "Unauthorized: Admin permission required"
             }), 403
         
-        return f(*args, **kwargs)
+        return f(user, *args, **kwargs)
 
     return decorated_function

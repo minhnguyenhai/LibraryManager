@@ -48,7 +48,7 @@ def get_book(book_id):
 @book_api.route("/book", methods=["POST"])
 @JWT_required
 @admin_required
-def add_book():
+def add_book(user):
     try:
         data = request.get_json()
         if data is None:
