@@ -29,8 +29,14 @@ def get_all_borrow_records(user):
 
 @borrowing_api.route("/user/<id>/borrowing")
 @JWT_required
-def list_borrow_records_of_user(id):
+def list_borrow_records_of_user(user, id):
     try:
+        if user.role != "admin" and user.id != id:
+            return jsonify({
+                "success": False,
+                "message": "You are not authorized to access this resource."
+            }), 403
+
         borrow_records = get_all_borrow_records_of_user(id)
         return jsonify({
             "success": True,
