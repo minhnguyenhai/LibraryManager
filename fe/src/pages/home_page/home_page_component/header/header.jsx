@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import logo from "../../../../assets/img/logo.jpg";
-import defaultAvatar from "../../../../assets/img/default-avatar.png"; 
+import defaultAvatar from "../../../../assets/img/default-avatar.png";
 import './header.css';
 import { Link, useNavigate } from "react-router-dom";
 import { handleRefreshToken } from "../../../auth/login_register";
@@ -22,19 +22,22 @@ const Header = ({ selectedNav, setSelectedNav }) => {
     }, []);
 
     const handleLogout = async () => {
-        handleRefreshToken();
-        const accessToken = localStorage.getItem('access_token');
-        const response = await logout(accessToken);
-        console.log('phản hồi',response);
-        if (response) {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            localStorage.removeItem('user_info');
-
-            setIsLoggedIn(false);
-            setUserData(null);
-
-            navigate('/login');
+        try {
+            handleRefreshToken();
+            const accessToken = localStorage.getItem('access_token');
+            const response = await logout(accessToken);
+            console.log('phản hồi', response);
+            if (response) {
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+                localStorage.removeItem('user_info');
+                localStorage.removeItem('selectedNav');
+                setIsLoggedIn(false);
+                setUserData(null);
+                navigate('/login');
+            }
+        } catch (error) {
+            console.log(error);
         }
     };
 
@@ -83,20 +86,27 @@ const Header = ({ selectedNav, setSelectedNav }) => {
                 >
                     TRANG CHỦ
                 </Link>
-                <Link
-                    to="/manage"
-                    className={`nav-link ${selectedNav === "Manage" ? "active" : ""}`}
-                    onClick={() => setSelectedNav("Manage")}
-                >
-                    QUẢN LÝ
-                </Link>
-                <Link
-                    to="/user"
-                    className={`nav-link ${selectedNav === "User" ? "active" : ""}`}
-                    onClick={() => setSelectedNav("User")}
-                >
-                    DỊCH VỤ NGƯỜI DÙNG
-                </Link>
+            
+                {userData?.role === "admin" && (
+                    <Link
+                        to="/manage"
+                        className={`nav-link ${selectedNav === "Manage" ? "active" : ""}`}
+                        onClick={() => setSelectedNav("Manage")}
+                    >
+                        QUẢN LÝ
+                    </Link>
+                )}
+
+                {/* Chỉ hiển thị mục "Dịch vụ người dùng" nếu vai trò là reader */}
+                {userData?.role === "reader" && (
+                    <Link
+                        to="/user"
+                        className={`nav-link ${selectedNav === "User" ? "active" : ""}`}
+                        onClick={() => setSelectedNav("User")}
+                    >
+                        DỊCH VỤ NGƯỜI DÙNG
+                    </Link>
+                )}
                 <Link
                     to="/search"
                     className={`nav-link ${selectedNav === "Search" ? "active" : ""}`}

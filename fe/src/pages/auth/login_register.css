@@ -422,4 +422,12 @@ form .register-link {
     color: #fff;
     margin-right: -10px;
 }
-
+.info-message {
+    background-color: #e6f7ff; /* Màu nền nhạt */
+    color: #007acc; /* Màu chữ */
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 14px;
+}

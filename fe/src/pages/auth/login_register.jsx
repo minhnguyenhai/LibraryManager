@@ -104,8 +104,7 @@ const LoginRegister = () => {
                 localStorage.setItem('user_info', JSON.stringify(result.user));
                 localStorage.setItem('confirm_token', result.confirm_token);
                 setAction('validation-active');
-                setValidationType('verify-email')
-                alert('Đăng ký thành công. Vui lòng nhập mã xác thực từ email');
+                setValidationType('verify-email');
             }
         } catch (err) {
             setError('Đăng ký thất bại, vui lòng thử lại');
@@ -126,7 +125,6 @@ const LoginRegister = () => {
                 localStorage.setItem('refresh_token', result.refresh_token);
                 if (validationType === 'verify-email') {
                     setAction('');
-                    alert('Your email address was verified successfully.');
                 } else if (validationType === 'validate-reset-code') {
                     setAction('resetpassword-active');
                 }
@@ -146,11 +144,9 @@ const LoginRegister = () => {
             const result= validationType==='verify-email'? await resend_code(email.trim()): await forgotPassword(email.trim());
             if (result) {
                 localStorage.setItem('confirm_token', result.confirm_token);
-                alert('Đã gửi lại mã xác thức tới email của bạn')
             }
         } catch (error) {
             console.log('Gửi lại mã xác thực thất bại', error);
-            //alert('Gửi lại mã xác thực thất bại');
         } finally {
             setLoading(false);
         }
