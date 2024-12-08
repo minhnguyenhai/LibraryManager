@@ -7,35 +7,16 @@ import BookModal from '../../../books/book_modal';
 import EditBookModal from '../../../edit_book_modal/edit_book_modal';
 import AddBookModal from '../../../add_book_modal/add_book_modal';
 import ConfirmationDialog from '../../../confirmation_dialog/confirmation_dialog';
-import { getAllBooks } from '../../../../../../services/user_services/main_services';
 import { deleteBook } from '../../../../../../services/admin_services/main_services';
 import { handleRefreshToken } from '../../../../../auth/login_register';
+import { getAllBooks, search } from '../../../../../../services/common_servieces';
+import { toast, ToastContainer } from 'react-toastify'; // Nếu bạn sử dụng thư viện react-toastify
+import 'react-toastify/dist/ReactToastify.css'; // Đừng quên import CSS
 
 
-
-// const generateBooks = (count) => {
-//     return Array.from({ length: count }, (_, index) => ({
-//         id: index + 1,
-//         title: `Book ${index + 1}`,
-//         author: `Author ${Math.floor(index / 5) + 1}`,
-//         price: `$${(15 + Math.random() * 25).toFixed(2)}`,
-//         imageUrl: "https://kenh14cdn.com/thumb_w/600/27fc8f4935/2015/09/09/TTHVTCX%20-%20Official%20poster-cd46e.jpg",
-//         description: `This is a detailed description for Book ${index + 1}. It contains all the important information about the book that readers might want to know before making a purchase decision...`,
-//         quantity: Math.floor(Math.random() * 10) + 1
-//     }));
-// };
-
-const allBooks = Array(100).fill().map((_, index) => ({
-    id: index + 1,
-    title: `Book ${index + 1}`,
-    author: `Author ${index + 1}`,
-    price: `$${(Math.random() * 20 + 10).toFixed(2)}`,
-    imageUrl: "https://kenh14cdn.com/thumb_w/600/27fc8f4935/2015/09/09/TTHVTCX%20-%20Official%20poster-cd46e.jpg",
-    description: `This is a detailed description for Book ${index + 1}. It contains all the important information about the book that readers might want to know before making a purchase decision...`,
-    quantity: Math.floor(Math.random() * 10) + 1
-}));
 
 const ManageBooks = () => {
+    const [loading, setLoading] = useState(false);
     const [selectedBook, setSelectedBook] = useState(null);
     const [editingBook, setEditingBook] = useState(null);
     const [isAddingBook, setIsAddingBook] = useState(false);
@@ -45,15 +26,18 @@ const ManageBooks = () => {
     });
 
     const [books, setBooks] = useState([]);
-
+    const [filteredBooks, setFilteredBooks] = useState(books);
     const [currentPage, setCurrentPage] = useState(1);
     const booksPerPage = 10;
-    // const allBooks = generateBooks(100);
+    const [triggerFetch, setTriggerFetch] = useState(false);
 
     const fetchBooks = async () => {
         try {
-            const data = await getAllBooks();
+            handleRefreshToken();
+            const accessToken = localStorage.getItem('access_token');
+            const data = await getAllBooks(accessToken);
             setBooks(data || []);
+            setFilteredBooks(data || []);
         } catch (error) {
             console.log(`Error: ${error}`);
         }
@@ -61,22 +45,29 @@ const ManageBooks = () => {
 
     useEffect(() => {
         fetchBooks();
-    })
-
-    //lọc sách
-    const [filteredBooks, setFilteredBooks] = useState(allBooks);
-
-    const handleSearch = (searchResults) => {
-        setFilteredBooks(searchResults);
-        setCurrentPage(1); // Reset to first page after search
-    };
+    }, [triggerFetch])
 
     const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
-    
+
     const getCurrentBooks = () => {
         const startIndex = (currentPage - 1) * booksPerPage;
         const endIndex = startIndex + booksPerPage;
         return filteredBooks.slice(startIndex, endIndex);
+    };
+
+    const handleSearch = async (searchTerm) => {
+        if (!searchTerm.trim()) return; // Bỏ qua nếu từ khóa rỗng
+        setLoading(true);
+        try {
+            handleRefreshToken();
+            const accessToken = localStorage.getItem("access_token"); // Lấy JWT Token từ localStorage
+            const results = await search(searchTerm, accessToken); // Gọi API tìm kiếm
+            setFilteredBooks(results); // Cập nhật kết quả tìm kiếm
+        } catch (error) {
+            console.error("Lỗi khi tìm kiếm:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleReadClick = (book) => {
@@ -84,6 +75,7 @@ const ManageBooks = () => {
     };
 
     const handleEditClick = (book) => {
+        console.log(book);
         setEditingBook(book);
     };
 
@@ -97,7 +89,7 @@ const ManageBooks = () => {
     };
 
     const handleAddNewBook = (newBook) => {
-        allBooks.push(newBook); // Thêm sách mới vào danh sách
+        books.push(newBook); // Thêm sách mới vào danh sách
         setIsAddingBook(false); // Đóng modal
     };
 
@@ -114,20 +106,22 @@ const ManageBooks = () => {
                 handleRefreshToken();
                 const accessToken = localStorage.getItem('access_token');
                 const response = await deleteBook(deleteConfirmation.bookToDelete.id, accessToken);
+
                 if (response.status === 204) {
-                    // Update local state to remove the deleted book
-                    const updatedBooks = books.filter(
-                        book => book.id !== deleteConfirmation.bookToDelete.id
-                    );
-                    // If you're managing books state, update it
-                    setBooks(updatedBooks);
+                    // Hiện thông báo toaster
+                    toast.success("Xóa thành công");
+                    setTimeout(() => {
+                        fetchBooks();
+                    }, 5000);
                 } else {
-                    console.log(response.status)
+                    toast.error('Xóa sách thất bại. Vui lòng thử lại!');
                 }
             } catch (error) {
                 console.error('Error deleting book:', error);
+                toast.error('Đã xảy ra lỗi khi xóa sách. Vui lòng thử lại!');
             }
         }
+
         setDeleteConfirmation({
             isOpen: false,
             bookToDelete: null
@@ -136,11 +130,11 @@ const ManageBooks = () => {
 
     return (
         <div className="manage-books-content">
+            <ToastContainer/>
             <div className="searchbar-option">
                 <SearchBar
                     onSearch={handleSearch}
-                    data={allBooks}
-                    searchFields={['title','author','id']}
+                    loading={loading}
                 />
                 <button className="catalog-button" onClick={() => setIsAddingBook(true)}>Thêm sách</button>
             </div>
@@ -159,9 +153,9 @@ const ManageBooks = () => {
                     </thead>
                     <tbody>
 
-                        {getCurrentBooks().map(book => (
+                        {getCurrentBooks().map((book, index) => (
                             <tr key={book.id}>
-                                <td>{book.id}</td>
+                                <td>{index + 1}</td>
                                 <td className="image-column">
                                     <img src={book.imageUrl} alt={book.title} />
                                     {book.title}

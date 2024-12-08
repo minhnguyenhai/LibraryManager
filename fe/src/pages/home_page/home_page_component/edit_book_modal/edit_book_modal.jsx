@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
 import './edit_book_modal.css';
 import { updateBook } from '../../../../services/admin_services/main_services';
 import { handleRefreshToken } from '../../../auth/login_register';
 
 const EditBookModal = ({ book, onClose, onSave }) => {
     const [editedBook, setEditedBook] = useState({ ...book });
+    useEffect(() => {
+        setEditedBook({ ...book });
+    }, [book]);
 
     const handleOverlayClick = (e) => {
         e.stopPropagation();
         onClose();
     };
-
     const handleContentClick = (e) => {
         e.stopPropagation();
     };
-
     const handleChange = (field, value) => {
         setEditedBook({
             ...editedBook,
@@ -25,18 +25,19 @@ const EditBookModal = ({ book, onClose, onSave }) => {
 
     const handleSave = async()  => {
         try {
+            console.log('Book',book)
             await handleRefreshToken();
             const accessToken=localStorage.getItem('access_token');
             const response= await updateBook(editedBook.id,editedBook,accessToken);
             onSave(response.updated_book);
-            alert('Thêm sách thành công');
-            onclose();
+            if(response){
+                alert('Thêm sách thành công');
+                onClose();
+            }
 
         } catch (error) {
             alert('Đã xảy ra lỗi cập nhật. Vui lòng thử lại');
         }
-        onSave(editedBook);
-        onClose();
     };
 
     if (!book) return null;
@@ -91,6 +92,15 @@ const EditBookModal = ({ book, onClose, onSave }) => {
                             onChange={(e) => handleChange('description', e.target.value)}
                         />
                     </div>
+                    <div className="form-group">
+                        <label htmlFor="imageUrl">Link ảnh</label>
+                        <input
+                            id="imageUrl"
+                            type="text"
+                            value={editedBook.imageUrl}
+                            onChange={(e) => handleChange('imageUrl', e.target.value)}
+                        />
+                    </div>
                     <div className="form-actions">
                         <button type="button" onClick={handleSave}>
                             Lưu
@@ -105,18 +115,5 @@ const EditBookModal = ({ book, onClose, onSave }) => {
     );
 };
 
-EditBookModal.propTypes = {
-    book: PropTypes.shape({
-        id: PropTypes.number,
-        title: PropTypes.string,
-        author: PropTypes.string,
-        price: PropTypes.string,
-        quantity: PropTypes.number,
-        imageUrl: PropTypes.string,
-        description: PropTypes.string
-    }),
-    onClose: PropTypes.func.isRequired,
-    onSave: PropTypes.func.isRequired
-};
 
 export default EditBookModal;

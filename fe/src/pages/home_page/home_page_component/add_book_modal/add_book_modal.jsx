@@ -34,12 +34,16 @@ const AddBookModal = ({ onClose, onAdd }) => {
         try {
             await handleRefreshToken();
             const accessToken=localStorage.getItem('access_token');
+            console.log(accessToken)
+            console.log(newBook);
             const response= await addBook(newBook,accessToken);
+            console.log(accessToken)
+            console.log(newBook);
             onAdd(response.new_book);
             alert('Thêm sách thành công');
             onclose();
         } catch (error) {
-            alert('Đã xảy ra lỗi khi thêm sách. Vui lòng thử lại!');
+            console.log('Error: ')
         }
     };
 

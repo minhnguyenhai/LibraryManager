@@ -1,13 +1,13 @@
 import axios from "axios";
 import Borrow from "../../models/borrow";
+import { BASE_URL } from "../common_servieces";
 
-const BASE_URL = '';
 
 //thêm sách mới
 export const addBook = async (bookData, accessToken)=> {
     try {
         const response = await axios.post(
-            `${BASE_URL}/add_book`,
+            `${BASE_URL}/book`,
             {
                 title: bookData.title,
                 author: bookData.author,
@@ -17,7 +17,7 @@ export const addBook = async (bookData, accessToken)=> {
                 quantity: bookData.quantity,
             },
             {
-                header:{
+                headers:{
                     Authorization: `Bearer ${accessToken}`,
                 }
             }
@@ -36,7 +36,7 @@ export const addBook = async (bookData, accessToken)=> {
 export const updateBook =async(bookId,bookData,accessToken)=>{
     try {
         const response=await axios.put(
-            `${BASE_URL}/update_book/${bookId}`,
+            `${BASE_URL}/book/${bookId}`,
             {
                 title: bookData.title,
                 author: bookData.author,
@@ -46,15 +46,17 @@ export const updateBook =async(bookId,bookData,accessToken)=>{
                 quantity: bookData.quantity,
             },
             {
-                header:{
+                headers:{
                     Authorization:`Bearer ${accessToken}`
                 }
             }
         )
+        console.log(response)
         if (response.status===200){
             return response.data;
         }else{
-            throw new Error(response.status);
+            //throw new Error(response.status);
+            console.log('Error:',response.status)
         }
     } catch (error) {
         throw error;
@@ -66,13 +68,14 @@ export const updateBook =async(bookId,bookData,accessToken)=>{
 export const deleteBook= async(bookId,accessToken)=>{
     try {
         const response=await axios.delete(
-            `${BASE_URL}/delete_book/${bookId}`,
+            `${BASE_URL}/book/${bookId}`,
             {
-                header:{
+                headers:{
                     Authorization: `Bearer ${accessToken}`
                 }
             }
         )
+        console.log('phản hồi',response);
         return response;
     } catch (error) {
         throw error;
@@ -86,11 +89,12 @@ export const getAllBorrow = async(accessToken)=>{
         const response=await axios.get(
             `${BASE_URL}/borrowing`,
             {
-                header:{
+                headers:{
                     Authorization: `Bearer ${accessToken}`
                 }
             }
         )
+        console.log(response)
         if(response.status===200){
             return response.data.borrow_records.map((borrow)=>new Borrow(borrow));
         }else{
@@ -114,7 +118,7 @@ export const addNewBorrow=async(borrowData,accessToken)=>{
                 due_date: borrowData.dueDate,
             },
             {
-                header:{
+                headers:{
                     Authorization:`Bearer ${accessToken}`
                 }
             }
@@ -138,7 +142,7 @@ export const returnBorrowBook =async(borrowId,borrowData,accessToken)=>{
                 return_date: borrowData.returnDate,
             },
             {
-                header:{
+                headers:{
                     Authorization:`Bearer ${accessToken}`
                 }
             }

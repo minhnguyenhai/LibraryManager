@@ -6,30 +6,21 @@ import AddBorrowModal from '../../../add_borrow_modal/add_borrow_modal';
 import { getAllBorrow } from '../../../../../../services/admin_services/main_services';
 import BorrowHistoryModal from '../../../borrow_history_modal/borrow_history_modal';
 import ReturnBookModal from '../../../return_book_modal/return_book_modal';
+import { handleRefreshToken } from '../../../../../auth/login_register';
 
-const generateBorrows = (count) => {
-    return Array.from({ length: count }, (_, index) => ({
-        id: index + 1,
-        user_id: `UserId ${index + 1}`,
-        book_id: `BookId ${index + 200}`,
-        quantity: 1,
-        borrow_date: "22/10/2005",
-        due_date: "22/12/2005",
-        return_date: "-",
-    }));
-};
 
 const ManageBorrowReturn = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const borrowsPerPage = 10;
-    const allBorrows = generateBorrows(100);
-
     const [isAddingBorrow, setIsAddingBorrow] = useState(false);
     const [borrows, setBorrows] = useState([]);
+    const [filteredBorrows, setFilteredBorrows] = useState([]);
 
     const fetchBorrows = async () => {
         try {
-            const data = await getAllBorrow();
+            handleRefreshToken();
+            const accessToken=localStorage.getItem('access_token');
+            const data = await getAllBorrow(accessToken);
             setBorrows(data || []);
         } catch (e) {
             console.log(`Error: $e`);
@@ -40,7 +31,6 @@ const ManageBorrowReturn = () => {
         fetchBorrows();
     }, [])
     //lọc tài khoản
-    const [filteredBorrows, setFilteredBorrows] = useState(allBorrows);
 
     const totalPages = Math.ceil(filteredBorrows.length / borrowsPerPage);
 
@@ -66,7 +56,7 @@ const ManageBorrowReturn = () => {
     };
 
     const handleAddnewBorrow = (newBorrow) => {
-        allBorrows.push(newBorrow); // Thêm sách mới vào danh sách
+        borrows.push(newBorrow); // Thêm sách mới vào danh sách
         setIsAddingBorrow(false); // Đóng modal
     };
     const [selectedBorrowForReturn, setSelectedBorrowForReturn] = useState(null);
@@ -90,7 +80,7 @@ const ManageBorrowReturn = () => {
             <div className="searchbar-option">
                 <SearchBar
                     onSearch={handleSearch}
-                    data={allBorrows}
+                    data={borrows}
                     searchFields={['user_id', 'book_id']}
                 />
                 <button className="catalog-button" onClick={() => setIsAddingBorrow(true)} >Tạo lượt mượn sách</button>
