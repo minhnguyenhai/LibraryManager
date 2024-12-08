@@ -1,6 +1,7 @@
 import uuid
+from datetime import date
 
-from sqlalchemy import String, Integer
+from sqlalchemy import String, Integer, Date
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app import db
@@ -17,6 +18,8 @@ class Book(db.Model):
     description: Mapped[str] = mapped_column(String, nullable=False)
     price: Mapped[int] = mapped_column(Integer, nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
+    created_at: Mapped[date] = mapped_column(Date, default=date.today())
+    updated_at: Mapped[date] = mapped_column(Date, default=date.today(), onupdate=date.today())
     
     borrow_records: Mapped[list["BorrowRecord"]] = relationship(back_populates="book")
     favorites: Mapped[list["Favorite"]] = relationship(back_populates="book")

@@ -1,53 +1,54 @@
 from flask import jsonify
 from . import statistic_api
-from ...services.statistic.statistic_service import(
-    get_book_statistic, get_user_statistic,
-    get_books_currently_borrowed,
-    get_users_currently_borrowing
+from ...services.statistic.statistic_service import (
+    get_total_number_of_users, count_new_users_this_month, count_users_currently_borrowing,
+    get_total_number_of_books, count_new_books_this_month, count_books_currently_borrowed
+    
 )
 from ...utils.decorators import JWT_required, admin_required
 
-@statistic_api.route('/user-statistics', methods=['GET'])
-@JWT_required
-@admin_required
-def user_statistics():
-    """Endpoint to get total user count and new users this month"""
-    try:
-        stats = get_user_statistic()
-        return jsonify(stats), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
-@statistic_api.route('/book-statistics', methods=['GET'])
+@statistic_api.route("/user", methods=["GET"])
 @JWT_required
 @admin_required
-def book_statistics():
-    """Endpoint to get total book count and new books added this month"""
+def get_user_statistics(user):
     try:
-        stats = get_book_statistic()
-        return jsonify(stats), 200
+        total_num_of_users = get_total_number_of_users()
+        num_of_new_users_this_month = count_new_users_this_month()
+        num_of_users_currently_borrowing = count_users_currently_borrowing()
+        return jsonify({
+            "success": True,
+            "message": "User statistics fetched successfully",
+            "total_users": total_num_of_users,
+            "new_users_this_month": num_of_new_users_this_month,
+            "users_borrowing": num_of_users_currently_borrowing
+        }), 200
+        
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    
-    
-@statistic_api.route('/books-currently-borrowed', methods=['GET'])
-@JWT_required
-@admin_required
-def books_currently_borrowed():
-    """ Endpoint to get the total number of books currently borrowed """
-    try:
-        total_books_borrowed = get_books_currently_borrowed()
-        return jsonify({"total_books_borrowed": total_books_borrowed}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({
+            "error": "Internal server error.",
+            "message": str(e)
+        }), 500
+        
 
-@statistic_api.route('/users-currently-borrowing', methods=['GET'])
+@statistic_api.route("/book", methods=["GET"])
 @JWT_required
 @admin_required
-def users_currently_borrowing():
-    """ Endpoint to get the total number of users currently borrowing books """
+def get_book_statistics(user):
     try:
-        total_users_borrowing = get_users_currently_borrowing()
-        return jsonify({"total_users_borrowing": total_users_borrowing}), 200
+        total_num_of_books = get_total_number_of_books()
+        num_of_new_books_this_month = count_new_books_this_month()
+        num_of_books_currently_borrowed = count_books_currently_borrowed()
+        return jsonify({
+            "success": True,
+            "message": "Book statistics fetched successfully",
+            "total_books": total_num_of_books,
+            "new_books_this_month": num_of_new_books_this_month,
+            "books_borrowed": num_of_books_currently_borrowed
+        }), 200
+        
     except Exception as e:
-        return jsonify({"error": str(e)}), 500    
+        return jsonify({
+            "error": "Internal server error.",
+            "message": str(e)
+        }), 500

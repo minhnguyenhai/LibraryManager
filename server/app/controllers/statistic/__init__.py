@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-statistic_api = Blueprint("statistic", __name__)
+statistic_api = Blueprint("statistic_api", __name__)
 
-from . import statistic_controller;
+from . import statistic_controller
