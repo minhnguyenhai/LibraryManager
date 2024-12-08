@@ -22,6 +22,8 @@ class User(db.Model):
     phone_number: Mapped[str] = mapped_column(String(15), nullable=False)
     role: Mapped[str] = mapped_column(String(10), default="reader")
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[date] = mapped_column(Date, default=date.today())
+    updated_at: Mapped[date] = mapped_column(Date, default=date.today(), onupdate=date.today())
     
     token: Mapped["Token"] = relationship("Token", uselist=False, back_populates="user")
     borrow_records: Mapped[list["BorrowRecord"]] = relationship(back_populates="user")
