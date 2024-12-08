@@ -21,7 +21,7 @@ def get_book_by_id(book_id):
         book = Book.query.get(book_id)
         if not book:
             return None
-        return book.as_dict()
+        return book
     except Exception as e:
         logging.error(f"Error while fetching book by id: {str(e)}")
         raise

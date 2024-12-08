@@ -31,11 +31,17 @@ def get_all_books():
 @JWT_required
 def get_book(book_id):
     try:
-        book_data = get_book_by_id(book_id)
+        book = get_book_by_id(book_id)
+        if not book:
+            return jsonify({
+                "success": False,
+                "message": "Book not found."
+            }), 404
+
         return jsonify({
             "success": True,
             "message": "Successfully fetched book.",
-            "book": book_data
+            "book": book.as_dict()
         }), 200
     
     except Exception as e:
