@@ -1,33 +1,39 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchBar from '../../../search/search_bar';
 import Pagination from '../../../pagination/pagination';
 import ConfirmationDialog from '../../../confirmation_dialog/confirmation_dialog';
+import { getUsers } from '../../../../../../services/admin_services/main_services';
+import { handleRefreshToken } from '../../../../../auth/login_register';
 
-const generateAccounts = (count) => {
-    return Array.from({ length: count }, (_, index) => ({
-        id: index + 1,
-        email: `Email ${index + 1}`,
-        name: `Name ${index + 1}`,
-        dob: "22/10/2005",
-        gender: "Male",
-        address: "Đại học bách khoa Hà Nội",
-        phone_number: "123456789",
-    }));
-};
+
 
 const ManageReaders = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const accountsPerPage = 10;
-    const allAccounts = generateAccounts(100);
-    
+    const [allAccounts,setAllAccounts]=useState([]);
     
     const [deleteConfirmation, setDeleteConfirmation] = useState({
         isOpen: false,
     });
 
-    //lọc tài khoản
     const [filteredAccounts, setFilteredAccounts] = useState(allAccounts);
-
+    const fetchAccounts = async () => {
+        try {
+            await handleRefreshToken();
+            const accessToken = localStorage.getItem('access_token');
+            console.log('trước',accessToken)
+            const data = await getUsers(accessToken);
+            console.log('sau')
+            setAllAccounts(data || []);
+            setFilteredAccounts(data || []);
+            console.log(filteredAccounts);
+        } catch (error) {
+            console.log(`Error: ${error}`);
+        }
+    }
+    useEffect(() => {
+        fetchAccounts();
+    }, [])
     const handleSearch = (searchResults) => {
         setFilteredAccounts(searchResults);
         setCurrentPage(1); // Reset to first page after search

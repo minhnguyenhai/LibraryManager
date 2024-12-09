@@ -1,6 +1,7 @@
 import axios from "axios";
 import Borrow from "../../models/borrow";
 import { BASE_URL } from "../common_servieces";
+import Account from "../../models/account";
 
 
 //thêm sách mới
@@ -151,6 +152,27 @@ export const returnBorrowBook =async(borrowId,borrowData,accessToken)=>{
             return response.data;
         }else{
             throw new Error(response.status);
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+//lấy tất cả Accounts
+export const getUsers= async(accessToken)=>{
+    try {
+        const response=await axios.get(
+            `${BASE_URL}/user`,
+            {
+                headers:{
+                    Authorization: `Bearer ${accessToken}`
+                }
+            }
+        )
+        if(response.status===200){
+            return response.data.users.map((userdata)=>new Account(userdata))
+        }else{
+            throw new Error("Lỗi");
         }
     } catch (error) {
         throw error;

@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { addBook } from '../../../../services/admin_services/main_services';
 import { handleRefreshToken } from '../../../auth/login_register';
+import { toast } from 'react-toastify';
 
-const AddBookModal = ({ onClose, onAdd }) => {
+const AddBookModal = ({ onClose, onAdd ,setTriggerFetch}) => {
     const [newBook, setNewBook] = useState({
         title: '',
         author: '',
@@ -34,15 +35,19 @@ const AddBookModal = ({ onClose, onAdd }) => {
         try {
             await handleRefreshToken();
             const accessToken=localStorage.getItem('access_token');
-            console.log(accessToken)
-            console.log(newBook);
             const response= await addBook(newBook,accessToken);
             console.log(accessToken)
             console.log(newBook);
-            onAdd(response.new_book);
-            alert('Thêm sách thành công');
-            onclose();
+            if(response){
+                onAdd();
+                onClose();
+                toast.success("Thêm sách thành công");
+                setTimeout(() => {
+                    setTriggerFetch(true);
+                }, 5000);
+            }
         } catch (error) {
+            toast.error("Thêm sách thất bại. Vui lòng thử lại");
             console.log('Error: ')
         }
     };

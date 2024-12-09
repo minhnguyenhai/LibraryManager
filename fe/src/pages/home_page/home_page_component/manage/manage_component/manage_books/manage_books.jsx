@@ -75,21 +75,14 @@ const ManageBooks = () => {
     };
 
     const handleEditClick = (book) => {
-        console.log(book);
         setEditingBook(book);
     };
 
-    const handleSaveEditedBook = (updatedBook) => {
-        // Thay đổi dữ liệu sách trong danh sách (giả lập cập nhật)
-        const bookIndex = books.findIndex((b) => b.id === updatedBook.id);
-        if (bookIndex !== -1) {
-            books[bookIndex] = updatedBook;
-        }
+    const handleSaveEditedBook = () => {
         setEditingBook(null); // Đóng modal
     };
 
-    const handleAddNewBook = (newBook) => {
-        books.push(newBook); // Thêm sách mới vào danh sách
+    const handleAddNewBook = () => {
         setIsAddingBook(false); // Đóng modal
     };
 
@@ -215,12 +208,14 @@ const ManageBooks = () => {
                 book={editingBook}
                 onClose={() => setEditingBook(null)}
                 onSave={handleSaveEditedBook}
+                setTriggerFetch={setTriggerFetch}
             />
 
             {isAddingBook && (
                 <AddBookModal
                     onClose={() => setIsAddingBook(false)}
                     onAdd={handleAddNewBook}
+                    setTriggerFetch={setTriggerFetch}
                 />
             )}
 

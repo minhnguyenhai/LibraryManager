@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import './edit_book_modal.css';
 import { updateBook } from '../../../../services/admin_services/main_services';
 import { handleRefreshToken } from '../../../auth/login_register';
+import { toast } from 'react-toastify';
 
-const EditBookModal = ({ book, onClose, onSave }) => {
+const EditBookModal = ({ book, onClose, onSave,setTriggerFetch }) => {
     const [editedBook, setEditedBook] = useState({ ...book });
     useEffect(() => {
         setEditedBook({ ...book });
@@ -29,14 +30,17 @@ const EditBookModal = ({ book, onClose, onSave }) => {
             await handleRefreshToken();
             const accessToken=localStorage.getItem('access_token');
             const response= await updateBook(editedBook.id,editedBook,accessToken);
-            onSave(response.updated_book);
             if(response){
-                alert('Thêm sách thành công');
+                onSave();
                 onClose();
+                toast.success("Sửa thông tin thành công");
+                setTimeout(() => {
+                    setTriggerFetch(true);
+                }, 5000);
             }
 
         } catch (error) {
-            alert('Đã xảy ra lỗi cập nhật. Vui lòng thử lại');
+            toast.error('Đã xảy ra lỗi cập nhật. Vui lòng thử lại');
         }
     };
 
