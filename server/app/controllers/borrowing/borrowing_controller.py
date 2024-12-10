@@ -3,7 +3,7 @@ from flask import request, jsonify
 from . import borrowing_api
 from ...services.borrowing.borrowing_service import (
     get_all_borrow_records_of_user, save_new_borrow_record, get_borrow_record_by_id,
-    update_borrow_record_info, list_borrow_records
+    update_borrow_record_info, list_borrow_records, search_borrow_records_by_query
 )
 from ...services.user.user_service import get_user_byId
 from ...services.book.book_service import get_book_by_id
@@ -142,6 +142,42 @@ def update_borrow_record(user, borrow_record_id):
             "error": "Invalid data.",
             "message": str(e)
         }), 400
+    
+    except Exception as e:
+        return jsonify({
+            "error": "Internal server error.",
+            "message": str(e)
+        }), 500
+        
+        
+@borrowing_api.route("/borrowing/search", methods=["GET"])
+@JWT_required
+@admin_required
+def search_borrow_records(user):
+    try:
+        query = request.args.get("query", type=str, default=None)
+        if not query:
+            return jsonify({
+                "success": False,
+                "message": "Missing query parameter."
+            }), 400
+            
+        borrow_record_search_results = search_borrow_records_by_query(query)
+        for result in borrow_record_search_results:
+            user_borrowing = get_user_byId(result["user_id"])
+            borrowed_book = get_book_by_id(result["book_id"])
+            result.update({
+                "user_name": user_borrowing.name,
+                "user_email": user_borrowing.email,
+                "book_title": borrowed_book.title,
+            })
+
+        return jsonify({
+            "success": True,
+            "message": "Search completed successfully.",
+            "total": len(borrow_record_search_results),
+            "borrow_records": borrow_record_search_results
+        }), 200
     
     except Exception as e:
         return jsonify({

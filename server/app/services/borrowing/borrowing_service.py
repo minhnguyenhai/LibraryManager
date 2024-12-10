@@ -2,6 +2,8 @@ import logging
 
 from app import db
 from ...models.borrow_record import BorrowRecord
+from ...models.user import User
+from ...models.book import Book
 
 
 def get_all_borrow_records_of_user(user_id):
@@ -62,4 +64,34 @@ def update_borrow_record_info(borrow_record, return_date):
     except Exception as e:
         db.session.rollback()
         logging.error(f"Error while updating borrow record: {str(e)}")
+        raise
+    
+    
+def search_borrow_records_by_query(query):
+    """ Search borrow records by a query string. """
+    try:
+        search_results = []
+        user_filters = (
+            User.name.ilike(f"%{query}%") |
+            User.email.ilike(f"%{query}%")
+        )
+        users = db.session.query(User).filter(user_filters).all()
+        if users:
+            for user in users:
+                borrow_records_for_user_query = BorrowRecord.query.filter_by(user_id=user.id).all()
+                for record_for_user_query in borrow_records_for_user_query:
+                    search_results.append(record_for_user_query.as_dict())
+        
+        book_filters = Book.title.ilike(f"%{query}%")
+        books = db.session.query(Book).filter(book_filters).all()
+        if books:
+            for book in books:
+                borrow_records_for_book_query = BorrowRecord.query.filter_by(book_id=book.id).all()
+                for record_for_book_query in borrow_records_for_book_query:
+                    search_results.append(record_for_book_query.as_dict())
+                    
+        return search_results
+
+    except Exception as e:
+        logging.error(f"Error while searching borrow records by query: {str(e)}")
         raise
