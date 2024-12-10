@@ -56,7 +56,8 @@ def delete_user_from_db(user):
         borrow_records_to_delete = db.session.execute(
             db.select(BorrowRecord).where(BorrowRecord.user_id == user.id)
         ).scalars().all()
-        db.session.delete(borrow_records_to_delete)
+        for record in borrow_records_to_delete:
+            db.session.delete(record)
         
         db.session.delete(user)
         db.session.commit()
