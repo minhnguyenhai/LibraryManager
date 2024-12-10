@@ -25,8 +25,9 @@ def create_app(config_class=Config):
     
     CORS(app, resources={r"/*": {
         "origins": "*", 
-        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
-        "allow_headers": "*"
+        "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        "allow_headers": "*",
+        "expose_headers": "*"
     }})
     
     db.init_app(app)
