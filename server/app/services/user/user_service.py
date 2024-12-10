@@ -66,4 +66,22 @@ def delete_user_from_db(user):
         db.session.rollback() 
         logging.error(f"Error while deleting user from database: {str(e)}")
         raise 
-        
+
+
+def search_users_by_query(query):
+    """Search users by a query string"""
+    try:
+        filters = (
+            User.name.ilike(f"%{query}%") |
+            User.email.ilike(f"%{query}%") |
+            User.phone_number.ilike(f"%{query}%") |
+            User.address.ilike(f"%{query}%")
+        )
+        search_query = db.session.query(User).filter(filters)
+        users = search_query.all()
+        users_data = [user.as_dict() for user in users]
+        return users_data
+    
+    except Exception as e:
+        logging.error(f"Error while searching users by query: {str(e)}")
+        raise

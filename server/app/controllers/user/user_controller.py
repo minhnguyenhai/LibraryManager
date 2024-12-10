@@ -1,7 +1,9 @@
 from flask import request, jsonify
 from . import user_api
 from ...services.user.user_service import (
-    list_users, is_admin, get_user_byId, update_user_info, delete_user_from_db
+    list_users, is_admin, get_user_byId, update_user_info, 
+    delete_user_from_db, search_users_by_query
+    
 )
 from ...utils.decorators import JWT_required, admin_required
 
@@ -139,6 +141,36 @@ def delete_user(user, id):
             "message": "User deleted successfully."
         }), 200
         
+    except Exception as e:
+        return jsonify({
+            "error": "Internal server error.",
+            "message": str(e)
+        }), 500
+        
+        
+@user_api.route("/search", methods=["GET"])
+@JWT_required
+@admin_required
+def search_users(user):
+    """
+    API để tìm kiếm người dùng.
+    """
+    try:
+        query = request.args.get("query", type=str, default=None)
+        if not query:
+            return jsonify({
+                "success": False,
+                "message": "Missing query parameter."
+            }), 400
+        
+        user_search_results = search_users_by_query(query)
+        return jsonify({
+            "success": True,
+            "message": "Search completed successfully.",
+            "total": len(user_search_results),
+            "users": user_search_results
+        }), 200
+
     except Exception as e:
         return jsonify({
             "error": "Internal server error.",
