@@ -15,7 +15,6 @@ from ...utils.decorators import JWT_required, admin_required
 @admin_required
 def get_all_borrow_records(user):
     try:
-        data_results = []
         borrow_records = list_borrow_records()
         for record in borrow_records:
             user_borrowing = get_user_byId(record["user_id"])
@@ -25,12 +24,11 @@ def get_all_borrow_records(user):
                 "user_email": user_borrowing.email,
                 "book_title": borrowed_book.title,
             })
-            data_results.append(record)
             
         return jsonify({
             "success": True,
             "message": "Successfully fetched all borrow records.",
-            "borrow_records": data_results
+            "borrow_records": borrow_records
         }), 200
     
     except Exception as e:
@@ -56,6 +54,7 @@ def list_borrow_records_of_user(user, id):
             record.update({
                 "book_title": borrowed_book.title,
             })
+            
         return jsonify({
             "success": True,
             "message": "Successfully fetched all borrow records of the user.",
