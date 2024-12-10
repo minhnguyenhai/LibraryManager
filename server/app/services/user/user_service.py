@@ -26,7 +26,7 @@ def get_user_byId(user_id):
         user = User.query.get(user_id)
         if not user:
             return None
-        return user.as_dict()
+        return user
     except Exception as e: 
         logging.error(f"Error while fetching user by ID: {str(e)}")
         raise

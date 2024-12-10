@@ -51,7 +51,7 @@ def get_user(user, id):
         return jsonify({
             "success": True,
             "message": "Successfully fetched user.",
-            "user": user_need_get
+            "user": user_need_get.as_dict()
         }), 200
         
     except Exception as e:
