@@ -1,0 +1,61 @@
+import React from 'react';
+const BorrowHistoryModal = ({selectedUser, onClose }) => {
+    const handleOverlayClick = (e) => {
+        e.stopPropagation();
+        onClose();
+    };
+
+    const handleContentClick = (e) => {
+        e.stopPropagation();
+    };
+    
+    return (
+        <div className="borrow-history-modal-overlay" onClick={handleOverlayClick}>
+            <div className="borrow-history-modal-content"onClick={handleContentClick}>
+                <div className="borrow-history-modal-header">
+                    <h2>Thông tin chi tiết người dùng</h2>
+                    <button 
+                        className="close-modal-btn" 
+                        onClick={onClose}
+                    >
+                        ✕
+                    </button>
+                </div>
+                <div className="borrow-history-modal-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tên</th>
+                                <th>Email</th>
+                                <th>Số điện thoại</th>
+                                <th>Địa chỉ</th>
+                                <th>Ngày sinh</th>
+                                <th>Giới tính</th>
+                                <th>Ngày tạo tài khoản</th>
+                                <th>Ngày cập nhật</th>
+                                <th>Vai trò</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {selectedUser.map((user) => (
+                                <tr key={user.id}>
+                                    <td>{user.name}</td>
+                                    <td>{user.email}</td>
+                                    <td>{user.phone_number}</td>
+                                    <td>{user.address}</td>
+                                    <td>{user.dob}</td>
+                                    <td>{user.gender}</td>
+                                    <td>{user.created_at}</td>
+                                    <td>{user.updated_at}</td>
+                                    <td>{user.role}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default BorrowHistoryModal;

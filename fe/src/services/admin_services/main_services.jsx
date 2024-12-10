@@ -106,6 +106,28 @@ export const getAllBorrow = async(accessToken)=>{
     }
 }
 
+//lấy danh sách tất cả lượt mượn của 1 người dùng cụ thể
+export const getAllBorrowsByUser =async(accessToken,userId)=>{
+    try {
+        const response=await axios.get(
+            `${BASE_URL}/user/${userId}/borrowing`,
+            {
+                headers:{
+                    Authorization: `Bearer ${accessToken}`
+                }
+            }
+        )
+        console.log(response)
+        if(response.status===200) {
+            return response.data.borrow_records.map((borrow)=>new Borrow(borrow));
+        }else{
+            throw new Error(`Error: ${response.status}`)
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
 //Tạo Lượt Mượn Sách
 export const addNewBorrow=async(borrowData,accessToken)=>{
     try {
@@ -148,6 +170,7 @@ export const returnBorrowBook =async(borrowId,borrowData,accessToken)=>{
                 }
             }
         )
+        console.log(response)
         if (response.status===200){
             return response.data;
         }else{

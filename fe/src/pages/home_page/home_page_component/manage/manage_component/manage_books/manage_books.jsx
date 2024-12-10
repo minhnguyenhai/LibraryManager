@@ -29,7 +29,7 @@ const ManageBooks = () => {
     const [filteredBooks, setFilteredBooks] = useState(books);
     const [currentPage, setCurrentPage] = useState(1);
     const booksPerPage = 10;
-    const [triggerFetch, setTriggerFetch] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
 
     const fetchBooks = async () => {
         try {
@@ -45,7 +45,7 @@ const ManageBooks = () => {
 
     useEffect(() => {
         fetchBooks();
-    }, [triggerFetch])
+    }, [refreshKey])
 
     const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
 
@@ -208,14 +208,14 @@ const ManageBooks = () => {
                 book={editingBook}
                 onClose={() => setEditingBook(null)}
                 onSave={handleSaveEditedBook}
-                setTriggerFetch={setTriggerFetch}
+                triggerRefresh={() => setRefreshKey((prev) => prev + 1)}
             />
 
             {isAddingBook && (
                 <AddBookModal
                     onClose={() => setIsAddingBook(false)}
                     onAdd={handleAddNewBook}
-                    setTriggerFetch={setTriggerFetch}
+                    triggerRefresh={() => setRefreshKey((prev) => prev + 1)}
                 />
             )}
 

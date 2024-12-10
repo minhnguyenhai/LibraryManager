@@ -3,10 +3,11 @@ import SearchBar from '../../../search/search_bar';
 import Pagination from '../../../pagination/pagination';
 import './manage_borrowreturn.css'
 import AddBorrowModal from '../../../add_borrow_modal/add_borrow_modal';
-import { getAllBorrow } from '../../../../../../services/admin_services/main_services';
+import { getAllBorrow, getAllBorrowsByUser } from '../../../../../../services/admin_services/main_services';
 import BorrowHistoryModal from '../../../borrow_history_modal/borrow_history_modal';
 import ReturnBookModal from '../../../return_book_modal/return_book_modal';
 import { handleRefreshToken } from '../../../../../auth/login_register';
+import { search } from '../../../../../../services/common_servieces';
 
 
 const ManageBorrowReturn = () => {
@@ -15,13 +16,16 @@ const ManageBorrowReturn = () => {
     const [isAddingBorrow, setIsAddingBorrow] = useState(false);
     const [borrows, setBorrows] = useState([]);
     const [filteredBorrows, setFilteredBorrows] = useState([]);
+    const [loading,setLoading] = useState([])
+    const [refreshKey, setRefreshKey] = useState(0);
 
     const fetchBorrows = async () => {
         try {
-            handleRefreshToken();
-            const accessToken=localStorage.getItem('access_token');
+            await handleRefreshToken();
+            const accessToken = localStorage.getItem('access_token');
             const data = await getAllBorrow(accessToken);
             setBorrows(data || []);
+            setFilteredBorrows(data || [])
         } catch (e) {
             console.log(`Error: $e`);
         }
@@ -29,14 +33,28 @@ const ManageBorrowReturn = () => {
 
     useEffect(() => {
         fetchBorrows();
-    }, [])
+    }, [refreshKey])
     //lọc tài khoản
 
     const totalPages = Math.ceil(filteredBorrows.length / borrowsPerPage);
 
-    const handleSearch = (searchResults) => {
-        setFilteredBorrows(searchResults);
-        setCurrentPage(1); // Reset to first page after search
+    // const handleSearch = (searchResults) => {
+    //     setFilteredBorrows(searchResults);
+    //     setCurrentPage(1); // Reset to first page after search
+    // };
+    const handleSearch = async (searchTerm) => {
+        if (!searchTerm.trim()) return; // Bỏ qua nếu từ khóa rỗng
+        setLoading(true);
+        try {
+            await handleRefreshToken();
+            const accessToken = localStorage.getItem("access_token"); // Lấy JWT Token từ localStorage
+            const results = await search(searchTerm, accessToken); // Gọi API tìm kiếm
+            setFilteredBorrows(results); // Cập nhật kết quả tìm kiếm
+        } catch (error) {
+            console.error("Lỗi khi tìm kiếm:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const getCurrentBorrows = () => {
@@ -47,12 +65,18 @@ const ManageBorrowReturn = () => {
     const [selectedUserBorrowHistory, setSelectedUserBorrowHistory] = useState([]);
     const [isShowBorrowHistory, setIsShowBorrowHistory] = useState(false);
 
-    const handleShowBorrowHistory = (userId) => {
-        //Lọc lịch sử mượn của người dùng cụ thể
-        const userHistory = filteredBorrows.filter(borrow => borrow.user_id === userId);
-        console.log("User history:", userHistory);
-        setSelectedUserBorrowHistory(userHistory);
-        setIsShowBorrowHistory(true);
+    const handleShowBorrowHistory = async (userId) => {
+        try {
+            await handleRefreshToken();
+            const accessToken = localStorage.getItem('access_token');
+            const data = await getAllBorrowsByUser(accessToken, userId)
+            if (data) {
+                setSelectedUserBorrowHistory(data)
+                setIsShowBorrowHistory(true);
+            }
+        } catch (error) {
+            console.log('error')
+        }
     };
 
     const handleAddnewBorrow = (newBorrow) => {
@@ -80,8 +104,7 @@ const ManageBorrowReturn = () => {
             <div className="searchbar-option">
                 <SearchBar
                     onSearch={handleSearch}
-                    data={borrows}
-                    searchFields={['user_id', 'book_id']}
+                    loading={loading}
                 />
                 <button className="catalog-button" onClick={() => setIsAddingBorrow(true)} >Tạo lượt mượn sách</button>
             </div>
@@ -89,14 +112,15 @@ const ManageBorrowReturn = () => {
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>MÃ NGƯỜI DÙNG</th>
-                            <th>MÃ SÁCH</th>
+                            <th style={{ width: '200px' }}>ID</th>
+                            <th style={{ width: '200px' }}>MÃ NGƯỜI DÙNG</th>
+                            <th style={{ width: '200px' }}>MÃ SÁCH</th>
                             <th>SỐ LƯỢNG</th>
                             <th>Ngày mượn</th>
                             <th>Hạn trả</th>
                             <th>Ngày trả</th>
-                            <th className='borrow-action'>Hành động</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -104,25 +128,22 @@ const ManageBorrowReturn = () => {
                         {getCurrentBorrows().map(borrow => (
                             <tr key={borrow.id}>
                                 <td>{borrow.id}</td>
-                                <td>{borrow.user_id}</td>
-                                <td>{borrow.book_id}</td>
+                                <td>{borrow.userId}</td>
+                                <td>{borrow.bookId}</td>
                                 <td className='quantity'>{borrow.quantity}</td>
-                                <td>{borrow.borrow_date}</td>
-                                <td>{borrow.due_date}</td>
-                                <td>{borrow.return_date}</td>
+                                <td>{borrow.borrowDate}</td>
+                                <td>{borrow.dueDate}</td>
+                                <td>{borrow.returnDate === 'None' ? '-' : borrow.returnDate}</td>
+                                <td>{borrow.status === 'borrowing' ? 'Đang mượn' : 'Đã trả'}</td>
                                 <td>
                                     <div className="button-option">
                                         <button onClick={() => handleOpenReturnModal(borrow)}
                                         >
                                             Trả sách
                                         </button>
-                                        <button onClick={() => handleShowBorrowHistory(borrow.user_id)}
+                                        <button onClick={() => handleShowBorrowHistory(borrow.userId)}
                                         >
                                             Xem lịch sử mượn sách
-                                        </button>
-                                        <button
-                                        >
-                                            Gia hạn mượn sách
                                         </button>
                                     </div>
                                 </td>
@@ -149,12 +170,13 @@ const ManageBorrowReturn = () => {
                 <AddBorrowModal
                     onClose={() => setIsAddingBorrow(false)}
                     onAdd={handleAddnewBorrow}
+                    triggerRefresh={() => setRefreshKey((prev) => prev + 1)}
                 />
             )}
 
             {isShowBorrowHistory && (
                 <BorrowHistoryModal
-                    userBorrowHistory={selectedUserBorrowHistory}
+                    selectedUserBorrowHistory={selectedUserBorrowHistory}
                     onClose={() => setIsShowBorrowHistory(false)}
                 />
             )}
@@ -164,6 +186,7 @@ const ManageBorrowReturn = () => {
                     borrow={selectedBorrowForReturn}
                     onClose={() => setSelectedBorrowForReturn(null)}
                     onReturn={handleReturnBook}
+                    triggerRefresh={() => setRefreshKey((prev) => prev + 1)}
                 />
             )}
         </div>

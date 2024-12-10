@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './return_book_modal.css'
 import { returnBorrowBook } from '../../../../services/admin_services/main_services';
 import { handleRefreshToken } from '../../../auth/login_register';
-const ReturnBookModal = ({ borrow, onClose, onReturn }) => {
+const ReturnBookModal = ({ borrow, onClose, onReturn,triggerRefresh }) => {
     const [returnBorrow, setReturnBorrow] = useState({...borrow});
     const handleOverlayClick = (e) => {
         e.stopPropagation();
@@ -25,14 +25,18 @@ const ReturnBookModal = ({ borrow, onClose, onReturn }) => {
             await handleRefreshToken();
             const accessToken=localStorage.getItem('access_token');
             const response= await returnBorrowBook(returnBorrow.id,returnBorrow,accessToken);
-            onReturn(response.updated_borrow_record);
-            alert('Trả sách thành công');
-            onclose();
+            if(response){
+                triggerRefresh();
+                onReturn(response.updated_borrow_record);
+                alert('Trả sách thành công');
+                onclose();
+            }
         } catch (error) {
             alert('Đã xảy ra lỗi cập nhật. Vui lòng thử lại');
+        }finally{
+            onReturn(returnBorrow);
+            onClose();
         }
-        onReturn(returnBorrow);
-        onClose();
     };
 
 
@@ -48,10 +52,9 @@ const ReturnBookModal = ({ borrow, onClose, onReturn }) => {
                             id="date"
                             type="date"
                             value={returnBorrow.returnDate}
-                            onChange={(e) => handleChange('date', e.target.value)}
+                            onChange={(e) => handleChange('returnDate', e.target.value)}
                         />
                     </div>
-                    
                     <div className="form-actions">
                         <button type="button" onClick={handleSave}>
                             Xác nhận

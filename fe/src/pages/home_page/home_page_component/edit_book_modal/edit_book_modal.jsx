@@ -4,7 +4,7 @@ import { updateBook } from '../../../../services/admin_services/main_services';
 import { handleRefreshToken } from '../../../auth/login_register';
 import { toast } from 'react-toastify';
 
-const EditBookModal = ({ book, onClose, onSave,setTriggerFetch }) => {
+const EditBookModal = ({ book, onClose, onSave,triggerRefresh }) => {
     const [editedBook, setEditedBook] = useState({ ...book });
     useEffect(() => {
         setEditedBook({ ...book });
@@ -35,7 +35,7 @@ const EditBookModal = ({ book, onClose, onSave,setTriggerFetch }) => {
                 onClose();
                 toast.success("Sửa thông tin thành công");
                 setTimeout(() => {
-                    setTriggerFetch(true);
+                    triggerRefresh();
                 }, 5000);
             }
 

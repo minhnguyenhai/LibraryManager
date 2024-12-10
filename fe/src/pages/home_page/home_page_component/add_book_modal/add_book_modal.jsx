@@ -4,7 +4,7 @@ import { addBook } from '../../../../services/admin_services/main_services';
 import { handleRefreshToken } from '../../../auth/login_register';
 import { toast } from 'react-toastify';
 
-const AddBookModal = ({ onClose, onAdd ,setTriggerFetch}) => {
+const AddBookModal = ({ onClose, onAdd ,triggerRefresh}) => {
     const [newBook, setNewBook] = useState({
         title: '',
         author: '',
@@ -43,7 +43,7 @@ const AddBookModal = ({ onClose, onAdd ,setTriggerFetch}) => {
                 onClose();
                 toast.success("Thêm sách thành công");
                 setTimeout(() => {
-                    setTriggerFetch(true);
+                    triggerRefresh();
                 }, 5000);
             }
         } catch (error) {

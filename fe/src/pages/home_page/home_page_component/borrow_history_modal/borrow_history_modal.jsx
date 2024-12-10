@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './borrow_history_modal.css'
-const BorrowHistoryModal = ({userBorrowHistory,  onClose }) => {
+const BorrowHistoryModal = ({selectedUserBorrowHistory, onClose }) => {
     const handleOverlayClick = (e) => {
         e.stopPropagation();
         onClose();
@@ -9,6 +9,7 @@ const BorrowHistoryModal = ({userBorrowHistory,  onClose }) => {
     const handleContentClick = (e) => {
         e.stopPropagation();
     };
+    
     return (
         <div className="borrow-history-modal-overlay" onClick={handleOverlayClick}>
             <div className="borrow-history-modal-content"onClick={handleContentClick}>
@@ -27,21 +28,21 @@ const BorrowHistoryModal = ({userBorrowHistory,  onClose }) => {
                             <tr>
                                 <th>ID</th>
                                 <th>MÃ SÁCH</th>
-                                <th>SỐ LƯỢNG</th>
+                                <th style={{ width: '100px' }}>SỐ LƯỢNG</th>
                                 <th>Ngày mượn</th>
                                 <th>Hạn trả</th>
                                 <th>Ngày trả</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {userBorrowHistory.map(borrow => (
+                            {selectedUserBorrowHistory.map((borrow,index) => (
                                 <tr key={borrow.id}>
-                                    <td>{borrow.id}</td>
-                                    <td>{borrow.book_id}</td>
+                                    <td>{index+1}</td>
+                                    <td>{borrow.bookId}</td>
                                     <td>{borrow.quantity}</td>
-                                    <td>{borrow.borrow_date}</td>
-                                    <td>{borrow.due_date}</td>
-                                    <td>{borrow.return_date}</td>
+                                    <td>{borrow.borrowDate}</td>
+                                    <td>{borrow.dueDate}</td>
+                                    <td>{borrow.returnDate==='None'? "-": borrow.returnDate}</td>
                                 </tr>
                             ))}
                         </tbody>
