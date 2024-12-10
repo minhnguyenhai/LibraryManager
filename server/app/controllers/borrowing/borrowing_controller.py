@@ -5,6 +5,8 @@ from ...services.borrowing.borrowing_service import (
     get_all_borrow_records_of_user, save_new_borrow_record, get_borrow_record_by_id,
     update_borrow_record_info, list_borrow_records
 )
+from ...services.user.user_service import get_user_byId
+from ...services.book.book_service import get_book_by_id
 from ...utils.decorators import JWT_required, admin_required
 
 
@@ -13,18 +15,29 @@ from ...utils.decorators import JWT_required, admin_required
 @admin_required
 def get_all_borrow_records(user):
     try:
+        data_results = []
         borrow_records = list_borrow_records()
+        for record in borrow_records:
+            user_borrowing = get_user_byId(record["user_id"])
+            borrowed_book = get_book_by_id(record["book_id"])
+            record.update({
+                "user_name": user_borrowing.name,
+                "user_email": user_borrowing.email,
+                "book_title": borrowed_book.title,
+            })
+            data_results.append(record)
+            
         return jsonify({
             "success": True,
             "message": "Successfully fetched all borrow records.",
-            "borrow_records": borrow_records
+            "borrow_records": data_results
         }), 200
     
     except Exception as e:
         return jsonify({
             "error": "Internal server error.",
             "message": str(e)
-        }), 500
+        }), 500 
 
 
 @borrowing_api.route("/user/<id>/borrowing")
