@@ -4,6 +4,10 @@ import Pagination from '../../../pagination/pagination';
 import ConfirmationDialog from '../../../confirmation_dialog/confirmation_dialog';
 import { getUsers } from '../../../../../../services/admin_services/main_services';
 import { handleRefreshToken } from '../../../../../auth/login_register';
+import AccountDetailModal from '../../../account_detail_model/account_detail_modal';
+import EditAccountModal from '../../../edit_account_modal/edit_account_modal';
+import { deleteAccount } from '../../../../../../services/common_servieces';
+import { toast, ToastContainer } from 'react-toastify';
 
 
 
@@ -12,18 +16,24 @@ const ManageReaders = () => {
     const accountsPerPage = 10;
     const [allAccounts,setAllAccounts]=useState([]);
     
+    
     const [deleteConfirmation, setDeleteConfirmation] = useState({
         isOpen: false,
+        accountToDelete: null
     });
 
     const [filteredAccounts, setFilteredAccounts] = useState(allAccounts);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [isOpenAccountModal, setIsOpenAccountModal] = useState(false);
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
+
+
     const fetchAccounts = async () => {
         try {
             await handleRefreshToken();
             const accessToken = localStorage.getItem('access_token');
-            console.log('trước',accessToken)
             const data = await getUsers(accessToken);
-            console.log('sau')
             setAllAccounts(data || []);
             setFilteredAccounts(data || []);
             console.log(filteredAccounts);
@@ -33,7 +43,8 @@ const ManageReaders = () => {
     }
     useEffect(() => {
         fetchAccounts();
-    }, [])
+    }, [refreshKey])
+    
     const handleSearch = (searchResults) => {
         setFilteredAccounts(searchResults);
         setCurrentPage(1); // Reset to first page after search
@@ -46,20 +57,51 @@ const ManageReaders = () => {
         return filteredAccounts.slice(startIndex, endIndex);
     };
 
-    const handleDeleteClick = () => {
+    const handleViewDetails = (account) => {
+        setSelectedUser(account);
+        setIsOpenAccountModal(true);
+    };
+    const handleEditClick = (user) => {
+        setSelectedUser(user);
+        setEditModalOpen(true);
+    };
+    const handleDeleteClick = (account) => {
         setDeleteConfirmation({
             isOpen: true,
+            accountToDelete: account
         });
     };
 
-    const handleConfirmDelete = () => {
-        // Đóng modal
+    const handleConfirmDelete = async () => {
+        if (deleteConfirmation.accountToDelete) {
+            try {
+                await handleRefreshToken();
+                const accessToken = localStorage.getItem('access_token');
+                const response = await deleteAccount(deleteConfirmation.accountToDelete.id, accessToken);
+
+                if (response) {
+                    // Hiện thông báo toaster
+                    toast.success("Xóa thành công");
+                    setTimeout(() => {
+                        fetchAccounts();
+                    }, 5000);
+                } else {
+                    toast.error('Xóa sách thất bại. Vui lòng thử lại!');
+                }
+            } catch (error) {
+                console.error('Error deleting account:', error);
+                toast.error('Đã xảy ra lỗi khi xóa sách. Vui lòng thử lại!');
+            }
+        }
+
         setDeleteConfirmation({
             isOpen: false,
+            accountToDelete: null
         });
     };
     return (
         <div className="manage-accounts-content">
+            <ToastContainer/>
             <div className="searchbar-option">
                 <SearchBar 
                 onSearch={handleSearch}
@@ -83,9 +125,9 @@ const ManageReaders = () => {
                     </thead>
                     <tbody>
 
-                        {getCurrentAccounts().map(account => (
+                        {getCurrentAccounts().map((account,index) => (
                             <tr key={account.id}>
-                                <td>{account.id}</td>
+                                <td>{index+1}</td>
                                 <td>{account.email}</td>
                                 <td>{account.name}</td>
                                 <td>{account.dob}</td>
@@ -94,15 +136,15 @@ const ManageReaders = () => {
                                 <td>{account.phone_number}</td>
                                 <td>
                                     <div className="button-option">
-                                        <button
+                                        <button onClick={()=>handleViewDetails(account)}
                                         >
                                             Xem thông tin
                                         </button>
-                                        <button
+                                        <button onClick={()=>handleEditClick(account)}
                                         >
                                             Sửa thông tin
                                         </button>
-                                        <button onClick={()=> handleDeleteClick()}
+                                        <button onClick={()=> handleDeleteClick(account)}
                                         >
                                             Xóa
                                         </button>
@@ -136,6 +178,22 @@ const ManageReaders = () => {
                 confirmLabel="Xóa"
                 cancelLabel="Hủy"
             />
+            
+            {isOpenAccountModal && (
+                <AccountDetailModal
+                    selectedUser={selectedUser}
+                    onClose={() => setIsOpenAccountModal(false)}
+                />
+            )}
+
+            {editModalOpen  && (
+                <EditAccountModal
+                    account={selectedUser}
+                    onClose={() => setEditModalOpen(false)}
+                    onSave={()=>setSelectedUser(null)}
+                    triggerRefresh={() => setRefreshKey((prev) => prev + 1)}
+                />
+            )}
         </div>
     );
 };

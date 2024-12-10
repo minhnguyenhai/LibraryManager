@@ -126,7 +126,7 @@
 import React, { useState, useEffect } from 'react';
 import './add_borrow_modal.css'
 import PropTypes from 'prop-types';
-import { addNewBorrow } from '../../../../services/admin_services/main_services';
+import { addNewBorrow, getUsers } from '../../../../services/admin_services/main_services';
 import { handleRefreshToken } from '../../../auth/login_register';
 import { getAllBooks } from '../../../../services/common_servieces';
 
@@ -140,7 +140,7 @@ const AddBorrowModal = ({ onClose, onAdd, triggerRefresh }) => {
     });
 
     const [books, setBooks] = useState([]);
-    //const [users, setUsers] = useState([]);
+    const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -151,10 +151,10 @@ const AddBorrowModal = ({ onClose, onAdd, triggerRefresh }) => {
 
                 // Fetch dữ liệu sách và người dùng
                 const booksData = await getAllBooks(accessToken);
-                //const usersData = await getAllUsers(accessToken);
+                const usersData = await getUsers(accessToken);
 
                 setBooks(booksData);
-                //setUsers(usersData);
+                setUsers(usersData);
                 setLoading(false);
             } catch (error) {
                 alert('Không thể tải dữ liệu. Vui lòng thử lại!');
@@ -199,7 +199,7 @@ const AddBorrowModal = ({ onClose, onAdd, triggerRefresh }) => {
                 <button className="modal-close" onClick={onClose}>×</button>
                 <h2 className="modal-title">Thêm lượt mượn sách</h2>
                 <form className="add-book-form">
-                    {/* <div className="form-group">
+                    <div className="form-group">
                         <label htmlFor="userId">Người dùng</label>
                         <select
                             id="userId"
@@ -210,11 +210,11 @@ const AddBorrowModal = ({ onClose, onAdd, triggerRefresh }) => {
                             <option value="">Chọn người dùng</option>
                             {users.map((user) => (
                                 <option key={user.id} value={user.id}>
-                                    {user.name}
+                                    {user.email}
                                 </option>
                             ))}
                         </select>
-                    </div> */}
+                    </div>
                     <div className="form-group">
                         <label htmlFor="bookId">Tên sách</label>
                         <select

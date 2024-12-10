@@ -27,7 +27,7 @@ const BorrowHistoryModal = ({selectedUserBorrowHistory, onClose }) => {
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>MÃ SÁCH</th>
+                                <th>Tên SÁCH</th>
                                 <th style={{ width: '100px' }}>SỐ LƯỢNG</th>
                                 <th>Ngày mượn</th>
                                 <th>Hạn trả</th>
@@ -38,7 +38,7 @@ const BorrowHistoryModal = ({selectedUserBorrowHistory, onClose }) => {
                             {selectedUserBorrowHistory.map((borrow,index) => (
                                 <tr key={borrow.id}>
                                     <td>{index+1}</td>
-                                    <td>{borrow.bookId}</td>
+                                    <td>{borrow.book_title}</td>
                                     <td>{borrow.quantity}</td>
                                     <td>{borrow.borrowDate}</td>
                                     <td>{borrow.dueDate}</td>

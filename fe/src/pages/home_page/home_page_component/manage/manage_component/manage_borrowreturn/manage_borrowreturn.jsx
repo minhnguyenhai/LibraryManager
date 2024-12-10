@@ -7,7 +7,6 @@ import { getAllBorrow, getAllBorrowsByUser } from '../../../../../../services/ad
 import BorrowHistoryModal from '../../../borrow_history_modal/borrow_history_modal';
 import ReturnBookModal from '../../../return_book_modal/return_book_modal';
 import { handleRefreshToken } from '../../../../../auth/login_register';
-import { search } from '../../../../../../services/common_servieces';
 
 
 const ManageBorrowReturn = () => {
@@ -16,7 +15,7 @@ const ManageBorrowReturn = () => {
     const [isAddingBorrow, setIsAddingBorrow] = useState(false);
     const [borrows, setBorrows] = useState([]);
     const [filteredBorrows, setFilteredBorrows] = useState([]);
-    const [loading,setLoading] = useState([])
+    const [loading,setLoading] = useState(false)
     const [refreshKey, setRefreshKey] = useState(0);
 
     const fetchBorrows = async () => {
@@ -43,18 +42,18 @@ const ManageBorrowReturn = () => {
     //     setCurrentPage(1); // Reset to first page after search
     // };
     const handleSearch = async (searchTerm) => {
-        if (!searchTerm.trim()) return; // Bỏ qua nếu từ khóa rỗng
-        setLoading(true);
-        try {
-            await handleRefreshToken();
-            const accessToken = localStorage.getItem("access_token"); // Lấy JWT Token từ localStorage
-            const results = await search(searchTerm, accessToken); // Gọi API tìm kiếm
-            setFilteredBorrows(results); // Cập nhật kết quả tìm kiếm
-        } catch (error) {
-            console.error("Lỗi khi tìm kiếm:", error);
-        } finally {
-            setLoading(false);
-        }
+        // if (!searchTerm.trim()) return; // Bỏ qua nếu từ khóa rỗng
+        // setLoading(true);
+        // try {
+        //     await handleRefreshToken();
+        //     const accessToken = localStorage.getItem("access_token"); // Lấy JWT Token từ localStorage
+        //     const results = await search(searchTerm, accessToken); // Gọi API tìm kiếm
+        //     setFilteredBorrows(results); // Cập nhật kết quả tìm kiếm
+        // } catch (error) {
+        //     console.error("Lỗi khi tìm kiếm:", error);
+        // } finally {
+        //     setLoading(false);
+        // }
     };
 
     const getCurrentBorrows = () => {
@@ -113,8 +112,8 @@ const ManageBorrowReturn = () => {
                     <thead>
                         <tr>
                             <th style={{ width: '200px' }}>ID</th>
-                            <th style={{ width: '200px' }}>MÃ NGƯỜI DÙNG</th>
-                            <th style={{ width: '200px' }}>MÃ SÁCH</th>
+                            <th style={{ width: '200px' }}>Email</th>
+                            <th style={{ width: '200px' }}>Tên sách</th>
                             <th>SỐ LƯỢNG</th>
                             <th>Ngày mượn</th>
                             <th>Hạn trả</th>
@@ -125,11 +124,11 @@ const ManageBorrowReturn = () => {
                     </thead>
                     <tbody>
 
-                        {getCurrentBorrows().map(borrow => (
+                        {getCurrentBorrows().map((borrow,index) => (
                             <tr key={borrow.id}>
-                                <td>{borrow.id}</td>
-                                <td>{borrow.userId}</td>
-                                <td>{borrow.bookId}</td>
+                                <td>{index+1}</td>
+                                <td>{borrow.user_email}</td>
+                                <td>{borrow.book_title}</td>
                                 <td className='quantity'>{borrow.quantity}</td>
                                 <td>{borrow.borrowDate}</td>
                                 <td>{borrow.dueDate}</td>

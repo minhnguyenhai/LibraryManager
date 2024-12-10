@@ -185,7 +185,7 @@ export const returnBorrowBook =async(borrowId,borrowData,accessToken)=>{
 export const getUsers= async(accessToken)=>{
     try {
         const response=await axios.get(
-            `${BASE_URL}/user`,
+            `${BASE_URL}/user/`,
             {
                 headers:{
                     Authorization: `Bearer ${accessToken}`

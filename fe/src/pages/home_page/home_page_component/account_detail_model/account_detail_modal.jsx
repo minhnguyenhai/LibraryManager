@@ -1,5 +1,5 @@
 import React from 'react';
-const BorrowHistoryModal = ({selectedUser, onClose }) => {
+const AccountDetailModal = ({ selectedUser, onClose }) => {
     const handleOverlayClick = (e) => {
         e.stopPropagation();
         onClose();
@@ -8,14 +8,14 @@ const BorrowHistoryModal = ({selectedUser, onClose }) => {
     const handleContentClick = (e) => {
         e.stopPropagation();
     };
-    
+
     return (
         <div className="borrow-history-modal-overlay" onClick={handleOverlayClick}>
-            <div className="borrow-history-modal-content"onClick={handleContentClick}>
+            <div className="borrow-history-modal-content" onClick={handleContentClick}>
                 <div className="borrow-history-modal-header">
                     <h2>Thông tin chi tiết người dùng</h2>
-                    <button 
-                        className="close-modal-btn" 
+                    <button
+                        className="close-modal-btn"
                         onClick={onClose}
                     >
                         ✕
@@ -37,19 +37,17 @@ const BorrowHistoryModal = ({selectedUser, onClose }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {selectedUser.map((user) => (
-                                <tr key={user.id}>
-                                    <td>{user.name}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.phone_number}</td>
-                                    <td>{user.address}</td>
-                                    <td>{user.dob}</td>
-                                    <td>{user.gender}</td>
-                                    <td>{user.created_at}</td>
-                                    <td>{user.updated_at}</td>
-                                    <td>{user.role}</td>
-                                </tr>
-                            ))}
+                            <tr key={selectedUser.id}>
+                                <td>{selectedUser.name}</td>
+                                <td>{selectedUser.email}</td>
+                                <td>{selectedUser.phone_number}</td>
+                                <td>{selectedUser.address}</td>
+                                <td>{selectedUser.dob}</td>
+                                <td>{selectedUser.gender}</td>
+                                <td>{selectedUser.created_at}</td>
+                                <td>{selectedUser.updated_at}</td>
+                                <td>{selectedUser.role}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -58,4 +56,4 @@ const BorrowHistoryModal = ({selectedUser, onClose }) => {
     );
 };
 
-export default BorrowHistoryModal;
+export default AccountDetailModal;
