@@ -51,6 +51,11 @@ def list_borrow_records_of_user(user, id):
             }), 403
 
         borrow_records = get_all_borrow_records_of_user(id)
+        for record in borrow_records:
+            borrowed_book = get_book_by_id(record["book_id"])
+            record.update({
+                "book_title": borrowed_book.title,
+            })
         return jsonify({
             "success": True,
             "message": "Successfully fetched all borrow records of the user.",

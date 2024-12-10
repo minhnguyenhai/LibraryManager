@@ -20,7 +20,7 @@ def get_borrow_record_by_id(borrow_record_id):
         borrow_record = BorrowRecord.query.get(borrow_record_id)
         if not borrow_record:
             return None
-        return borrow_record.as_dict()
+        return borrow_record
     except Exception as e:
         logging.error(f"Error while fetching borrow record by id: {str(e)}")
         raise
