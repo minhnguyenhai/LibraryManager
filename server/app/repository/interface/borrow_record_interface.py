@@ -16,6 +16,14 @@ class BorrowRecordInterface(ABC):
         pass
     
     @abstractmethod
+    def list_borrow_records_of_user_by_status(self, user_id, status) -> List[BorrowRecordModel]:
+        pass
+    
+    @abstractmethod
+    def list_borrow_records_of_book_by_status(self, book_id, status) -> List[BorrowRecordModel]:
+        pass
+    
+    @abstractmethod
     def get_borrow_record_by_id(self, borrow_record_id) -> BorrowRecordModel:
         pass
     

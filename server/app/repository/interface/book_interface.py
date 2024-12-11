@@ -58,6 +58,10 @@ class FavoriteInterface(ABC):
         pass
     
     @abstractmethod
+    def get_all_favorites_of_book(self, book_id) -> List[FavoriteModel]:
+        pass
+    
+    @abstractmethod
     def get_favorite(self, user_id, book_id) -> FavoriteModel:
         pass
     

@@ -47,6 +47,10 @@ class UserService:
     def delete_user_from_db(self, user):
         """Delete a user from the database"""
         try:
+            status_borrowing_records = self.borrow_record_repository.list_borrow_records_of_user_by_status(user.id, "borrowing")
+            if status_borrowing_records:
+                return False
+            
             token_to_delete = self.token_repository.get_token_by_user_id(user.id)
             self.token_repository.delete_token(token_to_delete)
             
@@ -54,11 +58,8 @@ class UserService:
             for favorite in favorites_to_delete:
                 self.favorite_repository.delete_favorite(favorite)
             
-            borrow_records_to_delete = self.borrow_record_repository.list_borrow_records_of_user(user.id)
-            for record in borrow_records_to_delete:
-                self.borrow_record_repository.delete_borrow_record(record)
-            
             self.user_repository.delete_user(user)
+            return True
             
         except Exception as e:  
             logging.error(f"Error while deleting user from database: {str(e)}")

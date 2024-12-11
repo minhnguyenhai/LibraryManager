@@ -24,13 +24,40 @@ class BorrowRecordRepository(BorrowRecordInterface):
         ).scalars().all()
         
         
+    def list_borrow_records_of_user_by_status(self, user_id, status) -> List[BorrowRecordModel]:
+        return db.session.execute(
+            db.select(BorrowRecordModel).where(
+                (BorrowRecordModel.user_id == user_id) & (BorrowRecordModel.status == status)
+            )
+        ).scalars().all()
+        
+        
+    def list_borrow_records_of_book_by_status(self, book_id, status) -> List[BorrowRecordModel]:
+        return db.session.execute(
+            db.select(BorrowRecordModel).where(
+                (BorrowRecordModel.book_id == book_id) & (BorrowRecordModel.status == status)
+            )
+        ).scalars().all()
+        
+        
     def get_borrow_record_by_id(self, borrow_record_id) -> BorrowRecordModel:
         return BorrowRecordModel.query.get(borrow_record_id)
     
     
     def create_borrow_record(self, user_id, book_id, quantity, borrow_date, due_date) -> BorrowRecordModel:
         try:
-            new_borrow_record = BorrowRecordModel(user_id, book_id, quantity, borrow_date, due_date)
+            user = UserModel.query.get(user_id)
+            book = BookModel.query.get(book_id)
+            new_borrow_record = BorrowRecordModel(
+                user_name=user.name,
+                user_email=user.email,
+                book_title=book.title,
+                quantity=quantity,
+                borrow_date=borrow_date,
+                due_date=due_date,
+                user_id=user_id,
+                book_id=book_id
+            )
             db.session.add(new_borrow_record)
             db.session.commit()
             return new_borrow_record
@@ -74,27 +101,12 @@ class BorrowRecordRepository(BorrowRecordInterface):
         
     def search_borrow_records(self, query) -> List[BorrowRecordModel]:
         try:
-            search_results = []
-            user_filters = (
-                UserModel.name.ilike(f"%{query}%") |
-                UserModel.email.ilike(f"%{query}%")
+            filters = (
+                BorrowRecordModel.user_name.ilike(f"%{query}%") |
+                BorrowRecordModel.user_email.ilike(f"%{query}%") |
+                BorrowRecordModel.book_title.ilike(f"%{query}%")
             )
-            users = db.session.query(UserModel).filter(user_filters).all()
-            if users:
-                for user in users:
-                    borrow_records_for_user_query = BorrowRecordModel.query.filter_by(user_id=user.id).all()
-                    for record_for_user_query in borrow_records_for_user_query:
-                        search_results.append(record_for_user_query)
-            
-            book_filters = BookModel.title.ilike(f"%{query}%")
-            books = db.session.query(BookModel).filter(book_filters).all()
-            if books:
-                for book in books:
-                    borrow_records_for_book_query = BorrowRecordModel.query.filter_by(book_id=book.id).all()
-                    for record_for_book_query in borrow_records_for_book_query:
-                        search_results.append(record_for_book_query)
-                        
-            return search_results
+            return db.session.query(BorrowRecordModel).filter(filters).all()
 
         except Exception as e:
             logging.error(f"Error searching borrow records: {str(e)}")

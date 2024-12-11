@@ -98,13 +98,19 @@ def delete_user(user, id):
             "message": "User not found."
         }), 404
         
-    user_service.delete_user_from_db(user_to_delete)
+    is_deleted = user_service.delete_user_from_db(user_to_delete)
+    if not is_deleted:
+        return jsonify({
+            "success": False,
+            "message": "User has borrowing records, can not be deleted."
+        }), 409
+
     return jsonify({
         "success": True,
         "message": "User deleted successfully."
     }), 200
-        
-        
+
+
 @user_api.route("/search", methods=["GET"])
 @JWT_required
 @admin_required

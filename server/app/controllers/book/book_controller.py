@@ -110,7 +110,13 @@ def delete_book(user, book_id):
             "message": "Book not found."
         }), 404
         
-    book_service.delete_book_from_db(book)
+    is_deleted = book_service.delete_book_from_db(book)
+    if not is_deleted:
+        return jsonify({
+            "success": False,
+            "message": "Book has borrowing records."
+        }), 409
+        
     return "", 204
         
      

@@ -104,6 +104,10 @@ class FavoriteRepository(FavoriteInterface):
         return FavoriteModel.query.filter_by(user_id=user_id).all()
     
     
+    def get_all_favorites_of_book(self, book_id) -> List[FavoriteModel]:
+        return FavoriteModel.query.filter_by(book_id=book_id).all()
+    
+    
     def get_favorite(self, user_id, book_id) -> FavoriteModel:
         return FavoriteModel.query.filter_by(user_id=user_id, book_id=book_id).first()
     

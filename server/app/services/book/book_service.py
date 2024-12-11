@@ -1,10 +1,13 @@
 import logging
-from ...repository.book_repository import BookRepository
+from ...repository.book_repository import BookRepository, FavoriteRepository
+from ...repository.borrow_record_repository import BorrowRecordRepository
 
 
 class BookService:
     def __init__(self):
         self.book_repository = BookRepository()
+        self.borrow_record_repository = BorrowRecordRepository()
+        self.favorite_repository = FavoriteRepository()
     
     
     def list_books(self):
@@ -43,7 +46,16 @@ class BookService:
     def delete_book_from_db(self, book):
         """ Delete a book from the database. """
         try:
+            status_borrowing_records = self.borrow_record_repository.list_borrow_records_of_book_by_status(book.id, "borrowing")
+            if status_borrowing_records:
+                return False
+            
+            favorites_to_delete = self.favorite_repository.get_all_favorites_of_book(book.id)
+            for favorite in favorites_to_delete:
+                self.favorite_repository.delete_favorite(favorite)
+            
             self.book_repository.delete_book(book)
+            return True
             
         except Exception as e:
             logging.error(f"Error while deleting book: {str(e)}")

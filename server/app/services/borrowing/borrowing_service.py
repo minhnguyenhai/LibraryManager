@@ -1,10 +1,14 @@
 import logging
 from ...repository.borrow_record_repository import BorrowRecordRepository
+from ...repository.user_repository import UserRepository
+from ...repository.book_repository import BookRepository
 
 
 class BorrowingService:
     def __init__(self):
         self.borrow_record_repository = BorrowRecordRepository()
+        self.user_repository = UserRepository()
+        self.book_repository = BookRepository()
     
     
     def get_all_borrow_records_of_user(self, user_id):
@@ -37,6 +41,11 @@ class BorrowingService:
     def save_new_borrow_record(self, user_id, book_id, quantity, borrow_date, due_date):
         """ Save a new borrow record to the database. """
         try:
+            user = self.user_repository.get_user_by_id(user_id)
+            book = self.book_repository.get_book_by_id(book_id)
+            if not user or not book:
+                return None
+            
             new_borrow_record = self.borrow_record_repository.create_borrow_record(user_id, book_id, quantity, borrow_date, due_date)
             return new_borrow_record
         

@@ -12,18 +12,7 @@ from ...utils.decorators import JWT_required, admin_required
 @admin_required
 def get_all_borrow_records(user):
     borrowing_service = BorrowingService()
-    borrow_records = borrowing_service.list_borrow_records()
-    user_service = UserService()
-    book_service = BookService()
-    for record in borrow_records:
-        user_borrowing = user_service.get_user_byId(record["user_id"])
-        borrowed_book = book_service.get_book_by_id(record["book_id"])
-        record.update({
-            "user_name": user_borrowing.name,
-            "user_email": user_borrowing.email,
-            "book_title": borrowed_book.title,
-        })
-        
+    borrow_records = borrowing_service.list_borrow_records()  
     return jsonify({
         "success": True,
         "message": "Successfully fetched all borrow records.",
@@ -42,13 +31,6 @@ def list_borrow_records_of_user(user, id):
 
     borrowing_service = BorrowingService()
     borrow_records = borrowing_service.get_all_borrow_records_of_user(id)
-    book_service = BookService()
-    for record in borrow_records:
-        borrowed_book = book_service.get_book_by_id(record["book_id"])
-        record.update({
-            "book_title": borrowed_book.title,
-        })
-        
     return jsonify({
         "success": True,
         "message": "Successfully fetched all borrow records of the user.",
@@ -78,6 +60,12 @@ def create_borrow_record(user):
         
     borrowing_service = BorrowingService()
     new_borrow_record = borrowing_service.save_new_borrow_record(data["user_id"], data["book_id"], data["quantity"], data["borrow_date"], data["due_date"])
+    if not new_borrow_record:
+        return jsonify({
+            "success": False,
+            "message": "User or book not found."
+        }), 404
+
     return jsonify({
         "success": True,
         "message": "Successfully saved new borrow record.",
@@ -132,17 +120,6 @@ def search_borrow_records(user):
     
     borrowing_service = BorrowingService()
     borrow_record_search_results = borrowing_service.search_borrow_records_by_query(query)
-    user_service = UserService()
-    book_service = BookService()
-    for result in borrow_record_search_results:
-        user_borrowing = user_service.get_user_byId(result["user_id"])
-        borrowed_book = book_service.get_book_by_id(result["book_id"])
-        result.update({
-            "user_name": user_borrowing.name,
-            "user_email": user_borrowing.email,
-            "book_title": borrowed_book.title,
-        })
-
     return jsonify({
         "success": True,
         "message": "Search completed successfully.",
