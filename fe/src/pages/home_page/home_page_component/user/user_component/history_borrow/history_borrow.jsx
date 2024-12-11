@@ -1,96 +1,68 @@
 import React, { useState, useEffect } from 'react';
-import './history_borrow.css'; // Đảm bảo rằng bạn có file CSS này để tạo kiểu cho bảng
+import './history_borrow.css';
 
 // Hàm tính trạng thái và màu sắc
-const getStatus = (borrowDate, dueDate, returnDate) => {
-    const currentDate = new Date();  // Ngày hiện tại
-    const due = new Date(dueDate); // Ngày hết hạn
-    const returned = returnDate ? new Date(returnDate) : null; // Ngày trả sách (nếu có)
-
-    // Trạng thái và màu sắc
-    if (returned) {
-        return { status: 'Đã trả', color: 'green' }; // Đã trả
-    } else if (currentDate > due) {
-        return { status: 'Quá hạn', color: 'red' }; // Quá hạn
-    } else if (currentDate.toDateString() === due.toDateString()) {
-        return { status: 'Đang mượn', color: 'yellow' }; // Đang mượn và sắp hết hạn
-    } else {
-        return { status: 'Đang mượn', color: 'blue' }; // Đang mượn
+const getStatus = (status) => {
+    if (status === 'borrowing') {
+        return { status: 'Đang mượn', color: 'blue' };
     }
+    if (status === 'overdue') {
+        return { status: 'Quá hạn', color: 'red' };
+    }
+    if (status === 'returned') {
+        return { status: 'Đã trả', color: 'green' };
+    }
+    return { status: 'Không xác định', color: 'grey' };
 };
 
-const HistoryBorrow = () => {
+const HistoryBorrow = ({ userId }) => {
     const [borrowRecords, setBorrowRecords] = useState([]); // Lưu trữ danh sách mượn sách
     const [loading, setLoading] = useState(false); // Trạng thái loading
     const [error, setError] = useState(null); // Lỗi khi gọi API
 
-    // Bộ dữ liệu giả
-    const mockBorrowRecords = [
-        {
-            id: "1",
-            book_id: "100",
-            borrow_date: "2023-01-01",
-            due_date: "2023-01-15",
-            return_date: null, // Chưa trả
-        },
-        {
-            id: "2",
-            book_id: "101",
-            borrow_date: "2023-02-01",
-            due_date: "2023-02-14",
-            return_date: "2023-02-10", // Đã trả
-        },
-        {
-            id: "3",
-            book_id: "102",
-            borrow_date: "2023-03-01",
-            due_date: "2023-03-15",
-            return_date: null, // Chưa trả
-        },
-        {
-            id: "4",
-            book_id: "103",
-            borrow_date: "2023-04-01",
-            due_date: "2023-04-10",
-            return_date: "2023-04-05", // Đã trả
-        },
-        {
-            id: "5",
-            book_id: "104",
-            borrow_date: "2023-06-01",
-            due_date: "2023-06-10",
-            return_date: null, // Chưa trả
-        }
-    ];
-
     useEffect(() => {
-        // Giả lập gọi API
-        setLoading(true);
+        const fetchBorrowRecords = async () => {
+            setLoading(true);
+            setError(null);
 
-        // Mô phỏng xử lý API trả về dữ liệu
-        setTimeout(() => {
             try {
-                const updatedRecords = mockBorrowRecords.map(record => {
-                    // Chuyển đổi thời gian mượn thành kiểu Date và xử lý trạng thái
-                    const borrowDate = new Date(record.borrow_date);
-                    const dueDate = new Date(record.due_date);
-                    const returnDate = record.return_date ? new Date(record.return_date) : null;
-                    const statusData = getStatus(borrowDate, dueDate, returnDate);
-
-                    return {
-                        ...record,
-                        status: statusData.status,
-                        statusColor: statusData.color,
-                    };
+                const token = localStorage.getItem('jwtToken'); // Lấy JWT token từ localStorage
+                const response = await fetch(`https://librarymanager-aict.onrender.com/user/${userId}/borrowing`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`, // Truyền token vào header
+                    },
                 });
-                setBorrowRecords(updatedRecords); // Lưu trữ vào state
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.borrow_records) {
+                    const updatedRecords = data.borrow_records.map(record => {
+                        const statusData = getStatus(record.status);
+                        return {
+                            ...record,
+                            statusText: statusData.status,
+                            statusColor: statusData.color,
+                        };
+                    });
+                    setBorrowRecords(updatedRecords); // Lưu trữ vào state
+                } else {
+                    setError('Không thể tải dữ liệu.');
+                }
             } catch (error) {
-                setError('Không thể tải dữ liệu.');
+                setError(error.message || 'Đã xảy ra lỗi.');
             } finally {
                 setLoading(false);
             }
-        }, 1000); // Giả lập 1 giây cho API trả về
-    }, []);
+        };
+
+        fetchBorrowRecords();
+    }, [userId]);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -100,6 +72,10 @@ const HistoryBorrow = () => {
         return <div>{error}</div>;
     }
 
+    if (borrowRecords.length === 0) {
+        return <div>Không có lịch sử mượn sách để hiển thị.</div>;
+    }
+
     return (
         <div className="table-container">
             <table>
@@ -107,10 +83,12 @@ const HistoryBorrow = () => {
                     <tr>
                         <th>ID</th>
                         <th>Sách ID</th>
+                        <th>Tên Sách</th>
+                        <th>Số Lượng</th>
                         <th>Ngày Mượn</th>
                         <th>Ngày Hạn Trả</th>
                         <th>Ngày Trả</th>
-                        <th>Trạng thái</th>
+                        <th>Trạng Thái</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -118,11 +96,13 @@ const HistoryBorrow = () => {
                         <tr key={record.id}>
                             <td>{record.id}</td>
                             <td>{record.book_id}</td>
+                            <td>{record.book_title}</td>
+                            <td>{record.quantity}</td>
                             <td>{new Date(record.borrow_date).toLocaleDateString()}</td>
                             <td>{new Date(record.due_date).toLocaleDateString()}</td>
                             <td>{record.return_date ? new Date(record.return_date).toLocaleDateString() : 'Chưa trả'}</td>
                             <td style={{ color: record.statusColor }}>
-                                {record.status}  {/* Hiển thị trạng thái */}
+                                {record.statusText} {/* Hiển thị trạng thái */}
                             </td>
                         </tr>
                     ))}
