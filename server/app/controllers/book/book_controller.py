@@ -6,7 +6,6 @@ from ...utils.decorators import JWT_required, admin_required
 
 
 @book_api.route("/book", methods=["GET"])
-@JWT_required
 def get_all_books():
     book_service = BookService()
     books_data = book_service.list_books()
@@ -18,7 +17,6 @@ def get_all_books():
 
 
 @book_api.route("/book/<book_id>", methods=["GET"])
-@JWT_required
 def get_book(book_id):
     book_service = BookService()
     book = book_service.get_book_by_id(book_id)
@@ -121,7 +119,6 @@ def delete_book(user, book_id):
         
      
 @book_api.route("/book/search", methods=["GET"])
-@JWT_required
 def search_books():
     query = request.args.get("query", type=str, default=None)
     if not query:

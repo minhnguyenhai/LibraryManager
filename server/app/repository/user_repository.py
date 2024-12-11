@@ -34,7 +34,7 @@ class UserRepository(UserInterface):
     
     
     def get_user_by_id(self, user_id) -> UserModel:
-        return db.execute(
+        return db.session.execute(
             db.select(UserModel).where(UserModel.id == user_id)
         ).scalar()
     

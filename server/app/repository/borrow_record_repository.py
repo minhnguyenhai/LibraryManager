@@ -2,6 +2,8 @@ import logging
 from typing import List
 from datetime import datetime
 
+from sqlalchemy import and_
+
 from .. import db
 from ..models.borrow_record import BorrowRecord as BorrowRecordModel
 from ..models.user import User as UserModel
@@ -27,7 +29,10 @@ class BorrowRecordRepository(BorrowRecordInterface):
     def list_borrow_records_of_user_by_status(self, user_id, status) -> List[BorrowRecordModel]:
         return db.session.execute(
             db.select(BorrowRecordModel).where(
-                (BorrowRecordModel.user_id == user_id) & (BorrowRecordModel.status == status)
+                and_(
+                    BorrowRecordModel.user_id == user_id,
+                    BorrowRecordModel.status == status
+                )
             )
         ).scalars().all()
         
@@ -35,7 +40,10 @@ class BorrowRecordRepository(BorrowRecordInterface):
     def list_borrow_records_of_book_by_status(self, book_id, status) -> List[BorrowRecordModel]:
         return db.session.execute(
             db.select(BorrowRecordModel).where(
-                (BorrowRecordModel.book_id == book_id) & (BorrowRecordModel.status == status)
+                and_(
+                    BorrowRecordModel.book_id == book_id,
+                    BorrowRecordModel.status == status
+                )
             )
         ).scalars().all()
         
