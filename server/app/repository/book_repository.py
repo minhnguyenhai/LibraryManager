@@ -100,6 +100,10 @@ class FavoriteRepository(FavoriteInterface):
         pass
     
     
+    def get_all_favorites_of_user(self, user_id) -> List[FavoriteModel]:
+        return FavoriteModel.query.filter_by(user_id=user_id).all()
+    
+    
     def get_favorite(self, user_id, book_id) -> FavoriteModel:
         return FavoriteModel.query.filter_by(user_id=user_id, book_id=book_id).first()
     

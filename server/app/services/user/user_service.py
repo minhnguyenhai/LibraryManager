@@ -1,6 +1,7 @@
 import logging
 from ...repository.user_repository import UserRepository
 from ...repository.token_repository import TokenRepository
+from ...repository.book_repository import FavoriteRepository
 from ...repository.borrow_record_repository import BorrowRecordRepository
 
 
@@ -8,6 +9,7 @@ class UserService:
     def __init__(self):
         self.user_repository = UserRepository()
         self.token_repository = TokenRepository()
+        self.favorite_repository = FavoriteRepository()
         self.borrow_record_repository = BorrowRecordRepository()
     
     
@@ -47,6 +49,10 @@ class UserService:
         try:
             token_to_delete = self.token_repository.get_token_by_user_id(user.id)
             self.token_repository.delete_token(token_to_delete)
+            
+            favorites_to_delete = self.favorite_repository.get_all_favorites_of_user(user.id)
+            for favorite in favorites_to_delete:
+                self.favorite_repository.delete_favorite(favorite)
             
             borrow_records_to_delete = self.borrow_record_repository.list_borrow_records_of_user(user.id)
             for record in borrow_records_to_delete:
