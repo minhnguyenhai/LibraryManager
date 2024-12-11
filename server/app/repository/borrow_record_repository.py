@@ -49,16 +49,16 @@ class BorrowRecordRepository(BorrowRecordInterface):
             user = UserModel.query.get(user_id)
             book = BookModel.query.get(book_id)
             new_borrow_record = BorrowRecordModel(
-                user_name=user.name,
-                user_email=user.email,
-                book_title=book.title,
+                user_id=user_id,
+                book_id=book_id,
                 quantity=quantity,
                 borrow_date=borrow_date,
-                due_date=due_date,
-                user_id=user_id,
-                book_id=book_id
+                due_date=due_date
             )
             db.session.add(new_borrow_record)
+            new_borrow_record.user_name = user.name
+            new_borrow_record.user_email = user.email
+            new_borrow_record.book_title = book.title
             db.session.commit()
             return new_borrow_record
 
