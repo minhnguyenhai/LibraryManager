@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import SearchBar from '../../../search/search_bar';
 import Pagination from '../../../pagination/pagination';
 import ConfirmationDialog from '../../../confirmation_dialog/confirmation_dialog';
-import { getUsers } from '../../../../../../services/admin_services/main_services';
+import { getUsers, searchAccount } from '../../../../../../services/admin_services/main_services';
 import { handleRefreshToken } from '../../../../../auth/login_register';
 import AccountDetailModal from '../../../account_detail_model/account_detail_modal';
 import EditAccountModal from '../../../edit_account_modal/edit_account_modal';
@@ -27,6 +27,7 @@ const ManageReaders = () => {
     const [isOpenAccountModal, setIsOpenAccountModal] = useState(false);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
+    const [loading, setLoading] = useState(false);
 
 
     const fetchAccounts = async () => {
@@ -45,9 +46,21 @@ const ManageReaders = () => {
         fetchAccounts();
     }, [refreshKey])
     
-    const handleSearch = (searchResults) => {
-        setFilteredAccounts(searchResults);
-        setCurrentPage(1); // Reset to first page after search
+    const handleSearch = async (searchTerm) => {
+        if (!searchTerm.trim()) {
+            await fetchAccounts();
+        }
+        setLoading(true);
+        try {
+            await handleRefreshToken();
+            const accessToken = localStorage.getItem("access_token"); // Lấy JWT Token từ localStorage
+            const results = await searchAccount(searchTerm, accessToken); // Gọi API tìm kiếm
+            setFilteredAccounts(results); // Cập nhật kết quả tìm kiếm
+        } catch (error) {
+            console.error("Lỗi khi tìm kiếm:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const totalPages = Math.ceil(filteredAccounts.length / accountsPerPage);
@@ -105,8 +118,7 @@ const ManageReaders = () => {
             <div className="searchbar-option">
                 <SearchBar 
                 onSearch={handleSearch}
-                data={allAccounts}
-                searchFields={['email','name','phone_number']}
+                loading={loading}
                 />
             </div>
             <div className="table-container">

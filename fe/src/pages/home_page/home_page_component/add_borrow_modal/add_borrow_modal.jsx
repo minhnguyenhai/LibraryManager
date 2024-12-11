@@ -129,6 +129,7 @@ import PropTypes from 'prop-types';
 import { addNewBorrow, getUsers } from '../../../../services/admin_services/main_services';
 import { handleRefreshToken } from '../../../auth/login_register';
 import { getAllBooks } from '../../../../services/common_servieces';
+import { toast } from 'react-toastify';
 
 const AddBorrowModal = ({ onClose, onAdd, triggerRefresh }) => {
     const [newBorrow, setNewBorrow] = useState({
@@ -182,13 +183,15 @@ const AddBorrowModal = ({ onClose, onAdd, triggerRefresh }) => {
             const accessToken = localStorage.getItem('access_token');
             const response = await addNewBorrow(newBorrow, accessToken);
             if (response) {
-                triggerRefresh();
-                onAdd(response.borrow_record);
-                alert('Thêm lượt mượn thành công');
+                onAdd();
                 onClose();
+                toast.success("Thêm lượt mượn thành công");
+                setTimeout(() => {
+                    triggerRefresh();
+                }, 5000);
             }
         } catch (error) {
-            alert('Đã xảy ra lỗi khi thêm. Vui lòng thử lại!');
+            toast.error("Thêm lượt mượn thất bại. Vui lòng thử lại");
         }
     };
 

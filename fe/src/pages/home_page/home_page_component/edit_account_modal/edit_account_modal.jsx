@@ -78,6 +78,7 @@ const EditAccountModal = ({ account, onClose, onSave, triggerRefresh }) => {
                             onChange={(e) => handleChange('gender', e.target.value)}
                         />
                     </div>
+
                     <div className="form-group">
                         <label htmlFor="address">Địa chỉ</label>
                         <input
@@ -95,7 +96,7 @@ const EditAccountModal = ({ account, onClose, onSave, triggerRefresh }) => {
                             onChange={(e) => handleChange('phone_number', e.target.value)}
                         />
                     </div>
-                    
+
                     <div className="form-actions">
                         <button type="button" onClick={handleSave}>
                             Lưu

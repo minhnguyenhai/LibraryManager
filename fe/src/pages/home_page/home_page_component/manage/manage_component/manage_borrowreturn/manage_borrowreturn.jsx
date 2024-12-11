@@ -3,10 +3,11 @@ import SearchBar from '../../../search/search_bar';
 import Pagination from '../../../pagination/pagination';
 import './manage_borrowreturn.css'
 import AddBorrowModal from '../../../add_borrow_modal/add_borrow_modal';
-import { getAllBorrow, getAllBorrowsByUser } from '../../../../../../services/admin_services/main_services';
+import { getAllBorrow, getAllBorrowsByUser, searchBorrow } from '../../../../../../services/admin_services/main_services';
 import BorrowHistoryModal from '../../../borrow_history_modal/borrow_history_modal';
 import ReturnBookModal from '../../../return_book_modal/return_book_modal';
 import { handleRefreshToken } from '../../../../../auth/login_register';
+import { ToastContainer } from 'react-toastify';
 
 
 const ManageBorrowReturn = () => {
@@ -37,23 +38,21 @@ const ManageBorrowReturn = () => {
 
     const totalPages = Math.ceil(filteredBorrows.length / borrowsPerPage);
 
-    // const handleSearch = (searchResults) => {
-    //     setFilteredBorrows(searchResults);
-    //     setCurrentPage(1); // Reset to first page after search
-    // };
     const handleSearch = async (searchTerm) => {
-        // if (!searchTerm.trim()) return; // Bỏ qua nếu từ khóa rỗng
-        // setLoading(true);
-        // try {
-        //     await handleRefreshToken();
-        //     const accessToken = localStorage.getItem("access_token"); // Lấy JWT Token từ localStorage
-        //     const results = await search(searchTerm, accessToken); // Gọi API tìm kiếm
-        //     setFilteredBorrows(results); // Cập nhật kết quả tìm kiếm
-        // } catch (error) {
-        //     console.error("Lỗi khi tìm kiếm:", error);
-        // } finally {
-        //     setLoading(false);
-        // }
+        if (!searchTerm.trim()) {
+            await fetchBorrows();
+        }
+        setLoading(true);
+        try {
+            await handleRefreshToken();
+            const accessToken = localStorage.getItem("access_token"); // Lấy JWT Token từ localStorage
+            const results = await searchBorrow(searchTerm, accessToken); // Gọi API tìm kiếm
+            setFilteredBorrows(results); // Cập nhật kết quả tìm kiếm
+        } catch (error) {
+            console.error("Lỗi khi tìm kiếm:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const getCurrentBorrows = () => {
@@ -78,8 +77,7 @@ const ManageBorrowReturn = () => {
         }
     };
 
-    const handleAddnewBorrow = (newBorrow) => {
-        borrows.push(newBorrow); // Thêm sách mới vào danh sách
+    const handleAddnewBorrow = () => {
         setIsAddingBorrow(false); // Đóng modal
     };
     const [selectedBorrowForReturn, setSelectedBorrowForReturn] = useState(null);
@@ -100,6 +98,7 @@ const ManageBorrowReturn = () => {
     };
     return (
         <div className="manage-borrows-content">
+            <ToastContainer/>
             <div className="searchbar-option">
                 <SearchBar
                     onSearch={handleSearch}

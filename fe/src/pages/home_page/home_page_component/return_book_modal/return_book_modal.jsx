@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './return_book_modal.css'
 import { returnBorrowBook } from '../../../../services/admin_services/main_services';
 import { handleRefreshToken } from '../../../auth/login_register';
+import { toast } from 'react-toastify';
 const ReturnBookModal = ({ borrow, onClose, onReturn,triggerRefresh }) => {
     const [returnBorrow, setReturnBorrow] = useState({...borrow});
     const handleOverlayClick = (e) => {
@@ -26,16 +27,15 @@ const ReturnBookModal = ({ borrow, onClose, onReturn,triggerRefresh }) => {
             const accessToken=localStorage.getItem('access_token');
             const response= await returnBorrowBook(returnBorrow.id,returnBorrow,accessToken);
             if(response){
-                triggerRefresh();
-                onReturn(response.updated_borrow_record);
-                alert('Trả sách thành công');
+                onReturn();
                 onclose();
+                toast.success("Trả sách thành công");
+                setTimeout(() => {
+                    triggerRefresh();
+                }, 5000);
             }
         } catch (error) {
-            alert('Đã xảy ra lỗi cập nhật. Vui lòng thử lại');
-        }finally{
-            onReturn(returnBorrow);
-            onClose();
+            toast.error("Trả sách thất bại. Vui lòng thử lại");
         }
     };
 

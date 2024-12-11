@@ -56,7 +56,9 @@ const ManageBooks = () => {
     };
 
     const handleSearch = async (searchTerm) => {
-        if (!searchTerm.trim()) return; // Bỏ qua nếu từ khóa rỗng
+        if (!searchTerm.trim()) {
+            await fetchBooks();
+        }
         setLoading(true);
         try {
             handleRefreshToken();

@@ -5,7 +5,7 @@ import Account from "../../models/account";
 
 
 //thêm sách mới
-export const addBook = async (bookData, accessToken)=> {
+export const addBook = async (bookData, accessToken) => {
     try {
         const response = await axios.post(
             `${BASE_URL}/book`,
@@ -18,14 +18,14 @@ export const addBook = async (bookData, accessToken)=> {
                 quantity: bookData.quantity,
             },
             {
-                headers:{
+                headers: {
                     Authorization: `Bearer ${accessToken}`,
                 }
             }
         )
-        if(response.status===201){
+        if (response.status === 201) {
             return response.data;
-        }else{
+        } else {
             throw new Error(response.status);
         }
     } catch (error) {
@@ -34,9 +34,9 @@ export const addBook = async (bookData, accessToken)=> {
 }
 
 //sửa sách
-export const updateBook =async(bookId,bookData,accessToken)=>{
+export const updateBook = async (bookId, bookData, accessToken) => {
     try {
-        const response=await axios.put(
+        const response = await axios.put(
             `${BASE_URL}/book/${bookId}`,
             {
                 title: bookData.title,
@@ -47,17 +47,17 @@ export const updateBook =async(bookId,bookData,accessToken)=>{
                 quantity: bookData.quantity,
             },
             {
-                headers:{
-                    Authorization:`Bearer ${accessToken}`
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
                 }
             }
         )
         console.log(response)
-        if (response.status===200){
+        if (response.status === 200) {
             return response.data;
-        }else{
+        } else {
             //throw new Error(response.status);
-            console.log('Error:',response.status)
+            console.log('Error:', response.status)
         }
     } catch (error) {
         throw error;
@@ -66,17 +66,17 @@ export const updateBook =async(bookId,bookData,accessToken)=>{
 
 //xóa sách khỏi cơ sở dữ liệu
 
-export const deleteBook= async(bookId,accessToken)=>{
+export const deleteBook = async (bookId, accessToken) => {
     try {
-        const response=await axios.delete(
+        const response = await axios.delete(
             `${BASE_URL}/book/${bookId}`,
             {
-                headers:{
+                headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
             }
         )
-        console.log('phản hồi',response);
+        console.log('phản hồi', response);
         return response;
     } catch (error) {
         throw error;
@@ -85,42 +85,42 @@ export const deleteBook= async(bookId,accessToken)=>{
 
 //Lấy Danh Sách Tất Cả Các Lượt Mượn
 
-export const getAllBorrow = async(accessToken)=>{
-    try{
-        const response=await axios.get(
+export const getAllBorrow = async (accessToken) => {
+    try {
+        const response = await axios.get(
             `${BASE_URL}/borrowing`,
             {
-                headers:{
+                headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
             }
         )
         console.log(response)
-        if(response.status===200){
-            return response.data.borrow_records.map((borrow)=>new Borrow(borrow));
-        }else{
+        if (response.status === 200) {
+            return response.data.borrow_records.map((borrow) => new Borrow(borrow));
+        } else {
             throw new Error(`Error: ${response.status}`)
         }
-    }catch(error){
+    } catch (error) {
         throw error;
     }
 }
 
 //lấy danh sách tất cả lượt mượn của 1 người dùng cụ thể
-export const getAllBorrowsByUser =async(accessToken,userId)=>{
+export const getAllBorrowsByUser = async (accessToken, userId) => {
     try {
-        const response=await axios.get(
+        const response = await axios.get(
             `${BASE_URL}/user/${userId}/borrowing`,
             {
-                headers:{
+                headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
             }
         )
         console.log(response)
-        if(response.status===200) {
-            return response.data.borrow_records.map((borrow)=>new Borrow(borrow));
-        }else{
+        if (response.status === 200) {
+            return response.data.borrow_records.map((borrow) => new Borrow(borrow));
+        } else {
             throw new Error(`Error: ${response.status}`)
         }
     } catch (error) {
@@ -129,9 +129,9 @@ export const getAllBorrowsByUser =async(accessToken,userId)=>{
 }
 
 //Tạo Lượt Mượn Sách
-export const addNewBorrow=async(borrowData,accessToken)=>{
+export const addNewBorrow = async (borrowData, accessToken) => {
     try {
-        const response=await axios.post(
+        const response = await axios.post(
             `${BASE_URL}/borrowing`,
             {
                 user_id: borrowData.userId,
@@ -141,14 +141,14 @@ export const addNewBorrow=async(borrowData,accessToken)=>{
                 due_date: borrowData.dueDate,
             },
             {
-                headers:{
-                    Authorization:`Bearer ${accessToken}`
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
                 }
             }
         )
-        if (response.status===201){
+        if (response.status === 201) {
             return response.data;
-        }else{
+        } else {
             throw new Error(`Error: ${response.status}`);
         }
     } catch (error) {
@@ -157,23 +157,23 @@ export const addNewBorrow=async(borrowData,accessToken)=>{
 }
 
 //trả sách
-export const returnBorrowBook =async(borrowId,borrowData,accessToken)=>{
+export const returnBorrowBook = async (borrowId, borrowData, accessToken) => {
     try {
-        const response=await axios.put(
+        const response = await axios.put(
             `${BASE_URL}/borrowing/${borrowId}/return`,
             {
                 return_date: borrowData.returnDate,
             },
             {
-                headers:{
-                    Authorization:`Bearer ${accessToken}`
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
                 }
             }
         )
         console.log(response)
-        if (response.status===200){
+        if (response.status === 200) {
             return response.data;
-        }else{
+        } else {
             throw new Error(response.status);
         }
     } catch (error) {
@@ -182,22 +182,95 @@ export const returnBorrowBook =async(borrowId,borrowData,accessToken)=>{
 }
 
 //lấy tất cả Accounts
-export const getUsers= async(accessToken)=>{
+export const getUsers = async (accessToken) => {
     try {
-        const response=await axios.get(
+        const response = await axios.get(
             `${BASE_URL}/user/`,
             {
-                headers:{
+                headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
             }
         )
-        if(response.status===200){
-            return response.data.users.map((userdata)=>new Account(userdata))
-        }else{
+        if (response.status === 200) {
+            return response.data.users.map((userdata) => new Account(userdata))
+        } else {
             throw new Error("Lỗi");
         }
     } catch (error) {
+        throw error;
+    }
+}
+
+//thống kê người dùng
+export const statisticlUser = async (accessToken) => {
+    try {
+        const response = await axios.get(
+            `${BASE_URL}/statistic/user`,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            }
+        )
+        console.log(response);
+        if (response.status === 200) return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+//thống kê sách
+export const statisticlBook = async (accessToken) => {
+    try {
+        const response = await axios.get(
+            `${BASE_URL}/statistic/book`,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            }
+        )
+        console.log(response);
+        if (response.status === 200) return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+//tìm kiếm tài khoản
+export const searchAccount = async (searchTearm, accessToken) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/user/search`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+            params: { query: searchTearm },
+        });
+
+        if (response.status === 200) {
+            return response.data.users.map((userdata) => new Account(userdata));
+        } else {
+            throw new Error("Lỗi");
+        }
+    } catch (error) {
+        console.error("Lỗi khi tìm kiếm:", error);
+        throw error;
+    }
+}
+
+//tìm kiếm trả mượn
+export const searchBorrow = async (searchTearm, accessToken) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/borrowing/search`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+            params: { query: searchTearm },
+        });
+
+        if (response.status === 200) {
+            return response.data.borrow_records.map((borrowdata) => new Borrow(borrowdata));
+        } else {
+            throw new Error("Lỗi");
+        }
+    } catch (error) {
+        console.error("Lỗi khi tìm kiếm:", error);
         throw error;
     }
 }
