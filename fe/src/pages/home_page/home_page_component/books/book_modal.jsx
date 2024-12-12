@@ -6,7 +6,8 @@ const BookModal = ({
     onClose,
     labels = {
         addToCart: 'Thêm vào danh sách yêu thích'
-    }
+    },
+    addFaBook
 }) => {
     const handleOverlayClick = (e) => {
         e.stopPropagation();
@@ -33,7 +34,9 @@ const BookModal = ({
                 <p className="modal-description">{book.description}</p>
                 <div className="modal-footer">
                     <span className="book-price">{book.price}</span>
-                    <button className="add-to-cart-button">
+                    <button className="add-to-cart-button"
+                        onClick={()=>addFaBook(book.id)}
+                    >
                         {labels.addToCart}
                     </button>
                 </div>

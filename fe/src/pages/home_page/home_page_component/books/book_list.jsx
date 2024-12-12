@@ -4,7 +4,8 @@ import Pagination from "../pagination/pagination";
 import BookModal from "./book_modal";
 import { handleRefreshToken } from "../../../auth/login_register";
 import { getAllBooks } from "../../../../services/common_servieces";
-
+import { addFavouriteBook } from "../../../../services/user_services/main_services";
+import { toast, ToastContainer } from 'react-toastify';
 const BookList = ({
   books,
   setBooks,
@@ -49,8 +50,23 @@ const BookList = ({
     setSelectedBook(book);
   };
 
+  const handleAddFaBook = async(bookId)=>{
+    await handleRefreshToken();
+    const accessToken = localStorage.getItem('access_token');
+    try {
+      const response = await addFavouriteBook(bookId,accessToken)
+      if(response){
+        setSelectedBook(null);
+        toast.success('Đã thêm sách vào danh sách yêu thích')
+      }
+    } catch (error) {
+      setSelectedBook(null);
+      toast.error('Thêm sách vào danh sách yêu thích thất bại. Vui lòng thử lại')
+    }
+  }
   return (
     <div className="book-container">
+      <ToastContainer/>
       <h1 className="book-title">Danh sách sách</h1>
       {loading && <p>Đang tải dữ liệu...</p>}
 
@@ -76,9 +92,7 @@ const BookList = ({
                 <span className="book-price">{book.price}</span>
                 <button
                   className="add-to-cart-button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
+                  onClick={()=> handleAddFaBook(book.id)}
                 >
                   Thêm vào danh sách yêu thích
                 </button>
@@ -108,6 +122,7 @@ const BookList = ({
         labels={{
           addToCart: "Thêm vào danh sách yêu thích",
         }}
+        addFaBook={handleAddFaBook}
       />
     </div>
   );
