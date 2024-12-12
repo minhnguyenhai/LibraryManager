@@ -19,6 +19,11 @@ class BookService:
     def get_book_by_id(self, book_id):
         """ Fetch a book by its id. """
         return self.book_repository.get_book_by_id(book_id)
+    
+    
+    def get_bool_by_title_author(self, title, author):
+        """ Fetch a book by its title and author. """
+        return self.book_repository.get_book_by_title_author(title, author)
 
         
     def save_new_book(self, title, author, image_url, description, price, quantity):

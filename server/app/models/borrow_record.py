@@ -16,6 +16,7 @@ class BorrowRecord(db.Model):
     user_name: Mapped[str] = mapped_column(String, nullable=False)
     user_email: Mapped[str] = mapped_column(String, nullable=False)
     book_title: Mapped[str] = mapped_column(String, nullable=False)
+    book_img_url: Mapped[str] = mapped_column(String, nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
     borrow_date: Mapped[date] = mapped_column(Date, nullable=False)
     due_date: Mapped[date] = mapped_column(Date, nullable=False)

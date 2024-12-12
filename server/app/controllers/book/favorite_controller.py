@@ -44,6 +44,13 @@ def add_favorite_book_for_user(user_id):
         }), 404
     
     favorite_service = FavoriteService()
+    existed_favorite_relationship = favorite_service.get_favorite_relationship(user_id, book_id)
+    if existed_favorite_relationship:
+        return jsonify({
+            "success": False,
+            "message": "Book already exists in favorites."
+        }), 400
+
     favorite_service.add_book_to_favorites(user_id, book_id)
     return jsonify({
         "success": True,

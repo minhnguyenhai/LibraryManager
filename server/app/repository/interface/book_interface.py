@@ -33,6 +33,10 @@ class BookInterface(ABC):
         pass
     
     @abstractmethod
+    def get_book_by_title_author(self, title, author) -> BookModel:
+        pass
+    
+    @abstractmethod
     def create_book(self, title, author, image_url, description, price, quantity) -> BookModel:
         pass
     

@@ -43,6 +43,10 @@ class BookRepository(BookInterface):
         return BookModel.query.get(book_id)
     
     
+    def get_book_by_title_author(self, title, author) -> BookModel:
+        return BookModel.query.filter_by(title=title, author=author).first()
+    
+    
     def create_book(self, title, author, image_url, description, price, quantity) -> BookModel:
         try:
             new_book = BookModel(title, author, image_url, description, price, quantity)

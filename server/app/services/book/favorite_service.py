@@ -19,6 +19,11 @@ class FavoriteService:
             raise
         
         
+    def get_favorite_relationship(self, user_id, book_id):
+        """ Fetch a favorite relationship between a user and a book. """
+        return self.favorite_repository.get_favorite(user_id, book_id)
+
+
     def add_book_to_favorites(self, user_id, book_id):
         """ Add book to user's favorites. """
         try:
@@ -27,7 +32,7 @@ class FavoriteService:
         except Exception as e:
             logging.error(f"Error while adding book to favorites: {str(e)}")
             raise
-        
+
         
     def remove_favorite_relationship(self, user_id, book_id):
         """ Remove a book from the user's favorites. """

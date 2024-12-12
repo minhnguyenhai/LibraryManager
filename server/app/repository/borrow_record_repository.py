@@ -66,6 +66,7 @@ class BorrowRecordRepository(BorrowRecordInterface):
             new_borrow_record.user_name = user.name
             new_borrow_record.user_email = user.email
             new_borrow_record.book_title = book.title
+            new_borrow_record.book_img_url = book.image_url
             db.session.commit()
             return new_borrow_record
 

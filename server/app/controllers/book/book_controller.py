@@ -53,6 +53,13 @@ def add_book(user):
         }), 400
     
     book_service = BookService()
+    existed_book = book_service.get_bool_by_title_author(data["title"], data["author"])
+    if existed_book:
+        return jsonify({
+            "success": False,
+            "message": "Book already exists."
+        }), 409
+
     new_book = book_service.save_new_book(data["title"], data["author"], data["image_url"], data["description"], data["price"], data["quantity"])
     return jsonify({
         "success": True,
