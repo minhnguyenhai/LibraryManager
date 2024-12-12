@@ -1,6 +1,5 @@
 import logging
 from typing import List
-from datetime import datetime
 
 from sqlalchemy import and_
 
@@ -78,9 +77,6 @@ class BorrowRecordRepository(BorrowRecordInterface):
         
     def update_borrow_record(self, borrow_record, return_date) -> BorrowRecordModel:
         try:
-            if isinstance(return_date, str):
-                return_date = datetime.strptime(return_date, "%Y-%m-%d").date()
-            
             borrow_record.return_date = return_date
             
             if return_date <= borrow_record.due_date:
@@ -94,8 +90,8 @@ class BorrowRecordRepository(BorrowRecordInterface):
             db.session.rollback()
             logging.error(f"Error updating borrow record: {str(e)}")
             raise
-        
-        
+
+
     def delete_borrow_record(self, record):
         try:
             db.session.delete(record)

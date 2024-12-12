@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import request, jsonify
 
 from . import borrowing_api
@@ -97,6 +99,14 @@ def update_borrow_record(user, borrow_record_id):
         return jsonify({
             "success": False,
             "message": "Missing field: return_date"
+        }), 400
+        
+    try:
+        return_date = datetime.strptime(return_date, "%Y-%m-%d").date()
+    except ValueError:
+        return jsonify({
+            "success": False,
+            "message": "Invalid return_date format. Expected format: 'YYYY-MM-DD'"
         }), 400
     
     updated_borrow_record = borrowing_service.update_borrow_record_info(borrow_record, return_date)

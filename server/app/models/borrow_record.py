@@ -20,7 +20,7 @@ class BorrowRecord(db.Model):
     borrow_date: Mapped[date] = mapped_column(Date, nullable=False)
     due_date: Mapped[date] = mapped_column(Date, nullable=False)
     return_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
-    status: Mapped[str] = mapped_column(String(10), default="borrowing")
+    status: Mapped[str] = mapped_column(String, default="borrowing")
     user_id: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id"), nullable=True)
     book_id: Mapped[Optional[str]] = mapped_column(ForeignKey("books.id"), nullable=True)
     
