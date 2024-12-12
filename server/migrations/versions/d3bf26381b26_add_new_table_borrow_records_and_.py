@@ -26,7 +26,7 @@ def upgrade():
     sa.Column('borrow_date', sa.Date(), nullable=False),
     sa.Column('due_date', sa.Date(), nullable=False),
     sa.Column('return_date', sa.Date(), nullable=True),
-    sa.Column('status', sa.String(length=10), nullable=False),
+    sa.Column('status', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['book_id'], ['books.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
