@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { FaBook } from "react-icons/fa";
 import { MdWorkHistory } from "react-icons/md";
-import { HistoryBorrow } from "./user_component/history_borrow/history_borrow";
+import HistoryBorrow from "./user_component/history_borrow/history_borrow";
+import FavouriteBook from "./user_component/favourite_book/favourite_book";
 const User = () => {
     const options = [
         { label: 'Sách yêu thích', icon: <FaBook />, key: 'favourite books' },
@@ -13,9 +14,12 @@ const User = () => {
     const renderContent = () => {
         switch (activeContent) {
             case 'favourite books':
+                return <FavouriteBook />;
             case 'history borrow':
-                return <HistoryBorrow/>
-        }
+                return <HistoryBorrow />;
+            default:
+                return null; 
+         }
     }
     return (
         <div className="manage-container">

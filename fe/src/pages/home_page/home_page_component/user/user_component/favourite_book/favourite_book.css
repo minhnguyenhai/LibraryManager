@@ -1,0 +1,89 @@
+.table-container{
+    padding: 50px 50px;
+}
+table {
+    border-collapse: collapse; 
+    width: 100%; 
+}
+th, td {
+
+    border: 1px solid #ddd;
+    padding: 8px; 
+    text-align: center; 
+}
+th {
+    background-color: #f2f2f2; 
+  }
+
+.image-column img {
+    max-width: 100%; 
+  }
+  .delete-button {
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+    background-color: #ff7875;
+}
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Nội dung modal */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+/* Nút trong modal */
+.modal-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.cancel-button, .confirm-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.cancel-button {
+    background-color: #ccc;
+}
+
+.cancel-button:hover {
+    background-color: #bbb;
+}
+
+.confirm-button {
+    background-color: #ff4d4f;
+    color: white;
+}
+
+.confirm-button:hover {
+    background-color: #ff7875;
+}
