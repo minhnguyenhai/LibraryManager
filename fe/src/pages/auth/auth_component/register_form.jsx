@@ -63,12 +63,12 @@ const RegisterForm = ({ email, password, name, dob, gender, phone_number,
                             <span>Giới tính</span>
                             <div className="gender-options">
                                 <label className="gender-option">
-                                    <input type="radio" name="gender" value="man" checked={gender === 'man'}
+                                    <input type="radio" name="gender" value="Male" checked={gender === 'Male'}
                                         onChange={(e) => setGender(e.target.value)} required />
                                     <span>Nam</span>
                                 </label>
                                 <label className="gender-option">
-                                    <input type="radio" name="gender" value="woman" checked={gender === 'woman'}
+                                    <input type="radio" name="gender" value="Female" checked={gender === 'Female'}
                                         onChange={(e) => setGender(e.target.value)} required />
                                     <span>Nữ</span>
                                 </label>
@@ -118,19 +118,6 @@ const RegisterForm = ({ email, password, name, dob, gender, phone_number,
                             />
                         </div>
                     </div>
-                </div>
-                <div className="remember-forgot">
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={agreeToTerms}
-                            onChange={(e) => setAgreeToTerms(e.target.checked)}
-                            required
-                        />
-                        <span className="ml-2">
-                            Tôi đồng ý với các điều khoản
-                        </span>
-                    </label>
                 </div>
 
                 <button

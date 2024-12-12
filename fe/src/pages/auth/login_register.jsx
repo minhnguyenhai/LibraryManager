@@ -8,29 +8,17 @@ import ForgotPasswordForm from "./auth_component/forgotPassword_form";
 import ValidationForm from "./auth_component/validation_form";
 import ResetPasswordForm from "./auth_component/resetPassword_form";
 
-//kiểm tra xem 1 token hết hạn chưa?
-const isTokenExpired = (token) => {
-    if (!token) return true;
-    // Giải mã token để lấy thời gian hết hạn (exp)
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const expTime = payload.exp * 1000; // chuyển thành milliseconds
-    return Date.now() >= expTime; // Trả về true nếu token đã hết hạn
-};
-
 // Xử lý refreshtoken
 export const handleRefreshToken = async () => {
-    const currentAccessToken = localStorage.getItem('access_token');
-    if (isTokenExpired(currentAccessToken)) {
-        try {
-            const currentRefreshToken = localStorage.getItem('refresh_token');
-            const result = await refrehToken(currentRefreshToken);
-            if (result) {
-                localStorage.setItem('access_token', result.access_token);
-                localStorage.setItem('refresh_token', result.refresh_token);
-            }
-        } catch (error) {
-            console.error(error);
+    try {
+        const currentRefreshToken = localStorage.getItem('refresh_token');
+        const result = await refrehToken(currentRefreshToken);
+        if (result) {
+            localStorage.setItem('access_token', result.access_token);
+            localStorage.setItem('refresh_token', result.refresh_token);
         }
+    } catch (error) {
+        console.error(error);
     }
 }
 

@@ -26,12 +26,6 @@ const LoginForm = ({ email, password, setEmail,loading, setPassword, handleLogin
                 <FaLock className="icon" />
             </div>
             <div className="remember-forgot">
-                <label>
-                    <input
-                        type="checkbox"
-                    />
-                    Nhớ mật khẩu?
-                </label>
                 <a href="#" onClick={forgotPasswordLink}>Quên mật khẩu?</a>
             </div>
 
