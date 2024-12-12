@@ -28,7 +28,7 @@ const ReturnBookModal = ({ borrow, onClose, onReturn,triggerRefresh }) => {
             const response= await returnBorrowBook(returnBorrow.id,returnBorrow,accessToken);
             if(response){
                 onReturn();
-                onclose();
+                onClose();
                 toast.success("Trả sách thành công");
                 setTimeout(() => {
                     triggerRefresh();

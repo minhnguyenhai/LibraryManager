@@ -86,14 +86,7 @@ const ManageBorrowReturn = () => {
         setSelectedBorrowForReturn(borrow);
     };
 
-    const handleReturnBook = (updatedBorrowRecord) => {
-        // Cập nhật record trong danh sách
-        const updatedBorrows = borrows.map(borrow =>
-            borrow.id === updatedBorrowRecord.id
-                ? updatedBorrowRecord
-                : borrow
-        );
-        setBorrows(updatedBorrows);
+    const handleReturnBook = () => {
         setSelectedBorrowForReturn(null);
     };
     return (

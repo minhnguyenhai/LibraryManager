@@ -54,8 +54,11 @@ const Header = ({ selectedNav, setSelectedNav }) => {
                         <span >{userData.name}</span>
                     </div>
                     <div className="account-dropdown">
-                        <Link to="/profile" className="dropdown-item">Hồ sơ của tôi</Link>
-                        <Link to="/settings" className="dropdown-item">Cài đặt</Link>
+                        <Link to="/profile" className="dropdown-item"
+                            onClick={() => setSelectedNav('')}
+                        >
+                            Hồ sơ của tôi
+                        </Link>
                         <div
                             className="dropdown-item logout-item"
                             onClick={handleLogout}
