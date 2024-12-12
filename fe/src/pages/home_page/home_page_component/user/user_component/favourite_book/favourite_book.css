@@ -87,3 +87,13 @@ th {
 .confirm-button:hover {
     background-color: #ff7875;
 }
+.centered-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Toàn màn hình */
+    font-size: 1.5rem; /* Kích thước chữ lớn */
+    font-style: italic; /* Chữ in nghiêng */
+    text-align: center; /* Căn giữa nội dung */
+    color: #555; /* Màu chữ nhẹ */
+}

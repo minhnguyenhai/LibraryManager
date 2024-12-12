@@ -21,7 +21,7 @@ const HistoryBorrow = () => {
     const [error, setError] = useState(null); 
 
     // Token và userId được truyền trực tiếp
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiOWNmOTNiMTAtYzY4NC00MzVmLTk3NjQtMmRmODMxNGZjYzExIiwiZXhwIjoxNzM0MDA1MTczfQ.WQXaQljUxOmCP4O6vPWQL74GUdBi2LaQXe-t6xMiLLI";
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiOWNmOTNiMTAtYzY4NC00MzVmLTk3NjQtMmRmODMxNGZjYzExIiwiZXhwIjoxNzM0MDE0NjEzfQ.ysEK5PYs2G1qTiksHGq546Nx5ptWeI5JFqBXljWrR_Q";
     const userId = "9cf93b10-c684-435f-9764-2df8314fcc11";
 
     useEffect(() => {
@@ -68,15 +68,15 @@ const HistoryBorrow = () => {
     }, [userId]);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div className="centered-message">Loading...</div>;
     }
-
+    
     if (error) {
-        return <div>{error}</div>;
+        return <div className="centered-message">Lỗi mất rồi, đăng nhập lại giúp tôi nhé</div>;
     }
-
+    
     if (borrowRecords.length === 0) {
-        return <div>Không có lịch sử mượn sách để hiển thị.</div>;
+        return <div className="centered-message">No Data</div>;
     }
 
     return (
@@ -86,6 +86,7 @@ const HistoryBorrow = () => {
                     <tr>
                         <th>STT</th>
                         <th>Tên Sách</th>
+                        <th>Hình ảnh</th>
                         <th>Số Lượng</th>
                         <th>Ngày Mượn</th>
                         <th>Ngày Hạn Trả</th>
@@ -98,6 +99,14 @@ const HistoryBorrow = () => {
                         <tr key={record.id}>
                             <td>{index + 1}</td> {/* Số thứ tự bắt đầu từ 1 */}
                             <td>{record.book_title}</td>
+                            <td>
+                             {/* Hiển thị hình ảnh */}
+                                 <img 
+                                 src={record.book_image_url} 
+                                 alt={record.book_title} 
+                                style={{ width: '50px', height: '75px', objectFit: 'cover' }} 
+                                 />
+                            </td>
                             <td>{record.quantity}</td>
                             <td>{new Date(record.borrow_date).toLocaleDateString()}</td>
                             <td>{new Date(record.due_date).toLocaleDateString()}</td>

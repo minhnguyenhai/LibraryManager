@@ -18,3 +18,13 @@ th {
 .image-column img {
     max-width: 100%;
   }
+  .centered-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Chiều cao toàn màn hình */
+    font-size: 1.5rem; /* Kích thước chữ lớn hơn */
+    font-style: italic; /* Chữ in nghiêng */
+    text-align: center; /* Căn giữa nội dung */
+    color: #555; /* Màu chữ nhẹ */
+}
