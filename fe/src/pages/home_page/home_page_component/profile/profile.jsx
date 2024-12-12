@@ -46,7 +46,7 @@ const Profile = () => {
                 setTimeout(()=>{
                     setIsEditing(false);
                     fetchAccount();
-                },5000)
+                },3000)
             }
         } catch (error) {
             toast.error("Cập nhật thông tin thất bại. Vui lòng thử lại")

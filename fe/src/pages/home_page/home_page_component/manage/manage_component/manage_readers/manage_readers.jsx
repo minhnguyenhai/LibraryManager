@@ -97,7 +97,7 @@ const ManageReaders = () => {
                     toast.success("Xóa thành công");
                     setTimeout(() => {
                         fetchAccounts();
-                    }, 5000);
+                    }, 3000);
                 } else {
                     toast.error('Xóa sách thất bại. Vui lòng thử lại!');
                 }

@@ -107,7 +107,7 @@ const ManageBooks = () => {
                     toast.success("Xóa thành công");
                     setTimeout(() => {
                         fetchBooks();
-                    }, 5000);
+                    }, 3000);
                 } else {
                     toast.error('Xóa sách thất bại. Vui lòng thử lại!');
                 }

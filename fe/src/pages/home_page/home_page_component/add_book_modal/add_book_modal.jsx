@@ -44,7 +44,7 @@ const AddBookModal = ({ onClose, onAdd ,triggerRefresh}) => {
                 toast.success("Thêm sách thành công");
                 setTimeout(() => {
                     triggerRefresh();
-                }, 5000);
+                }, 3000);
             }
         } catch (error) {
             toast.error("Thêm sách thất bại. Vui lòng thử lại");

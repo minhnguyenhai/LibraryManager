@@ -32,7 +32,7 @@ const ReturnBookModal = ({ borrow, onClose, onReturn,triggerRefresh }) => {
                 toast.success("Trả sách thành công");
                 setTimeout(() => {
                     triggerRefresh();
-                }, 5000);
+                }, 3000);
             }
         } catch (error) {
             toast.error("Trả sách thất bại. Vui lòng thử lại");
