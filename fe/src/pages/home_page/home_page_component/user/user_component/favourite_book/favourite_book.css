@@ -44,8 +44,8 @@ th {
     z-index: 1000;
 }
 
-/* Nội dung modal */
-.modal-content {
+
+.modal-content-fabook {
     background-color: white;
     padding: 20px;
     border-radius: 8px;
@@ -55,7 +55,6 @@ th {
     width: 100%;
 }
 
-/* Nút trong modal */
 .modal-buttons {
     display: flex;
     justify-content: space-around;

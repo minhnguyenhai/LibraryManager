@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './favourite_book.css'; 
+import { handleRefreshToken } from '../../../../../auth/login_register';
 
 const FavouriteBooks = () => {
     const [favouriteBooks, setFavouriteBooks] = useState([]); 
@@ -10,27 +11,21 @@ const FavouriteBooks = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedBookId, setSelectedBookId] = useState(null);
 
-    // Lấy JWT token từ localStorage
-    // const token = localStorage.getItem('jwtToken');
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiOWNmOTNiMTAtYzY4NC00MzVmLTk3NjQtMmRmODMxNGZjYzExIiwiZXhwIjoxNzM0MDAyODk0fQ.KXZ9WoHIoFIsJt7f9890l562Pf0y9POEd6KXIi8lpHI';
     // Hàm gọi API để lấy danh sách sách yêu thích
     useEffect(() => {
         const fetchFavouriteBooks = async () => {
             setLoading(true);
             setError(null);
-
+            await handleRefreshToken();
+            const accessToken = localStorage.getItem('access_token');
             try {
-                // Kiểm tra token
-                if (!token) {
-                    throw new Error('Vui lòng đăng nhập.');
-                }
 
                 // Giả lập gọi API
                 const response = await fetch('https://librarymanager-aict.onrender.com/user/favorite', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${accessToken}`,
                     },
                 });
 
@@ -48,7 +43,7 @@ const FavouriteBooks = () => {
         };
 
         fetchFavouriteBooks();
-    }, [token]);
+    }, []);
 
     // Hàm mở modal khi nhấn nút "Xóa"
     const openModal = (id) => {
@@ -65,13 +60,18 @@ const FavouriteBooks = () => {
     // Hàm gọi API để xóa sách yêu thích
     const handleDeleteBook = async () => {
         try {
-            const response = await fetch(`/user/favorite/${selectedBookId}`, {
+            await handleRefreshToken();
+            const accessToken = localStorage.getItem('access_token');
+            const response = await fetch(`https://librarymanager-aict.onrender.com/user/favorite/${selectedBookId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${accessToken}`,
                 },
             });
+            if(response.ok){
+
+            }
 
             if (!response.ok) {
                 throw new Error('Không thể xóa sách.');
@@ -109,9 +109,9 @@ const FavouriteBooks = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {favouriteBooks.map(book => (
+                    {favouriteBooks.map((book,index) => (
                         <tr key={book.id}>
-                            <td>{book.id}</td>
+                            <td>{index+1}</td>
                             <td>{book.title}</td>
                             <td className="image-column">
                                 <img src={book.url_image || 'https://via.placeholder.com/150'} alt={book.title} />
@@ -132,7 +132,7 @@ const FavouriteBooks = () => {
             {/* Modal xác nhận xóa */}
             {isModalOpen && (
                 <div className="modal">
-                    <div className="modal-content">
+                    <div className="modal-content-fabook">
                         <h3>Bạn chắc chắn muốn xóa sách này chứ?</h3>
                         <div className="modal-buttons">
                             <button onClick={closeModal} className="cancel-button">

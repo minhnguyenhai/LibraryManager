@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './history_borrow.css';
+import { handleRefreshToken } from '../../../../../auth/login_register';
 
 // Hàm tính trạng thái và màu sắc
 const getStatus = (status) => {
@@ -20,21 +21,20 @@ const HistoryBorrow = () => {
     const [loading, setLoading] = useState(false); 
     const [error, setError] = useState(null); 
 
-    // Token và userId được truyền trực tiếp
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiOWNmOTNiMTAtYzY4NC00MzVmLTk3NjQtMmRmODMxNGZjYzExIiwiZXhwIjoxNzM0MDA1MTczfQ.WQXaQljUxOmCP4O6vPWQL74GUdBi2LaQXe-t6xMiLLI";
-    const userId = "9cf93b10-c684-435f-9764-2df8314fcc11";
 
     useEffect(() => {
         const fetchBorrowRecords = async () => {
             setLoading(true);
             setError(null);
-
+            await handleRefreshToken();
+            const accessToken = localStorage.getItem('access_token');
+            const user = JSON.parse(localStorage.getItem('user_info'));
             try {
-                const response = await fetch(`https://librarymanager-aict.onrender.com/user/${userId}/borrowing`, {
+                const response = await fetch(`https://librarymanager-aict.onrender.com/user/${user.id}/borrowing`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`, // Truyền token trực tiếp vào header
+                        Authorization: `Bearer ${accessToken}`, // Truyền token trực tiếp vào header
                     },
                 });
 
@@ -65,7 +65,7 @@ const HistoryBorrow = () => {
         };
 
         fetchBorrowRecords();
-    }, [userId]);
+    }, []);
 
     if (loading) {
         return <div>Loading...</div>;

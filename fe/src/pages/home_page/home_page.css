@@ -21,4 +21,5 @@
 
 .body-content{
     margin-bottom: 50px;
+    min-height: 500px;
 }

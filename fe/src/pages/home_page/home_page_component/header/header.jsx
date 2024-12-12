@@ -13,7 +13,7 @@ const Header = ({ selectedNav, setSelectedNav }) => {
 
     useEffect(() => {
         handleRefreshToken();
-        const token = localStorage.getItem('access_token');
+        const token = localStorage.getItem('refresh_token');
         const user = localStorage.getItem('user_info');
         if (token && user) {
             setIsLoggedIn(true);
@@ -23,7 +23,7 @@ const Header = ({ selectedNav, setSelectedNav }) => {
 
     const handleLogout = async () => {
         try {
-            handleRefreshToken();
+            await handleRefreshToken();
             const accessToken = localStorage.getItem('access_token');
             const response = await logout(accessToken);
             console.log('phản hồi', response);
@@ -34,7 +34,7 @@ const Header = ({ selectedNav, setSelectedNav }) => {
                 localStorage.removeItem('selectedNav');
                 setIsLoggedIn(false);
                 setUserData(null);
-                navigate('/login');
+                navigate('/');
             }
         } catch (error) {
             console.log(error);
