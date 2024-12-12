@@ -15,10 +15,14 @@ const getStatus = (status) => {
     return { status: 'Không xác định', color: 'grey' };
 };
 
-const HistoryBorrow = ({ userId }) => {
+const HistoryBorrow = () => {
     const [borrowRecords, setBorrowRecords] = useState([]); // Lưu trữ danh sách mượn sách
-    const [loading, setLoading] = useState(false); // Trạng thái loading
-    const [error, setError] = useState(null); // Lỗi khi gọi API
+    const [loading, setLoading] = useState(false); 
+    const [error, setError] = useState(null); 
+
+    // Token và userId được truyền trực tiếp
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiOWNmOTNiMTAtYzY4NC00MzVmLTk3NjQtMmRmODMxNGZjYzExIiwiZXhwIjoxNzM0MDA1MTczfQ.WQXaQljUxOmCP4O6vPWQL74GUdBi2LaQXe-t6xMiLLI";
+    const userId = "9cf93b10-c684-435f-9764-2df8314fcc11";
 
     useEffect(() => {
         const fetchBorrowRecords = async () => {
@@ -26,12 +30,11 @@ const HistoryBorrow = ({ userId }) => {
             setError(null);
 
             try {
-                const token = localStorage.getItem('jwtToken'); // Lấy JWT token từ localStorage
                 const response = await fetch(`https://librarymanager-aict.onrender.com/user/${userId}/borrowing`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`, // Truyền token vào header
+                        Authorization: `Bearer ${token}`, // Truyền token trực tiếp vào header
                     },
                 });
 
@@ -42,7 +45,7 @@ const HistoryBorrow = ({ userId }) => {
                 const data = await response.json();
 
                 if (data.borrow_records) {
-                    const updatedRecords = data.borrow_records.map(record => {
+                    const updatedRecords = data.borrow_records.map((record) => {
                         const statusData = getStatus(record.status);
                         return {
                             ...record,
@@ -50,7 +53,7 @@ const HistoryBorrow = ({ userId }) => {
                             statusColor: statusData.color,
                         };
                     });
-                    setBorrowRecords(updatedRecords); // Lưu trữ vào state
+                    setBorrowRecords(updatedRecords); // Cập nhật danh sách mượn sách
                 } else {
                     setError('Không thể tải dữ liệu.');
                 }
@@ -81,8 +84,7 @@ const HistoryBorrow = ({ userId }) => {
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Sách ID</th>
+                        <th>STT</th>
                         <th>Tên Sách</th>
                         <th>Số Lượng</th>
                         <th>Ngày Mượn</th>
@@ -92,10 +94,9 @@ const HistoryBorrow = ({ userId }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {borrowRecords.map(record => (
+                    {borrowRecords.map((record, index) => (
                         <tr key={record.id}>
-                            <td>{record.id}</td>
-                            <td>{record.book_id}</td>
+                            <td>{index + 1}</td> {/* Số thứ tự bắt đầu từ 1 */}
                             <td>{record.book_title}</td>
                             <td>{record.quantity}</td>
                             <td>{new Date(record.borrow_date).toLocaleDateString()}</td>
