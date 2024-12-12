@@ -30,6 +30,20 @@ def list_borrow_records_of_user(user, id):
             "success": False,
             "message": "You are not authorized to access this resource."
         }), 403
+        
+    user_service = UserService()
+    target_user = user_service.get_user_byId(id)
+    if not target_user:
+        return jsonify({
+            "success": False,
+            "message": "User not found."
+        }), 404
+
+    if user_service.is_admin(target_user):
+        return jsonify({
+            "success": False,
+            "message": "Admins cannot borrow books."
+        }), 400
 
     borrowing_service = BorrowingService()
     borrow_records = borrowing_service.get_all_borrow_records_of_user(id)
@@ -60,12 +74,26 @@ def create_borrow_record(user):
             "message": f"Missing fields: {missing_fields}"
         }), 400
         
+    user_service = UserService()
+    target_user = user_service.get_user_byId(data["user_id"])
+    if not target_user:
+        return jsonify({
+            "success": False,
+            "message": "User not found."
+        }), 404
+    
+    if user_service.is_admin(target_user):
+        return jsonify({
+            "success": False,
+            "message": "Admins cannot borrow books."
+        }), 400
+
     borrowing_service = BorrowingService()
     new_borrow_record = borrowing_service.save_new_borrow_record(data["user_id"], data["book_id"], data["quantity"], data["borrow_date"], data["due_date"])
     if not new_borrow_record:
         return jsonify({
             "success": False,
-            "message": "User or book not found."
+            "message": "Book not found."
         }), 404
 
     return jsonify({

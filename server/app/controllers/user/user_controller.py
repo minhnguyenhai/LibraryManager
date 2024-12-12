@@ -50,13 +50,19 @@ def update_user(user, id):
             "success": False,
             "message": "You are not authorized to access this resource."
         }), 403
-        
+
     user_to_update = user_service.get_user_byId(id)
     if not user_to_update: 
         return jsonify({
             "success": False,
             "message": "User not found."
         }), 404
+
+    if user_service.is_admin(user_to_update):
+        return jsonify({
+            "success": False,
+            "message": "Can not update admin user."
+        }), 403
         
     data = request.get_json()
     if not data:
@@ -97,6 +103,12 @@ def delete_user(user, id):
             "success": False,
             "message": "User not found."
         }), 404
+        
+    if user_service.is_admin(user_to_delete):
+        return jsonify({
+            "success": False,
+            "message": "Can not delete admin user."
+        }), 403
         
     is_deleted = user_service.delete_user_from_db(user_to_delete)
     if not is_deleted:

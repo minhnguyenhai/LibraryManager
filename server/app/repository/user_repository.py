@@ -16,11 +16,14 @@ class UserRepository(UserInterface):
     
     
     def count_total_users(self) -> int:
-        return UserModel.query.count()
+        return UserModel.query.filter(UserModel.role == "reader").count()
     
     
     def count_new_users_from_day(self, day) -> int:
-        return UserModel.query.filter(UserModel.created_at >= day).count()
+        return UserModel.query.filter(
+            UserModel.created_at >= day,
+            UserModel.role == "reader"
+        ).count()
     
     
     def count_users_by_borrowing_status(self, status) -> int:
@@ -30,7 +33,9 @@ class UserRepository(UserInterface):
     
     
     def get_all_users(self) -> List[UserModel]:
-        return UserModel.query.all()
+        return db.session.execute(
+            db.select(UserModel).where(UserModel.role == "reader")
+        ).scalars().all()
     
     
     def get_user_by_id(self, user_id) -> UserModel:
@@ -126,6 +131,7 @@ class UserRepository(UserInterface):
                 UserModel.phone_number.ilike(f"%{query}%") |
                 UserModel.address.ilike(f"%{query}%")
             )
+            filters = filters & (UserModel.role == "reader")
             return db.session.query(UserModel).filter(filters).all()
         
         except Exception as e:
