@@ -142,7 +142,8 @@ const ManageBooks = () => {
                             <th>Tác giả</th>
                             <th>Mô tả</th>
                             <th>Giá</th>
-                            <th>Số lượng</th>
+                            <th>Tổng số lượng sách</th>
+                            <th>Số lượng sách hiện có</th>
                             <th>Hành động</th>
                         </tr>
                     </thead>
@@ -158,7 +159,8 @@ const ManageBooks = () => {
                                 <td>{book.author}</td>
                                 <td className='description-column' >{book.description}</td>
                                 <td>{book.price}</td>
-                                <td className='quantity'>{book.quantity}</td>
+                                <td className='quantity'>{book.total_quantity}</td>
+                                <td className='quantity'>{book.available_quantity}</td>
                                 <td>
                                     <div className="button-option">
                                         <button
