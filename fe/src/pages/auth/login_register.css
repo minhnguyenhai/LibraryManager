@@ -1,0 +1,433 @@
+.login_register-page {
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image: url('/src/assets/img/background.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.login_register-page .wrapper {
+    position: relative;
+    width: 420px;
+    height: 450px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .1);
+    backdrop-filter: blur(30px);
+    border-radius: 10px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    /* overflow: hidden; */
+    overflow-y: auto;
+    transition: height .2s ease;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE và Edge */
+}
+
+.wrapper::-webkit-scrollbar {
+    display: none;
+    /* Ẩn thanh cuộn trên Chrome, Safari */
+}
+
+/* Tăng chiều cao của wrapper khi chuyển sang đăng ký hoặc quên mật khẩu */
+.wrapper.register-active {
+    height: 600px;
+    width: 900px;
+    align-items: start;
+}
+
+.wrapper.forgotpassword-active {
+    height: 350px;
+}
+
+.wrapper.validation-active {
+    height: 340px;
+    /* Đặt chiều cao phù hợp cho form nhập mã code */
+}
+
+.wrapper.resetpassword-active {
+    height: 350px;
+    /* Đặt chiều cao phù hợp cho form đặt lại mật khẩu */
+}
+
+.wrapper .form-box {
+    width: 100%;
+    padding: 40px;
+    position: absolute;
+    /* Để có thể di chuyển form qua lại */
+    transition: translate .2s ease;
+}
+
+/* Vị trí mặc định cho các form */
+.wrapper .form-box.login {
+    translate: 0;
+    /* Form login mặc định ở giữa */
+}
+
+.wrapper .form-box.register {
+    translate: 400px;
+    /* Form register ở bên phải của login */
+}
+
+.wrapper .form-box.forgotpassword {
+    translate: 800px;
+    /* Form forgotpassword nằm bên phải của register */
+}
+
+.wrapper .form-box.validation {
+    translate: 1200px;
+    /* Form validation nằm bên phải của forgotpassword */
+}
+
+.wrapper .form-box.resetpassword {
+    translate: 1600px;
+    /* Đặt bên phải của form validation */
+}
+
+/* Khi chuyển sang trạng thái đăng ký */
+.wrapper.register-active .form-box.login {
+    translate: -400px;
+    /* Di chuyển form login ra bên trái */
+}
+
+.wrapper.register-active .form-box.register {
+    translate: 0;
+    /* Hiển thị form đăng ký */
+}
+
+.wrapper.register-active .form-box.forgotpassword {
+    translate: 400px;
+    /* Đặt forgotpassword bên phải */
+}
+
+.wrapper.register-active .form-box.validation {
+    translate: 800px;
+    /* Đặt validation bên phải của forgotpassword */
+}
+
+.wrapper.register-active .form-box.resetpassword {
+    translate: 1200px;
+}
+
+/* Khi chuyển sang trạng thái quên mật khẩu */
+.wrapper.forgotpassword-active .form-box.login {
+    translate: -800px;
+    /* Di chuyển login ra bên trái */
+}
+
+.wrapper.forgotpassword-active .form-box.register {
+    translate: -400px;
+    /* Di chuyển register ra bên trái */
+}
+
+.wrapper.forgotpassword-active .form-box.forgotpassword {
+    translate: 0;
+    /* Hiển thị form forgotpassword */
+}
+
+.wrapper.forgotpassword-active .form-box.validation {
+    translate: 400px;
+    /* Đặt validation bên phải của forgotpassword */
+}
+
+.wrapper.forgotpassword-active .form-box.resetpassword {
+    translate: 800px;
+}
+
+/* Khi chuyển sang trạng thái nhập mã code */
+.wrapper.validation-active .form-box.login {
+    translate: -1200px;
+    /* Di chuyển login ra xa bên trái */
+}
+
+.wrapper.validation-active .form-box.register {
+    translate: -800px;
+    /* Di chuyển register ra bên trái */
+}
+
+.wrapper.validation-active .form-box.forgotpassword {
+    translate: -400px;
+    /* Di chuyển forgotpassword ra bên trái */
+}
+
+.wrapper.validation-active .form-box.validation {
+    translate: 0;
+    /* Hiển thị form nhập mã code */
+}
+
+.wrapper.validation-active form-box.resetpassword {
+    translate: 400;
+}
+
+/* Khi chuyển sang trạng thái resetpassword */
+.wrapper.resetpassword-active .form-box.login {
+    translate: -1600px;
+    /* Di chuyển login ra xa bên trái */
+}
+
+.wrapper.resetpassword-active .form-box.register {
+    translate: -1200px;
+    /* Di chuyển register ra bên trái */
+}
+
+.wrapper.resetpassword-active .form-box.forgotpassword {
+    translate: -800px;
+    /* Di chuyển forgotpassword ra bên trái */
+}
+
+.wrapper.resetpassword-active .form-box.validation {
+    translate: -400px;
+    /* Ẩn form validation */
+}
+
+.wrapper.resetpassword-active .form-box.resetpassword {
+    translate: 0;
+    /* Hiển thị form resetpassword khi ở trạng thái resetpassword */
+}
+
+form h1 {
+    font-size: 36px;
+    text-align: center;
+}
+
+form .input-box {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 30px 0;
+}
+
+.input-box input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    border: 2px solid rgba(255, 255, 255, .1);
+    border-radius: 40px;
+    font-size: 16px;
+    color: #fff;
+    padding: 20px 45px 20px 20px;
+}
+
+.input-box input::placeholder {
+    color: #fff;
+}
+
+.input-box .icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    translate: 0 -50%;
+    font-size: 16px;
+}
+
+/* Styles cho trường Gender */
+.gender-box {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 30px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 2px solid rgba(255, 255, 255, .1);
+    border-radius: 40px;
+    padding: 0 20px;
+}
+
+.gender-options {
+    display: flex;
+    gap: 20px;
+    /* Khoảng cách giữa các lựa chọn */
+    color: #fff;
+}
+
+.gender-option {
+    display: flex;
+    align-items: center;
+    color: #fff;
+    font-size: 16px;
+}
+
+.gender-option input[type="radio"] {
+    margin-right: 5px;
+    accent-color: #fff;
+}
+
+
+.input-box input[type="date"] {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 40px;
+    font-size: 16px;
+    color: #fff;
+    padding: 20px 45px 20px 20px;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.input-box input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    opacity: 0.8;
+    filter: invert(1);
+    /* Đảo ngược màu sắc để biểu tượng thành màu trắng */
+}
+
+.input-container {
+    display: flex;
+    gap: 20px; /* Khoảng cách giữa các cột */
+}
+
+.input-column {
+    flex: 1; /* Chia đều không gian cho hai cột */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Khoảng cách giữa các trường nhập liệu trong mỗi cột */
+}
+
+
+form .remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14.5px;
+    margin: -15px 0 15px;
+}
+
+.remember-forgot label input {
+    accent-color: #fff;
+    margin-right: 4px;
+}
+
+.remember-forgot a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.remember-forgot a:hover {
+    text-decoration: underline;
+}
+
+form button {
+    width: 100%;
+    height: 45px;
+    background: #fff;
+    border: none;
+    outline: none;
+    border-radius: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    font-weight: 700;
+}
+
+
+form .register-link {
+    font-size: 14.5px;
+    text-align: center;
+    margin: 20px 0 15px;
+}
+
+.register-link p a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.register-link p a:hover {
+    text-decoration: underline;
+}
+
+/* Styles for React Select to match other input fields */
+.input-box .select__control {
+    width: 100%;
+    height: 50px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    outline: none;
+    border-radius: 40px;
+    font-size: 16px;
+    color: #fff;
+    padding: 0 20px;
+    box-shadow: none;
+    position: relative;
+    display: flex;
+    align-items: center;
+    
+}
+
+.input-box .select__control:hover {
+    border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.input-box .select__control--is-focused {
+    border: 2px solid rgba(255, 255, 255, 0.4) !important;
+    box-shadow: none;
+}
+
+.input-box .select__placeholder {
+    color: white;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: -5px;
+}
+
+.input-box .select__single-value {
+    color: white;
+    position: absolute;
+    margin-left: -5px;
+}
+
+.input-box .select__menu {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 20px;
+    color: white;
+}
+
+.input-box .select__option {
+    background-color: transparent;
+    color: white;
+    cursor: pointer;
+}
+
+.input-box .select__option:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.input-box .select__option--is-selected {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.input-box .select__indicator-separator {
+    display: none;
+}
+
+.input-box .select__dropdown-indicator {
+    color: #fff;
+    margin-right: -10px;
+}
+.info-message {
+    background-color: #e6f7ff; /* Màu nền nhạt */
+    color: #007acc; /* Màu chữ */
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 14px;
+}
