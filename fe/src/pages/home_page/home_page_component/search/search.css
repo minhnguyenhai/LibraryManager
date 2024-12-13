@@ -1,0 +1,56 @@
+.search-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background-color: #88b0c2; /* Màu nền */
+    padding: 10px;
+}
+
+.search-input-wrapper {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa; /* Màu nền ô tìm kiếm */
+    border-radius: 30px;
+    padding: 0px 0px;
+    box-shadow: 0px 0px 2px #000; /* Tạo viền nhẹ */
+    width: 800px;
+}
+
+.search-icon {
+    margin-left: 10px;
+    color: #000;
+    font-size: 1.2rem;
+}
+
+.search-input {
+    border: none;
+    outline: none;
+    padding: 8px;
+    flex: 1;
+    background-color: transparent;
+    font-size: 1rem;
+}
+
+.search-button {
+    background-color: #600000; /* Màu nền của nút "TÌM KIẾM" */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-family: "Protest Strike";
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.catalog-button {
+    background-color: #f8f9fa; 
+    color: black;
+    border: 1px solid #000;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-family: "Protest Strike";
+    font-size: 16px;
+    margin-left: 30px;
+    display: flex;
+    cursor: pointer;
+}

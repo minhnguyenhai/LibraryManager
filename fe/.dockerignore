@@ -1,0 +1,23 @@
+# Firebase configs
+.firebase/
+.firebase.json
+.firebaserc
+
+# NodeJS dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+
+# build output
+build/
+
+# Git
+.git/
+.gitignore
+*.md
+
+# IDE and system-specific files
+.vscode/
+.idea/
+.DS_Store
