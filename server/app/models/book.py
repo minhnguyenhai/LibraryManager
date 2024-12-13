@@ -17,7 +17,8 @@ class Book(db.Model):
     image_url: Mapped[str] = mapped_column(String, nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=False)
     price: Mapped[int] = mapped_column(Integer, nullable=False)
-    quantity: Mapped[int] = mapped_column(Integer, nullable=False)
+    total_quantity: Mapped[int] = mapped_column(Integer, nullable=False)
+    available_quantity: Mapped[int] = mapped_column(Integer, nullable=False)
     created_at: Mapped[date] = mapped_column(Date, default=date.today())
     updated_at: Mapped[date] = mapped_column(Date, default=date.today(), onupdate=date.today())
     
@@ -31,7 +32,8 @@ class Book(db.Model):
         self.image_url = image_url
         self.description = description
         self.price = price
-        self.quantity = quantity
+        self.total_quantity = quantity
+        self.available_quantity = quantity
     
     
     def as_dict(self):

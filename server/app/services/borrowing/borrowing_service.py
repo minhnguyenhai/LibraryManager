@@ -47,6 +47,10 @@ class BorrowingService:
                 return None
             
             new_borrow_record = self.borrow_record_repository.create_borrow_record(user_id, book_id, quantity, borrow_date, due_date)
+            data_to_update_book = {
+                "available_quantity": book.available_quantity - quantity,
+            }
+            updated_book = self.book_repository.update_book(book, data_to_update_book)
             return new_borrow_record
         
         except Exception as e:
@@ -58,6 +62,11 @@ class BorrowingService:
         """ Update a borrow record in the database. """
         try:
             updated_borrow_record = self.borrow_record_repository.update_borrow_record(borrow_record, return_date)
+            book = self.book_repository.get_book_by_id(updated_borrow_record.book_id)
+            data_to_update_book = {
+                "available_quantity": book.available_quantity + updated_borrow_record.quantity
+            }
+            updated_book = self.book_repository.update_book(book, data_to_update_book)
             return updated_borrow_record
         
         except Exception as e:

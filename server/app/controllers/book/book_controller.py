@@ -87,7 +87,7 @@ def update_book(user, book_id):
             "message": "Invalid JSON data."
         }), 400
     
-    ALLOW_FIELDS = {"title", "author", "image_url", "description", "price", "quantity"}
+    ALLOW_FIELDS = {"title", "author", "image_url", "description", "price", "total_quantity", "available_quantity"}
     unknown_fields = {field for field in data if field not in ALLOW_FIELDS}
     if unknown_fields:
         return jsonify({
