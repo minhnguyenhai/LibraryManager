@@ -20,7 +20,6 @@ const FavouriteBooks = () => {
             const accessToken = localStorage.getItem('access_token');
             try {
 
-                // Giả lập gọi API
                 const response = await fetch('https://librarymanager-aict.onrender.com/user/favorite', {
                     method: 'GET',
                     headers: {
@@ -30,7 +29,7 @@ const FavouriteBooks = () => {
                 });
 
                 if (!response.ok) {
-                    throw new Error('Không thể tải được sách.');
+                    throw new Error('No Data.');
                 }
 
                 const data = await response.json();
@@ -45,19 +44,16 @@ const FavouriteBooks = () => {
         fetchFavouriteBooks();
     }, []);
 
-    // Hàm mở modal khi nhấn nút "Xóa"
     const openModal = (id) => {
         setSelectedBookId(id);
         setIsModalOpen(true);
     };
 
-    // Hàm đóng modal
     const closeModal = () => {
         setIsModalOpen(false);
         setSelectedBookId(null);
     };
 
-    // Hàm gọi API để xóa sách yêu thích
     const handleDeleteBook = async () => {
         try {
             await handleRefreshToken();
@@ -78,7 +74,7 @@ const FavouriteBooks = () => {
             }
 
             setFavouriteBooks(favouriteBooks.filter(book => book.id !== selectedBookId));
-            closeModal(); // Đóng modal sau khi xóa thành công
+            closeModal();
         } catch (err) {
             setError(err.message);
         }
@@ -86,15 +82,15 @@ const FavouriteBooks = () => {
 
     // Hiển thị trạng thái
     if (loading) {
-        return <div>Đang tải dữ liệu...</div>;
+        return <div className="centered-message">Loading...</div>;
     }
 
     if (error) {
-        return <div style={{ color: 'black' }}>{error}</div>;
+        return <div className="centered-message">{error}</div>;
     }
 
     if (favouriteBooks.length === 0) {
-        return <div>Không có sách yêu thích để hiển thị.</div>;
+        return <div className="centered-message">Không có sách yêu thích để hiển thị.</div>;
     }
 
     return (
@@ -129,7 +125,6 @@ const FavouriteBooks = () => {
                 </tbody>
             </table>
 
-            {/* Modal xác nhận xóa */}
             {isModalOpen && (
                 <div className="modal">
                     <div className="modal-content-fabook">
