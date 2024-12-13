@@ -16,15 +16,15 @@ class BookRepository(BookInterface):
     
     
     def count_total_books(self) -> int:
-        return BookModel.query.count()
+        return db.session.query(func.sum(BookModel.total_quantity)).scalar() or 0
     
     
     def count_new_books_from_day(self, day) -> int:
-        return BookModel.query.filter(BookModel.created_at >= day).count()
+        return db.session.query(func.sum(BookModel.total_quantity)).filter(BookModel.created_at >= day).scalar() or 0
     
     
     def count_books_by_borrowing_status(self, status) -> int:
-        return db.session.query(func.sum(BorrowRecordModel.quantity)).filter(BorrowRecordModel.status == status).scalar()
+        return db.session.query(func.sum(BorrowRecordModel.quantity)).filter(BorrowRecordModel.status == status).scalar() or 0
     
     
     def get_all_books(self) -> List[BookModel]:

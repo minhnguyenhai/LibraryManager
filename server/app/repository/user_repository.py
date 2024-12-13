@@ -29,7 +29,7 @@ class UserRepository(UserInterface):
     def count_users_by_borrowing_status(self, status) -> int:
         return db.session.query(func.count(func.distinct(BorrowRecordModel.user_id)))\
                             .filter(BorrowRecordModel.status == status)\
-                            .scalar()
+                            .scalar() or 0
     
     
     def get_all_users(self) -> List[UserModel]:
