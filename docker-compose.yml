@@ -20,6 +20,8 @@ services:
       - POSTGRESQL_DBNAME=library_db
       - POSTGRESQL_HOST=database
       - POSTGRESQL_PORT=5432
+      - MAIL_USERNAME=minhnguyenhai26032003@gmail.com
+      - MAIL_PASSWORD=xsurrgjlrrgexjsg
     depends_on:
       database: 
         condition: service_healthy
