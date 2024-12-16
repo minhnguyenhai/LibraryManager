@@ -1,0 +1,38 @@
+[
+    {
+        "email": "admin1@gmail.com",
+        "password": "123456789",
+        "name": "Library Admin 1",
+        "dob": "2003-03-26",
+        "gender": "male",
+        "address": "Hai Ba Trung, Ha Noi",
+        "phone_number": "0123456789"
+    },
+    {
+        "email": "admin2@gmail.com",
+        "password": "123456789",
+        "name": "Library Admin 2",
+        "dob": "2003-10-20",
+        "gender": "female",
+        "address": "Dong Da, Ha Noi",
+        "phone_number": "0123456789"
+    },
+    {
+        "email": "admin3@gmail.com",
+        "password": "123456789",
+        "name": "Library Admin 3",
+        "dob": "2004-04-22",
+        "gender": "male",
+        "address": "Ha Dong, Ha Noi",
+        "phone_number": "0123456789"
+    },
+    {
+        "email": "admin4@gmail.com",
+        "password": "123456789",
+        "name": "Library Admin 4",
+        "dob": "2003-06-21",
+        "gender": "female",
+        "address": "Long Bien, Ha Noi",
+        "phone_number": "0123456789"
+    }
+]

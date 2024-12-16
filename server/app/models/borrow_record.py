@@ -13,13 +13,17 @@ class BorrowRecord(db.Model):
     __tablename__ = "borrow_records"
     
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), nullable=False)
-    book_id: Mapped[str] = mapped_column(ForeignKey("books.id"), nullable=False)
+    user_name: Mapped[str] = mapped_column(String, nullable=False)
+    user_email: Mapped[str] = mapped_column(String, nullable=False)
+    book_title: Mapped[str] = mapped_column(String, nullable=False)
+    book_img_url: Mapped[str] = mapped_column(String, nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
     borrow_date: Mapped[date] = mapped_column(Date, nullable=False)
     due_date: Mapped[date] = mapped_column(Date, nullable=False)
     return_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
-    status: Mapped[str] = mapped_column(String(10), default="borrowing")
+    status: Mapped[str] = mapped_column(String, default="borrowing")
+    user_id: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id"), nullable=True)
+    book_id: Mapped[Optional[str]] = mapped_column(ForeignKey("books.id"), nullable=True)
     
     user: Mapped["User"] = relationship(back_populates="borrow_records")
     book: Mapped["Book"] = relationship(back_populates="borrow_records")
