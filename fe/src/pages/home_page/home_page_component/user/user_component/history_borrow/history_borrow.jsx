@@ -10,7 +10,7 @@ const getStatus = (status) => {
     if (status === 'overdue') {
         return { status: 'Quá hạn', color: 'red' };
     }
-    if (status === 'returned') {
+    if (status === 'returned-ontime') {
         return { status: 'Đã trả', color: 'green' };
     }
     return { status: 'Không xác định', color: 'grey' };
@@ -37,13 +37,12 @@ const HistoryBorrow = () => {
                         Authorization: `Bearer ${accessToken}`, // Truyền token trực tiếp vào header
                     },
                 });
-
                 if (!response.ok) {
                     throw new Error(`Error: ${response.status}`);
                 }
 
                 const data = await response.json();
-
+                console.log(data)
                 if (data.borrow_records) {
                     const updatedRecords = data.borrow_records.map((record) => {
                         const statusData = getStatus(record.status);
@@ -102,7 +101,7 @@ const HistoryBorrow = () => {
                             <td>
                              {/* Hiển thị hình ảnh */}
                                  <img 
-                                 src={record.book_image_url} 
+                                 src={record.book_img_url} 
                                  alt={record.book_title} 
                                 style={{ width: '50px', height: '75px', objectFit: 'cover' }} 
                                  />

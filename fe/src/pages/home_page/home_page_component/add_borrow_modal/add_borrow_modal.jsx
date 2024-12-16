@@ -63,7 +63,7 @@ const AddBorrowModal = ({ onClose, onAdd, triggerRefresh }) => {
                 toast.success("Thêm lượt mượn thành công");
                 setTimeout(() => {
                     triggerRefresh();
-                }, 3000);
+                }, 2000);
             }
         } catch (error) {
             toast.error("Thêm lượt mượn thất bại. Vui lòng thử lại");

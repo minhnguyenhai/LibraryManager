@@ -27,12 +27,13 @@ const FavouriteBooks = () => {
                         Authorization: `Bearer ${accessToken}`,
                     },
                 });
-
+                console.log(response)
                 if (!response.ok) {
                     throw new Error('No Data.');
                 }
 
                 const data = await response.json();
+                console.log(data)
                 setFavouriteBooks(data.books || []);
             } catch (err) {
                 setError(err.message);
@@ -100,6 +101,8 @@ const FavouriteBooks = () => {
                     <tr>
                         <th>ID</th>
                         <th>Tên Sách</th>
+                        <th>Tác giả</th>
+                        <th style={{ width: '400px' }}>Mô tả</th>
                         <th>Hình ảnh</th>
                         <th>Hành động</th>
                     </tr>
@@ -109,8 +112,10 @@ const FavouriteBooks = () => {
                         <tr key={book.id}>
                             <td>{index+1}</td>
                             <td>{book.title}</td>
+                            <td>{book.author}</td>
+                            <td>{book.description}</td>
                             <td className="image-column">
-                                <img src={book.url_image || 'https://via.placeholder.com/150'} alt={book.title} />
+                                <img src={book.image_url || 'https://via.placeholder.com/150'} alt={book.title} />
                             </td>
                             <td>
                                 <button 
