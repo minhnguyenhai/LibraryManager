@@ -26,7 +26,7 @@ const EditBookModal = ({ book, onClose, onSave,triggerRefresh }) => {
 
     const handleSave = async()  => {
         try {
-            console.log('Book',book)
+            console.log('Book',editedBook)
             await handleRefreshToken();
             const accessToken=localStorage.getItem('access_token');
             const response= await updateBook(editedBook.id,editedBook,accessToken);

@@ -44,7 +44,8 @@ export const updateBook = async (bookId, bookData, accessToken) => {
                 image_url: bookData.imageUrl,
                 description: bookData.description,
                 price: bookData.price,
-                quantity: bookData.quantity,
+                available_quantity: bookData.available_quantity,
+                total_quantity: bookData.total_quantity
             },
             {
                 headers: {
