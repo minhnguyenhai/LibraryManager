@@ -95,6 +95,14 @@ def update_book(user, book_id):
             "message": f"Unknown fields: {', '.join(unknown_fields)}"
         }), 400
         
+    total_quantity = data.get("total_quantity", book.total_quantity)
+    available_quantity = data.get("available_quantity", book.available_quantity)
+    if total_quantity < available_quantity:
+        return jsonify({
+            "success": False,
+            "message": "Total quantity must be greater than or equal to available quantity."
+        }), 400
+
     updated_book = book_service.update_book_info(book, data)
     return jsonify({
         "success": True,
