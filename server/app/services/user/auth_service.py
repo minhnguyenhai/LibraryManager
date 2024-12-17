@@ -25,7 +25,7 @@ class AuthService:
         return user
 
 
-    def generate_access_token(self, user_id, expires_in=300):
+    def generate_access_token(self, user_id, expires_in=1800):
         """Generate a new access token for the user."""
         try:
             payload = {
