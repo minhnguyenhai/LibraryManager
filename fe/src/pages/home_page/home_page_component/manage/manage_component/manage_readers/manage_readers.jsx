@@ -143,7 +143,7 @@ const ManageReaders = () => {
                                 <td>{account.email}</td>
                                 <td>{account.name}</td>
                                 <td>{account.dob}</td>
-                                <td>{account.gender=='Male'? 'Nam':'Nữ'}</td>
+                                <td>{account.gender}</td>
                                 <td>{account.address}</td>
                                 <td>{account.phone_number}</td>
                                 <td>

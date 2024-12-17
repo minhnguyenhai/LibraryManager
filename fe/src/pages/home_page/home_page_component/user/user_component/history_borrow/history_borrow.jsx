@@ -109,7 +109,7 @@ const HistoryBorrow = () => {
                             <td>{record.quantity}</td>
                             <td>{new Date(record.borrow_date).toLocaleDateString()}</td>
                             <td>{new Date(record.due_date).toLocaleDateString()}</td>
-                            <td>{record.return_date ? new Date(record.return_date).toLocaleDateString() : 'Chưa trả'}</td>
+                            <td>{record.return_date =="None"? '-':new Date(record.return_date).toLocaleDateString()}</td>
                             <td style={{ color: record.statusColor }}>
                                 {record.statusText} {/* Hiển thị trạng thái */}
                             </td>

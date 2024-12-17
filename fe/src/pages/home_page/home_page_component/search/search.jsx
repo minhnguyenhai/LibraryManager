@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./search.css";
 import BookList from "../books/book_list";
 import SearchBar from "./search_bar";
-import { search } from "../../../../services/common_servieces";
+import { getAllBooks, search } from "../../../../services/common_servieces";
 import { handleRefreshToken } from "../../../auth/login_register";
 
 const Search = () => {
@@ -11,8 +11,23 @@ const Search = () => {
 
     const [loading, setLoading] = useState(false);
 
+    const fetchBooks = async () => {
+        setLoading(true);
+        try {
+          await handleRefreshToken();
+          const accessToken = localStorage.getItem("access_token");
+          const data = await getAllBooks(accessToken);
+          setBooks(data || []); // Lưu toàn bộ danh sách
+          setFilteredBooks(data || []); // Lưu danh sách đã lọc ban đầu
+        } catch (error) {
+          console.log("Error: ", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
     const handleSearch = async (searchTerm) => {
-        if (!searchTerm.trim()) return; // Bỏ qua nếu từ khóa rỗng
+        if (!searchTerm.trim()) fetchBooks(); 
 
         setLoading(true);
         try {

@@ -28,7 +28,7 @@ const ManageBooks = () => {
     const [books, setBooks] = useState([]);
     const [filteredBooks, setFilteredBooks] = useState(books);
     const [currentPage, setCurrentPage] = useState(1);
-    const booksPerPage = 10;
+    const booksPerPage = 5;
     const [refreshKey, setRefreshKey] = useState(0);
 
     const fetchBooks = async () => {

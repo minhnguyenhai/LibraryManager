@@ -15,7 +15,7 @@ const BookList = ({
   const [selectedBook, setSelectedBook] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const booksPerPage = 10;
+  const booksPerPage = 5;
 
   const fetchBooks = async () => {
     setLoading(true);
