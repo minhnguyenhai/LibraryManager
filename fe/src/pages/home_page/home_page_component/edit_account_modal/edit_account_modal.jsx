@@ -35,7 +35,7 @@ const EditAccountModal = ({ account, onClose, onSave, triggerRefresh }) => {
                 toast.success("Sửa thông tin thành công");
                 setTimeout(() => {
                     triggerRefresh();
-                }, 3000);
+                }, 2000);
             }
 
         } catch (error) {

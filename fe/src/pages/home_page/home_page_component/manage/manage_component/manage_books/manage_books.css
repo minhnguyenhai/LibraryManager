@@ -57,7 +57,7 @@ th:last-child {
 }
 
 td.description-column {
-  width: 400px;
+  width: 350px;
   word-wrap: break-word;
   max-width: 400px;
 }

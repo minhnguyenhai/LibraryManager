@@ -26,7 +26,7 @@ const EditBookModal = ({ book, onClose, onSave,triggerRefresh }) => {
 
     const handleSave = async()  => {
         try {
-            console.log('Book',book)
+            console.log('Book',editedBook)
             await handleRefreshToken();
             const accessToken=localStorage.getItem('access_token');
             const response= await updateBook(editedBook.id,editedBook,accessToken);
@@ -36,7 +36,7 @@ const EditBookModal = ({ book, onClose, onSave,triggerRefresh }) => {
                 toast.success("Sửa thông tin thành công");
                 setTimeout(() => {
                     triggerRefresh();
-                }, 3000);
+                }, 2000);
             }
 
         } catch (error) {
@@ -80,12 +80,21 @@ const EditBookModal = ({ book, onClose, onSave,triggerRefresh }) => {
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="quantity">Số lượng</label>
+                        <label htmlFor="total_quantity">Tổng số lượng sách</label>
                         <input
-                            id="quantity"
+                            id="total_quantity"
                             type="number"
-                            value={editedBook.quantity}
-                            onChange={(e) => handleChange('quantity', e.target.value)}
+                            value={editedBook.total_quantity}
+                            onChange={(e) => handleChange('total_quantity', e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="available_quantity">Số lượng sách hiện có</label>
+                        <input
+                            id="available_quantity"
+                            type="number"
+                            value={editedBook.available_quantity}
+                            onChange={(e) => handleChange('available_quantity', e.target.value)}
                         />
                     </div>
                     <div className="form-group">

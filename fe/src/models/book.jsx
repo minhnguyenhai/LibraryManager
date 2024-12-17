@@ -6,7 +6,8 @@ class Book {
     this.imageUrl = data.image_url;
     this.description = data.description;
     this.price = data.price;
-    this.quantity = data.quantity;
+    this.total_quantity = data.total_quantity;
+    this.available_quantity = data.available_quantity
   }
 
 }

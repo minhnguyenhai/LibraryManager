@@ -10,7 +10,7 @@ const getStatus = (status) => {
     if (status === 'overdue') {
         return { status: 'Quá hạn', color: 'red' };
     }
-    if (status === 'returned') {
+    if (status === 'returned-ontime') {
         return { status: 'Đã trả', color: 'green' };
     }
     return { status: 'Không xác định', color: 'grey' };
@@ -37,13 +37,12 @@ const HistoryBorrow = () => {
                         Authorization: `Bearer ${accessToken}`, // Truyền token trực tiếp vào header
                     },
                 });
-
                 if (!response.ok) {
                     throw new Error(`Error: ${response.status}`);
                 }
 
                 const data = await response.json();
-
+                console.log(data)
                 if (data.borrow_records) {
                     const updatedRecords = data.borrow_records.map((record) => {
                         const statusData = getStatus(record.status);
@@ -68,15 +67,15 @@ const HistoryBorrow = () => {
     }, []);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div className="centered-message">Loading...</div>;
     }
-
+    
     if (error) {
-        return <div>{error}</div>;
+        return <div className="centered-message">Lỗi mất rồi, đăng nhập lại giúp tôi nhé</div>;
     }
-
+    
     if (borrowRecords.length === 0) {
-        return <div>Không có lịch sử mượn sách để hiển thị.</div>;
+        return <div className="centered-message">No Data</div>;
     }
 
     return (
@@ -86,6 +85,7 @@ const HistoryBorrow = () => {
                     <tr>
                         <th>STT</th>
                         <th>Tên Sách</th>
+                        <th>Hình ảnh</th>
                         <th>Số Lượng</th>
                         <th>Ngày Mượn</th>
                         <th>Ngày Hạn Trả</th>
@@ -98,6 +98,14 @@ const HistoryBorrow = () => {
                         <tr key={record.id}>
                             <td>{index + 1}</td> {/* Số thứ tự bắt đầu từ 1 */}
                             <td>{record.book_title}</td>
+                            <td>
+                             {/* Hiển thị hình ảnh */}
+                                 <img 
+                                 src={record.book_img_url} 
+                                 alt={record.book_title} 
+                                style={{ width: '50px', height: '75px', objectFit: 'cover' }} 
+                                 />
+                            </td>
                             <td>{record.quantity}</td>
                             <td>{new Date(record.borrow_date).toLocaleDateString()}</td>
                             <td>{new Date(record.due_date).toLocaleDateString()}</td>

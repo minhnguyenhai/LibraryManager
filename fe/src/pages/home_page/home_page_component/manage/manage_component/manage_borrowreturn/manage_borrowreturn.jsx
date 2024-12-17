@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import SearchBar from '../../../search/search_bar';
 import Pagination from '../../../pagination/pagination';
-import './manage_borrowreturn.css'
 import AddBorrowModal from '../../../add_borrow_modal/add_borrow_modal';
 import { getAllBorrow, getAllBorrowsByUser, searchBorrow } from '../../../../../../services/admin_services/main_services';
 import BorrowHistoryModal from '../../../borrow_history_modal/borrow_history_modal';
