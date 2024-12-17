@@ -1,0 +1,24 @@
+Delete Book by ID
+This API allows an admin to delete a specific book from the system by its unique identifier.
+---
+tags:
+  - Book
+parameters:
+  - name: Authorization
+    in: header
+    required: true
+    description: Bearer token for authentication
+    schema:
+      type: string
+      example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  - name: book_id
+    in: path
+    required: true
+    description: Unique identifier of the book to delete
+    schema:
+      type: string
+      example: "e6b3562f-6cc5-4e2c-95d2-b7ac8ec478cc"
+
+responses:
+  204:
+    description: Book deleted successfully

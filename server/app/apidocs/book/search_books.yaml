@@ -1,0 +1,85 @@
+Search Books
+This API allows users to search for books by a query string.
+---
+tags:
+  - Book
+parameters:
+  - name: Authorization
+    in: header
+    required: true
+    description: Bearer token for authentication
+    schema:
+      type: string
+      example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  - name: query
+    in: query
+    required: true
+    description: Query string to search for books
+    schema:
+      type: string
+      example: "Clean Code"
+
+responses:
+  200:
+    description: Search completed successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Search completed successfully."
+        total:
+          type: integer
+          description: Total number of matching books
+          example: 2
+        books:
+          type: array
+          description: List of matching books
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Unique identifier of the book
+                example: "e6b3562f-6cc5-4e2c-95d2-b7ac8ec478cc"
+              title:
+                type: string
+                description: Title of the book
+                example: "Clean Code"
+              author:
+                type: string
+                description: Author of the book
+                example: "Robert C. Martin"
+              image_url:
+                type: string
+                description: URL of the book's image
+                example: "https://example.com/clean-code.jpg"
+              description:
+                type: string
+                description: Short description of the book
+                example: "A handbook of agile software craftsmanship."
+              price:
+                type: integer
+                description: Price of the book
+                example: 25
+              total_quantity:
+                type: integer
+                description: Total quantity of the book
+                example: 100
+              available_quantity:
+                type: integer
+                description: Available quantity for purchase
+                example: 90
+              created_at:
+                type: string
+                format: date
+                description: Date when the book was created
+                example: "2021-08-01"
+              updated_at:
+                type: string
+                format: date
+                description: Date when the book was last updated
+                example: "2021-08-01"

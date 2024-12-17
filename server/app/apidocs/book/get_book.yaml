@@ -1,0 +1,79 @@
+Get Book by ID
+This API retrieves the details of a specific book based on its unique identifier.
+---
+tags:
+  - Book
+parameters:
+  - name: Authorization
+    in: header
+    required: true
+    description: Bearer token for authentication
+    schema:
+      type: string
+      example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  - name: book_id
+    in: path
+    required: true
+    description: Unique identifier of the book
+    schema:
+      type: string
+      example: "e6b3562f-6cc5-4e2c-95d2-b7ac8ec478cc"
+
+responses:
+  200:
+    description: Successfully fetched the book details
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Successfully fetched book."
+        book:
+          type: object
+          description: Details of the requested book
+          properties:
+            id:
+              type: string
+              description: Unique identifier of the book
+              example: "e6b3562f-6cc5-4e2c-95d2-b7ac8ec478cc"
+            title:
+              type: string
+              description: Title of the book
+              example: "Clean Code"
+            author:
+              type: string
+              description: Author of the book
+              example: "Robert C. Martin"
+            image_url:
+              type: string
+              description: URL of the book's image
+              example: "https://example.com/image.jpg"
+            description:
+              type: string
+              description: Short description of the book
+              example: "A book about writing cleaner and more maintainable code."
+            price:
+              type: integer
+              description: Price of the book
+              example: 20
+            total_quantity:
+              type: integer
+              description: Total quantity of the book in stock
+              example: 100
+            available_quantity:
+              type: integer
+              description: Available quantity for purchase
+              example: 75
+            created_at:
+              type: string
+              format: date
+              description: Date when the book was added
+              example: "2024-01-01"
+            updated_at:
+              type: string
+              format: date
+              description: Date when the book was last updated
+              example: "2024-02-01"

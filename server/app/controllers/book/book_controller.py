@@ -1,4 +1,5 @@
 from flask import request, jsonify
+from flasgger.utils import swag_from
 
 from . import book_api
 from ...services.book.book_service import BookService
@@ -6,6 +7,7 @@ from ...utils.decorators import JWT_required, admin_required
 
 
 @book_api.route("/book", methods=["GET"])
+@swag_from("../../apidocs/book/get_all_books.yaml", endpoint="book_api.get_all_books", methods=["GET"])
 def get_all_books():
     book_service = BookService()
     books_data = book_service.list_books()
@@ -17,6 +19,7 @@ def get_all_books():
 
 
 @book_api.route("/book/<book_id>", methods=["GET"])
+@swag_from("../../apidocs/book/get_book.yaml", endpoint="book_api.get_book", methods=["GET"])
 def get_book(book_id):
     book_service = BookService()
     book = book_service.get_book_by_id(book_id)
@@ -36,6 +39,7 @@ def get_book(book_id):
 @book_api.route("/book", methods=["POST"])
 @JWT_required
 @admin_required
+@swag_from("../../apidocs/book/add_book.yaml", endpoint="book_api.add_book", methods=["POST"])
 def add_book(user):
     data = request.get_json()
     if not data:
@@ -71,6 +75,7 @@ def add_book(user):
 @book_api.route("/book/<book_id>", methods=["PUT"])
 @JWT_required
 @admin_required
+@swag_from("../../apidocs/book/update_book.yaml", endpoint="book_api.update_book", methods=["PUT"])
 def update_book(user, book_id):
     book_service = BookService()
     book = book_service.get_book_by_id(book_id)
@@ -114,6 +119,7 @@ def update_book(user, book_id):
 @book_api.route("/book/<book_id>", methods=["DELETE"])
 @JWT_required
 @admin_required
+@swag_from("../../apidocs/book/delete_book.yaml", endpoint="book_api.delete_book", methods=["DELETE"])
 def delete_book(user, book_id):
     book_service = BookService()
     book = book_service.get_book_by_id(book_id)
@@ -134,6 +140,7 @@ def delete_book(user, book_id):
         
      
 @book_api.route("/book/search", methods=["GET"])
+@swag_from("../../apidocs/book/search_books.yaml", endpoint="book_api.search_books", methods=["GET"])
 def search_books():
     query = request.args.get("query", type=str, default=None)
     if not query:

@@ -1,0 +1,34 @@
+Resend Verification Code
+This API resends a verification code to the user's email for account verification.
+---
+tags:
+  - User - Auth
+parameters:
+  - name: body
+    in: body
+    required: true
+    description: JSON body containing the user's email
+    schema:
+      type: object
+      properties:
+        email:
+          type: string
+          description: The user's registered email address
+          example: "johndoe@example.com"
+
+responses:
+  200:
+    description: Verification code sent successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Verification code sent to email successfully."
+        confirm_token:
+          type: string
+          description: Token used for confirming the email
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."

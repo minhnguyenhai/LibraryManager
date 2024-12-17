@@ -1,0 +1,96 @@
+Update Borrow Record Return Date
+This API allows an admin to update the return date for a borrow record.
+---
+tags:
+  - Borrowing
+parameters:
+  - name: Authorization
+    in: header
+    required: true
+    description: Bearer token for authentication (admin only)
+    schema:
+      type: string
+      example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+  - name: borrow_record_id
+    in: path
+    required: true
+    description: ID of the borrow record to be updated
+    schema:
+      type: string
+      example: "123e4567-e89b-12d3-a456-426614174000"
+
+  - name: body
+    in: body
+    required: true
+    description: JSON payload containing the return date
+    schema:
+      type: object
+      required:
+        - return_date
+      properties:
+        return_date:
+          type: string
+          format: date
+          description: The return date for the borrowed book (format YYYY-MM-DD)
+          example: "2024-01-15"
+
+responses:
+  200:
+    description: Successfully updated the return date
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Successfully updated return date for borrow record."
+        updated_borrow_record:
+          type: object
+          description: Updated borrow record details
+          properties:
+            id:
+              type: string
+              description: Unique identifier of the borrow record
+              example: "123e4567-e89b-12d3-a456-426614174000"
+            user_name:
+              type: string
+              description: Name of the user
+              example: "John Doe"
+            user_email:
+              type: string
+              description: Email of the user
+              example: "johndoe@example.com"
+            book_title:
+              type: string
+              description: Title of the borrowed book
+              example: "Learn Flask with Examples"
+            book_img_url:
+              type: string
+              description: URL of the book cover image
+              example: "https://example.com/book-cover.jpg"
+            quantity:
+              type: integer
+              description: Number of borrowed books
+              example: 1
+            borrow_date:
+              type: string
+              format: date
+              description: Borrow date of the book
+              example: "2024-01-01"
+            due_date:
+              type: string
+              format: date
+              description: Due date for returning the book
+              example: "2024-01-15"
+            return_date:
+              type: string
+              format: date
+              description: The updated return date
+              example: "2024-01-10"
+            status:
+              type: string
+              description: Current status of the borrow record
+              example: "returned-ontime"

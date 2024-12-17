@@ -1,0 +1,102 @@
+Update User by ID
+This API updates the information of a specific user. Only the user themselves or an admin can perform this operation.
+---
+tags:
+  - User
+parameters:
+  - name: Authorization
+    in: header
+    required: true
+    description: Bearer token for authentication
+    schema:
+      type: string
+      example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  - name: id
+    in: path
+    required: true
+    description: Unique identifier of the user
+    schema:
+      type: string
+      example: "e6b3562f-6cc5-4e2c-95d2-b7ac8ec478cc"
+  - name: body
+    in: body
+    required: true
+    description: JSON body containing fields to update
+    schema:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Updated name of the user
+          example: "John Doe Updated"
+        dob:
+          type: string
+          format: date
+          description: Updated date of birth
+          example: "1991-01-01"
+        gender:
+          type: string
+          description: Updated gender of the user
+          example: "male"
+        address:
+          type: string
+          description: Updated address
+          example: "123 New Street, Hanoi, Vietnam"
+        phone_number:
+          type: string
+          description: Updated phone number
+          example: "0987654321"
+
+responses:
+  200:
+    description: Successfully updated the user
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Successfully updated user."
+        user:
+          type: object
+          description: Updated user details
+          properties:
+            id:
+              type: string
+              example: "e6b3562f-6cc5-4e2c-95d2-b7ac8ec478cc"
+            name:
+              type: string
+              example: "John Doe Updated"
+            dob:
+              type: string
+              format: date
+              example: "1991-01-01"
+            gender:
+              type: string
+              example: "male"
+            address:
+              type: string
+              example: "123 New Street, Hanoi, Vietnam"
+            phone_number:
+              type: string
+              example: "0987654321"
+            role:
+              type: string
+              description: Role of the user
+              example: "reader"
+            is_verified:
+              type: boolean
+              description: Whether the user's email is verified
+              example: true
+            created_at:
+              type: string
+              format: date-time
+              description: Timestamp of user creation
+              example: "2024-01-01T12:00:00.000Z"
+            updated_at:
+              type: string
+              format: date-time
+              description: Timestamp of last update
+              example: "2024-02-01T12:00:00.000Z"

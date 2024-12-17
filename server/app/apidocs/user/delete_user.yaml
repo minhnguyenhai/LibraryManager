@@ -1,0 +1,33 @@
+Delete User by ID
+This API deletes a specific user. Admins can delete any user, while users can only delete their own account.
+---
+tags:
+  - User
+parameters:
+  - name: Authorization
+    in: header
+    required: true
+    description: Bearer token for authentication
+    schema:
+      type: string
+      example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  - name: id
+    in: path
+    required: true
+    description: Unique identifier of the user to delete
+    schema:
+      type: string
+      example: "e6b3562f-6cc5-4e2c-95d2-b7ac8ec478cc"
+
+responses:
+  200:
+    description: User deleted successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "User deleted successfully."

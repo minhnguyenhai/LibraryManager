@@ -1,0 +1,38 @@
+Validate Reset Code
+This API verifies the reset password code and returns a temporary access token.
+---
+tags:
+  - User - Auth
+parameters:
+  - name: body
+    in: body
+    required: true
+    description: JSON body containing reset token and verification code
+    schema:
+      type: object
+      properties:
+        confirm_token:
+          type: string
+          description: The reset token sent to the user's email
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        verification_code:
+          type: string
+          description: The reset code sent to the user's email
+          example: "123456"
+
+responses:
+  200:
+    description: Reset code verified successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Reset code verified successfully."
+        temp_access_token:
+          type: string
+          description: Temporary access token for password reset
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."

@@ -1,0 +1,114 @@
+Update Book
+This API allows an admin to update details of an existing book based on its unique identifier.
+---
+tags:
+  - Book
+parameters:
+  - name: Authorization
+    in: header
+    required: true
+    description: Bearer token for authentication
+    schema:
+      type: string
+      example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  - name: book_id
+    in: path
+    required: true
+    description: Unique identifier of the book to update
+    schema:
+      type: string
+      example: "e6b3562f-6cc5-4e2c-95d2-b7ac8ec478cc"
+  - name: body
+    in: body
+    required: true
+    description: Fields to update for the book
+    schema:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Updated title of the book
+          example: "Clean Code Revised"
+        author:
+          type: string
+          description: Updated author of the book
+          example: "Robert C. Martin"
+        image_url:
+          type: string
+          description: Updated URL of the book's cover image
+          example: "https://example.com/clean-code-revised.jpg"
+        description:
+          type: string
+          description: Updated description of the book
+          example: "Revised edition of Clean Code."
+        price:
+          type: integer
+          description: Updated price of the book
+          example: 30
+        total_quantity:
+          type: integer
+          description: Updated total quantity of the book
+          example: 150
+        available_quantity:
+          type: integer
+          description: Updated available quantity for purchase
+          example: 120
+
+responses:
+  200:
+    description: Successfully updated the book details
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Successfully updated book."
+        updated_book:
+          type: object
+          description: Details of the updated book
+          properties:
+            id:
+              type: string
+              description: Unique identifier of the book
+              example: "e6b3562f-6cc5-4e2c-95d2-b7ac8ec478cc"
+            title:
+              type: string
+              description: Title of the book
+              example: "Clean Code Revised"
+            author:
+              type: string
+              description: Author of the book
+              example: "Robert C. Martin"
+            image_url:
+              type: string
+              description: URL of the book's image
+              example: "https://example.com/clean-code-revised.jpg"
+            description:
+              type: string
+              description: Short description of the book
+              example: "Revised edition of Clean Code."
+            price:
+              type: integer
+              description: Price of the book
+              example: 30
+            total_quantity:
+              type: integer
+              description: Total quantity of the book
+              example: 150
+            available_quantity:
+              type: integer
+              description: Available quantity for purchase
+              example: 120
+            created_at:
+              type: string
+              format: date
+              description: Date when the book was created
+              example: "2024-02-03"
+            updated_at:
+              type: string
+              format: date
+              description: Date when the book was last updated
+              example: "2024-02-10"

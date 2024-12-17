@@ -1,4 +1,6 @@
 from flask import request, jsonify
+from flasgger.utils import swag_from
+
 from . import user_api
 from ...services.user.user_service import UserService
 from ...utils.decorators import JWT_required, admin_required
@@ -7,6 +9,7 @@ from ...utils.decorators import JWT_required, admin_required
 @user_api.route("/", methods = ["GET"])
 @JWT_required
 @admin_required
+@swag_from("../../apidocs/user/get_all_users.yaml", endpoint="user_api.get_all_users", methods=["GET"])
 def get_all_users(user):
     user_service = UserService()
     users = user_service.list_users()
@@ -19,6 +22,7 @@ def get_all_users(user):
     
 @user_api.route("/<id>", methods = ["GET"])
 @JWT_required
+@swag_from("../../apidocs/user/get_user.yaml", endpoint="user_api.get_user", methods=["GET"])
 def get_user(user, id):
     user_service = UserService()
     if not user_service.is_admin(user) and user.id != id:
@@ -43,6 +47,7 @@ def get_user(user, id):
         
 @user_api.route("/<id>", methods=["PUT"])
 @JWT_required
+@swag_from("../../apidocs/user/update_user.yaml", endpoint="user_api.update_user", methods=["PUT"])
 def update_user(user, id):
     user_service = UserService()
     if not user_service.is_admin(user) and user.id != id:
@@ -89,6 +94,7 @@ def update_user(user, id):
 
 @user_api.route("/<id>", methods=["DELETE"])
 @JWT_required
+@swag_from("../../apidocs/user/delete_user.yaml", endpoint="user_api.delete_user", methods=["DELETE"])
 def delete_user(user, id):
     user_service = UserService()
     if not user_service.is_admin(user) and user.id != id:
@@ -126,6 +132,7 @@ def delete_user(user, id):
 @user_api.route("/search", methods=["GET"])
 @JWT_required
 @admin_required
+@swag_from("../../apidocs/user/search_users.yaml", endpoint="user_api.search_users", methods=["GET"])
 def search_users(user):
     query = request.args.get("query", type=str, default=None)
     if not query:
