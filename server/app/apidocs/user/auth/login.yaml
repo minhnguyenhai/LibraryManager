@@ -1,0 +1,78 @@
+User login
+This API is used to login a user
+---
+tags:
+  - User - Auth
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      properties:
+        email:
+          type: string
+          description: User email address
+          example: johndoe@example.com
+        password:
+          type: string
+          description: User password
+          example: password123
+
+responses:
+  200:
+    description: Successfully logged in
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Login successful."
+        user:
+          type: object
+          description: User details
+          properties:
+            id:
+              type: string
+              example: "e6b3562f-6cc5-4e2c-95d2-b7ac8ec478cc"
+            email:
+              type: string
+              example: "johndoe@example.com"
+            name:
+              type: string
+              example: "John Doe"
+            dob:
+              type: string
+              format: date
+              example: "1990-01-01"
+            gender:
+              type: string
+              example: "male"
+            address:
+              type: string
+              example: "1 Dai Co Viet, Hanoi, Vietnam"
+            phone_number:
+              type: string
+              example: "0123456789"
+            role:
+              type: string
+              example: "reader"
+            is_verified:
+              type: boolean
+              example: true
+            created_at:
+              type: string
+              format: date-time
+              example: "2021-01-01T00:00:00.000Z"
+            updated_at:
+              type: string
+              format: date-time
+              example: "2021-01-01T00:00:00.000Z"
+        access_token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        refresh_token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
