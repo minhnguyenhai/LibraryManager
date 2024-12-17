@@ -1,4 +1,5 @@
 from flask import Flask
+from flasgger import Swagger
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -8,6 +9,44 @@ from celery import Celery
 
 from config import Config
 from .errors import handle_exception
+
+
+swagger_template = {
+    "swagger": "2.0",
+    "info": {
+        "title": "🏢 Library Manager API 📖",
+        "description": "API documentation for the Library Manager system.\nMade with 🧡 by Group 34 - IT4409 - HUST",
+        "version": "1.0.0"
+    },
+    "host": "librarymanager-aict.onrender.com",  
+    "schemes": ["https"],
+    "tags": [
+        {
+            "name": "User - Auth",
+            "description": "Endpoints for user authentication, login, register, forgot password, token manager, etc."
+        },
+        {
+            "name": "User",
+            "description": "Endpoints for managing user profiles."
+        },
+        {
+            "name": "Book",
+            "description": "Endpoints for managing books in the system."
+        },
+        {
+            "name": "Book - Favorite",
+            "description": "Endpoints for managing favorite books of users."
+        },
+        {
+            "name": "Borrowing",
+            "description": "Endpoints for managing borrowing records in the system."
+        },
+        {
+            "name": "Statistic",
+            "description": "Endpoints for getting statistics of the system."
+        }
+    ]
+}
 
 
 class Base(DeclarativeBase):
@@ -23,7 +62,7 @@ celery = Celery(__name__, broker=Config.CELERY_BROKER_URL)
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
-    
+    swagger = Swagger(app, template=swagger_template)
     CORS(app, resources={r"/*": {
         "origins": "*", 
         "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
