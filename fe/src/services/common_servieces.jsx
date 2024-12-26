@@ -1,7 +1,7 @@
 import axios from "axios";
 import Book from "../models/book";
 
-export const BASE_URL = 'https://librarymanager-aict.onrender.com'
+export const BASE_URL = 'https://librarymanager-s6yc.onrender.com'
 
 //Lấy danh sách tất cả sách.
 
