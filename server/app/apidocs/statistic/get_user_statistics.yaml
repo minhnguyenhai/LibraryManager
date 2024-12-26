@@ -1,0 +1,38 @@
+Get User Statistics
+This API allows an admin to fetch user statistics, including total users, new users this month, and users currently borrowing books.
+---
+tags:
+  - Statistic
+parameters:
+  - name: Authorization
+    in: header
+    required: true
+    description: Bearer token for authentication (admin only)
+    schema:
+      type: string
+      example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+responses:
+  200:
+    description: User statistics fetched successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "User statistics fetched successfully"
+        total_users:
+          type: integer
+          description: Total number of registered users
+          example: 1500
+        new_users_this_month:
+          type: integer
+          description: Number of new users registered in the current month
+          example: 120
+        users_borrowing:
+          type: integer
+          description: Number of users currently borrowing books
+          example: 350

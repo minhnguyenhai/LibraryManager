@@ -1,0 +1,38 @@
+Get Book Statistics
+This API allows an admin to fetch book statistics, including total books, new books added this month, and books currently borrowed.
+---
+tags:
+  - Statistic
+parameters:
+  - name: Authorization
+    in: header
+    required: true
+    description: Bearer token for authentication (admin only)
+    schema:
+      type: string
+      example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+responses:
+  200:
+    description: Book statistics fetched successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Book statistics fetched successfully"
+        total_books:
+          type: integer
+          description: Total number of books in the system
+          example: 5000
+        new_books_this_month:
+          type: integer
+          description: Number of new books added in the current month
+          example: 200
+        books_borrowed:
+          type: integer
+          description: Number of books currently borrowed by users
+          example: 1500
