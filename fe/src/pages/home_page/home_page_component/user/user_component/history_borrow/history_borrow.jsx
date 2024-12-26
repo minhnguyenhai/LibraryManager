@@ -30,7 +30,7 @@ const HistoryBorrow = () => {
             const accessToken = localStorage.getItem('access_token');
             const user = JSON.parse(localStorage.getItem('user_info'));
             try {
-                const response = await fetch(`https://librarymanager-aict.onrender.com/user/${user.id}/borrowing`, {
+                const response = await fetch(`https://librarymanager-s6yc.onrender.com/user/${user.id}/borrowing`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

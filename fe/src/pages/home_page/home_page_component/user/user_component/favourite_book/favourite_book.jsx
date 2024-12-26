@@ -20,7 +20,7 @@ const FavouriteBooks = () => {
       const accessToken = localStorage.getItem("access_token");
       try {
         const response = await fetch(
-          "https://librarymanager-aict.onrender.com/user/favorite",
+          "https://librarymanager-s6yc.onrender.com/user/favorite",
           {
             method: "GET",
             headers: {
@@ -62,7 +62,7 @@ const FavouriteBooks = () => {
       await handleRefreshToken();
       const accessToken = localStorage.getItem("access_token");
       const response = await fetch(
-        `https://librarymanager-aict.onrender.com/user/favorite/${selectedBookId}`,
+        `https://librarymanager-s6yc.onrender.com/user/favorite/${selectedBookId}`,
         {
           method: "DELETE",
           headers: {
