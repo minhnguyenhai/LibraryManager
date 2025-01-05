@@ -97,7 +97,7 @@ Access the application at:
 http://localhost:3000
 ```
 
-### Using Docker Compose
+### Run Application Using Docker Compose
 If using Docker compose, just only run the command below:
 ```bash
 docker-compose up -d
